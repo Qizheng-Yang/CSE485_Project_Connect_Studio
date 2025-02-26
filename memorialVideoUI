@@ -1,0 +1,107 @@
+import { useState } from "react";
+import Image from "next/image";
+
+export default function MemorialStudio() {
+  const [step, setStep] = useState(1);
+  const [image, setImage] = useState(null);
+  const [name, setName] = useState("John Doe");
+  const [theme, setTheme] = useState(null);
+  const [titleSlides, setTitleSlides] = useState([]);
+
+  const handleNext = () => {
+    if (step < 8) setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file));
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
+      <header className="w-full flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 className="text-2xl font-bold">STUDIO</h1>
+        <Image src="/logo.png" alt="MyBabbo Logo" width={120} height={40} />
+      </header>
+      <div className="w-full max-w-3xl bg-white p-6 rounded-md shadow-lg mt-6">
+        <div className="text-center">
+          {image && (
+            <Image
+              src={image}
+              alt="Uploaded Image"
+              width={80}
+              height={80}
+              className="rounded-full mx-auto"
+            />
+          )}
+          <h2 className="text-xl mt-2">In Loving Memory of <strong>{name}</strong></h2>
+        </div>
+
+        <div className="flex justify-center space-x-2 my-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+            <span
+              key={s}
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${step === s ? 'bg-green-400 text-white' : 'bg-gray-300 text-gray-600'}`}
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+
+        {step === 1 && (
+          <div className="text-center">
+            <label className="block font-semibold">UPLOAD MAIN IMAGE</label>
+            <input type="file" onChange={handleImageUpload} className="mt-2" />
+            <label className="block mt-4 font-semibold">TITLE</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border p-2 w-full mt-2"
+            />
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="text-center">
+            <label className="block font-semibold">THEME</label>
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              {["Heritage", "Lights", "Watercolor", "Scenery"].map((t) => (
+                <button
+                  key={t}
+                  className={`p-2 border ${theme === t ? 'border-green-500' : 'border-gray-300'}`}
+                  onClick={() => setTheme(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div>
+            <label className="block font-semibold">ADD TITLE SLIDES</label>
+            <input
+              type="text"
+              placeholder="Enter Custom Text"
+              className="border p-2 w-full mt-2"
+              onChange={(e) => setTitleSlides([...titleSlides, e.target.value])}
+            />
+          </div>
+        )}
+
+        <div className="flex justify-between mt-6">
+          <button onClick={handleBack} className="bg-green-400 text-white px-4 py-2 rounded">Back</button>
+          <button onClick={handleNext} className="bg-green-400 text-white px-4 py-2 rounded">Next</button>
+        </div>
+      </div>
+    </div>
+  );
+}
