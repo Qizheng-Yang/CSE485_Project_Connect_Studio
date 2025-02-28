@@ -1,0 +1,164 @@
+/* General Page Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    background: white;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Header */
+header {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+}
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.step {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    border-radius: 50%;
+    background: #d8d8d8;
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.step.active {
+    background: #b2cc55;
+    color: white;
+}
+
+/* Main Information Section */
+.main-info {
+    text-align: center;
+}
+
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.upload-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #555;
+    cursor: pointer;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Toggle Switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 25px;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ddd;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: #b2cc55;
+}
+
+.toggle-slider:before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2.5px;
+    left: 3px;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    left: 27px;
+}
+
+/* Buttons */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 12px 20px;
+    background-color:rgb(145, 224, 145);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button.back {
+    background: #d8d8d8;
+    color: #333;
+}
+
+button.next {
+    background: #b2cc55;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.8;
+}
