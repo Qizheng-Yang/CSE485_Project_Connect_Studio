@@ -36,7 +36,7 @@ function Step1() {
         {/* Upload Main Image Section */}
         <div className="upload-main-image-section">
           <h3 className="upload-main-image-header">UPLOAD MAIN IMAGE</h3>
-          <div className="upload-icon-container" onClick={handleUploadClick}>
+          <div className="upload-icon-container" onClick={handleUploadClick} style={{ cursor: 'pointer' }}>
             {/* File Input (Hidden) */}
             <input
                 type="file"
