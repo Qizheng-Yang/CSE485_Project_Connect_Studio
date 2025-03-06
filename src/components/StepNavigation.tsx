@@ -11,6 +11,7 @@ const labels = [
   'Finalize',
 ];
 
+
 function StepNavigation() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
@@ -22,6 +23,7 @@ function StepNavigation() {
         </div>
         <span className="in-loving-memory">In loving memory of</span>
       </div>
+
 
       {/* Step Buttons */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>

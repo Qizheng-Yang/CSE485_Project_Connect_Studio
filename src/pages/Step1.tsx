@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import StepNavigation from '../components/StepNavigation';
 
+import NavbarBabbo from '../components/NavbarBabbo';
+
 import React, { useRef } from 'react';
 
 function Step1() {
@@ -14,16 +16,16 @@ function Step1() {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            // Handle the selected file here (e.g., display preview, upload to server)
             console.log('Selected file:', file);
-            alert(`Selected file: ${file.name}`); // Simple alert for demonstration
+            alert(`Selected file: ${file.name}`); 
         }
     };
 
   return (
     <div className="container">
       {/* Navbar */}
-      <Navbar />
+      {/* <Navbar /> */}
+      <NavbarBabbo />
 
       {/* Step Navigation */}
       <StepNavigation />
@@ -78,7 +80,7 @@ function Step1() {
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
           {/* Back Button */}
-          <Link to="/create">
+          <Link to="/">
             <button className="back-button">Back</button>
           </Link>
 
@@ -93,3 +95,5 @@ function Step1() {
 }
 
 export default Step1;
+
+

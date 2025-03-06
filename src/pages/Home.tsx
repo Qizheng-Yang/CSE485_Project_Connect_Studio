@@ -6,6 +6,7 @@ function Home() {
     <div>
       <Navbar />
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
+        {/* <Link to="/create"> */}
         <Link to="/create">
           <button style={{ fontSize: '24px', padding: '10px 20px' }}>Create Video</button>
         </Link>
