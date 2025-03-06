@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import StepNavigation from '../components/StepNavigation';
-
 import NavbarBabbo from '../components/NavbarBabbo';
+import StepNavigation from '../components/StepNavigation';
 
 import React, { useRef } from 'react';
 
@@ -23,11 +21,8 @@ function Step1() {
 
   return (
     <div className="container">
-      {/* Navbar */}
-      {/* <Navbar /> */}
-      <NavbarBabbo />
 
-      {/* Step Navigation */}
+      <NavbarBabbo />
       <StepNavigation />
 
       {/* Main Content */}
