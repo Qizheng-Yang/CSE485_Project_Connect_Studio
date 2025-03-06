@@ -9,7 +9,7 @@ body {
 
 /* Container */
   .container {
-    max-width: 1300px;
+    max-width: 1390px;
     background: white;
     margin: 40px auto;
     padding: 40px;
@@ -126,18 +126,18 @@ body {
     }
     
     .title-input {
-        marginTop: 20px;
-        fontSize: 16px;
+        margin-top: 20px;
+        font-Size: 16px;
         color: #929396;
         border: none;
         background-color: transparent;
         outline: none;
-        textAlign: center;
+        text-align: center;
         border-bottom: 2px solid #b2cc55;
         display: block;
         width: 250px;
         margin: 0 auto;
-        paddingBottom: 5px;
+        padding-Bottom: 5px;
     }
     
     /* Toggle Switch Section */
@@ -151,7 +151,7 @@ body {
         align-items: center;
         justify-content: center;
         gap: 10px;
-        fontSize: 16px;
+        font-Size: 16px;
         color: #929396;
         position: relative;
     }
