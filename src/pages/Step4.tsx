@@ -1,19 +1,42 @@
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 
 function Step4() {
   return (
-    <div>
-      <Navbar />
+    <div className="container">
+      <NavbarBabbo />
       <StepNavigation />
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <h2>Step 4: PHOTOS</h2>
-        <p>Select a theme for your video.</p>
-        <div style={{ marginTop: '20px' }}>
-          <Link to="/step/3"><button>Back</button></Link>
-          <Link to="/step/5"><button>Next</button></Link>
+
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Main Information Section */}
+        <h2 className="main-information-header">PHOTOS</h2>
+
+
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <h2>Step 4: PHOTOS</h2>
+          <p>Select a theme for your video.</p>
         </div>
+
+
+
+
+        {/* Navigation Buttons */}
+        <div className="navigation-buttons">
+          {/* Back Button */}
+          <Link to="/step/3">
+            <button className="back-button">Back</button>
+          </Link>
+
+          {/* Next Button */}
+          <Link to="/step/5">
+            <button className="next-button">Next</button>
+          </Link>
+        </div>
+
+
       </div>
     </div>
   );
