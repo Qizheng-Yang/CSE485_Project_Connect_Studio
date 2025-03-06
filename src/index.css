@@ -1,6 +1,6 @@
 /* General Page Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: Verdana, sans-serif;
     background-color: #f7f7f7;
     margin: 0;
     padding: 0;
@@ -32,6 +32,30 @@ header {
     align-items: center;
     margin-bottom: 30px;
 }
+
+.step_buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #ffffff; /* Default white background */
+    color: #555; /* Default gray text */
+    font-size: 17px;
+    font-weight: normal;
+    border: none;
+    cursor: pointer;
+    text-decoration: none; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .step_buttons.active {
+    background-color: #b2cc55; /* Green background for active step */
+    color: #ffffff; /* White text for active step */
+  }
+  
+
 
 .step {
     width: 35px;
