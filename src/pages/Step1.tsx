@@ -2,7 +2,24 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import StepNavigation from '../components/StepNavigation';
 
+import React, { useRef } from 'react';
+
 function Step1() {
+  const fileInputRef = useRef<HTMLInputElement>(null); // Create a reference to the file input
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click(); // Programmatically click the file input
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            // Handle the selected file here (e.g., display preview, upload to server)
+            console.log('Selected file:', file);
+            alert(`Selected file: ${file.name}`); // Simple alert for demonstration
+        }
+    };
+
   return (
     <div className="container">
       {/* Navbar */}
@@ -19,7 +36,15 @@ function Step1() {
         {/* Upload Main Image Section */}
         <div className="upload-main-image-section">
           <h3 className="upload-main-image-header">UPLOAD MAIN IMAGE</h3>
-          <div className="upload-icon-container">
+          <div className="upload-icon-container" onClick={handleUploadClick}>
+            {/* File Input (Hidden) */}
+            <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                ref={fileInputRef} // Assign the reference
+            />
             {/* Icon Placeholder */}
             <span className="upload-icon">✎</span>
           </div>
