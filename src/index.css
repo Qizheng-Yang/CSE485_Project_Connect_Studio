@@ -9,16 +9,17 @@ body {
 
 /* Container */
   .container {
-    max-width: 1390px;
+    max-width: 1460px;
+    min-height: 825px;
     background: white;
-    margin: 40px auto;
-    padding: 40px;
+    margin: 15px auto;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
   
-/* Main Content */
+/* Main Content (other than top) */
   .main-content {
     margin-top: 40px;
   }
@@ -57,7 +58,7 @@ body {
         font-weight: bold;
         color: #000000;
         text-align: left;
-        margin-left: 200px;
+        margin-left: 120px;
     }
     
     /* Upload Main Image Section */
@@ -93,7 +94,7 @@ body {
     /* Introductory Text Section */
     .introductory-text-section {
         text-align: center;
-        margin-top: 30px;
+        margin-top: 55px;
     }
     
     .introductory-text-header {
@@ -116,7 +117,7 @@ body {
     /* Title Section */
     .title-section {
         text-align: center;
-        margin-top: 35px;
+        margin-top: 40px;
     }
     
     .title-header {
@@ -168,11 +169,11 @@ body {
   
 /* Back & Next Buttons START */
     .navigation-buttons {
-        margin-top: 40px;
+        margin-top: 90px;
         display: flex;
         justify-content: space-between;
-        padding-left: 80px;
-        padding-right: 80px;
+        padding-left: 160px;
+        padding-right: 160px;
     }
 
     
