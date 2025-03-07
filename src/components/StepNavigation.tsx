@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import cameraIcon from '../assets/cameraIcon.png';
 
 const labels = [
   'Info',
@@ -19,7 +20,7 @@ function StepNavigation() {
       <div className="image-memory-section">
         <div className="image-placeholder">
           {/* Camera Icon */}
-          📷
+          <img src={cameraIcon} className="camera-icon" alt="Camera Icon" />
         </div>
         <span className="in-loving-memory">In loving memory of</span>
       </div>

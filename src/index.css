@@ -40,11 +40,13 @@ body {
         padding-top: 0px;
         padding-bottom: 0px;
     }
+    
 
-    .myBabbo-logo{
-        font-size: 18px;
-        font-weight: normal;
-        padding-right: 50px
+    .myBabbo-logo {
+        width: 200px;
+        height: 90px;
+        object-Fit: contain;
+        padding-right: 45px;
     }
 
 
@@ -81,6 +83,12 @@ body {
             color: #555;
             text-align: center;
             margin-bottom: 5px;
+        }
+
+        .camera-icon {
+            width: 70px;
+            height: 70px;
+            object-Fit: contain;
         }
 
 
