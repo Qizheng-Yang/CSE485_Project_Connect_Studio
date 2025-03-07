@@ -66,8 +66,8 @@ body {
         }
 
         .image-placeholder {
-            width: 130px;
-            height: 130px;
+            width: 145px;
+            height: 145px;
             border-radius: 50%;
             background-color: #ddd;
             display: flex;
