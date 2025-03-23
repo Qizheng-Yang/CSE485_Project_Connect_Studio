@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import cameraIcon from '../assets/cameraIcon.png';
 import { useImage } from '../context/ImageContext';
 
+import React from 'react';
+
 const labels = [
   'Info',
   'Theme',
@@ -15,20 +17,7 @@ const labels = [
 ];
 
 function StepNavigation() {
-  const { uploadedImage, setUploadedImage } = useImage();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleCameraClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setUploadedImage(imageUrl);
-    }
-  };
+  const { uploadedImage, name } = useImage();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
@@ -48,7 +37,7 @@ function StepNavigation() {
             overflow: 'hidden',
             backgroundColor: '#f0f0f0'
           }}
-          onClick={handleCameraClick}
+          // onClick={handleCameraClick}
         >
           {uploadedImage ? (
             <img 
@@ -64,16 +53,9 @@ function StepNavigation() {
             <img src={cameraIcon} className="camera-icon" alt="Camera Icon" />
           )}
           
-          {/* Hidden file input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageChange}
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
         </div>
         <span className="in-loving-memory">In loving memory of</span>
+        <span className="in-loving-memory">{name}</span>
       </div>
       
       {/* Step Buttons */}

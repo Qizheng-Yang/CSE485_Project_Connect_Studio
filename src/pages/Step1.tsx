@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 
+import { useImage } from '../context/ImageContext';
+
 import React, { useRef } from 'react';
 
 function Step1() {
   const fileInputRef = useRef<HTMLInputElement>(null); // Create a reference to the file input
+    const { setUploadedImage, setName } = useImage(); 
 
     const handleUploadClick = () => {
         fileInputRef.current?.click(); // Programmatically click the file input
@@ -14,9 +17,15 @@ function Step1() {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            console.log('Selected file:', file);
-            alert(`Selected file: ${file.name}`); 
+
+            const imageURL = URL.createObjectURL(file);
+            setUploadedImage(imageURL);
+
         }
+    };
+
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
     };
 
   return (
@@ -60,6 +69,7 @@ function Step1() {
             type="text"
             placeholder="Insert Name"
             className="title-input"
+            onChange={handleNameChange} 
           />
         </div>
 
