@@ -1,6 +1,3 @@
-import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import StepNavigation from '../components/StepNavigation';
 
 import Step1 from '../pages/Step1';
 

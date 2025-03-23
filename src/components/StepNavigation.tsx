@@ -1,9 +1,7 @@
-import { useRef, ChangeEvent } from 'react';
 import { NavLink } from 'react-router-dom';
 import cameraIcon from '../assets/cameraIcon.png';
 import { useImage } from '../context/ImageContext';
 
-import React from 'react';
 
 const labels = [
   'Info',

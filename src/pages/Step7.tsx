@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import React from 'react';
 import { useImage } from '../context/ImageContext';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
