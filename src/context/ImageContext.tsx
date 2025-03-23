@@ -16,7 +16,7 @@ const ImageContext = createContext<ImageContextType | undefined>(undefined);
 // Create a provider component
 export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [intro, setIntro] = useState<string>('');
+  const [intro, setIntro] = useState<string>('In Loving Memory of');
   const [name, setName] = useState<string>('');
 
   return (
