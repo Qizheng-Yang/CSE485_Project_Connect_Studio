@@ -10,7 +10,7 @@ import React, { useRef, useState } from 'react';
 
 function Step1() {
   const fileInputRef = useRef<HTMLInputElement>(null); // Create a reference to the file input
-    const { setUploadedImage, setName } = useImage(); 
+    const { setUploadedImage, setIntro, setName } = useImage(); 
 
     const handleUploadClick = () => {
         fileInputRef.current?.click(); // Programmatically click the file input
@@ -24,6 +24,10 @@ function Step1() {
             setUploadedImage(imageURL);
 
         }
+    };
+
+    const handleIntroChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setIntro(event.target.value);
     };
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +71,14 @@ function Step1() {
         {/* Introductory Text Section */}
         <div className="introductory-text-section">
           <h3 className="introductory-text-header">INTRODUCTORY TEXT</h3>
-          <p className="introductory-text">In Loving Memory of</p>
+          <input
+            type="text"
+            placeholder="Insert Intro"
+            defaultValue="In Loving Memory of"
+            className="introductory-input"
+            onChange={handleIntroChange} 
+          />
+
         </div>
 
         {/* Title Section */}

@@ -17,7 +17,7 @@ const labels = [
 ];
 
 function StepNavigation() {
-  const { uploadedImage, name } = useImage();
+  const { uploadedImage, intro, name } = useImage();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
@@ -54,7 +54,7 @@ function StepNavigation() {
           )}
           
         </div>
-        <span className="in-loving-memory">In loving memory of</span>
+        <span className="in-loving-memory">{intro}</span>
         <span className="in-loving-memory">{name}</span>
       </div>
       

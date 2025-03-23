@@ -4,6 +4,8 @@ import React, { createContext, useState, useContext } from 'react';
 interface ImageContextType {
   uploadedImage: string | null;
   setUploadedImage: (imageUrl: string | null) => void;
+  intro: string;
+  setIntro: (intro: string) => void;
   name: string;
   setName: (name: string) => void;
 }
@@ -14,10 +16,11 @@ const ImageContext = createContext<ImageContextType | undefined>(undefined);
 // Create a provider component
 export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [intro, setIntro] = useState<string>('');
   const [name, setName] = useState<string>('');
 
   return (
-    <ImageContext.Provider value={{ uploadedImage, setUploadedImage, name, setName }}>
+    <ImageContext.Provider value={{ uploadedImage, setUploadedImage, intro, setIntro,name, setName }}>
       {children}
     </ImageContext.Provider>
   );

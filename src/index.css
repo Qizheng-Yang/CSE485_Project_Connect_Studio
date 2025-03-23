@@ -170,15 +170,19 @@ body {
         color: #000000;
     }
     
-    .introductory-text {
+    .introductory-input {
         margin-top: 20px;
-        font-size: 16px;
+        font-Size: 16px;
         color: #000000;
+        border: none;
+        background-color: transparent;
+        outline: none;
+        text-align: center;
         border-bottom: 2px solid #b2cc55;
         display: block;
         width: 250px;
         margin: 0 auto;
-        padding-bottom: 5px;
+        padding-Bottom: 5px;
     }
     
     /* Title Section */
@@ -196,7 +200,7 @@ body {
     .title-input {
         margin-top: 20px;
         font-Size: 16px;
-        color: #929396;
+        color: #000000;
         border: none;
         background-color: transparent;
         outline: none;
