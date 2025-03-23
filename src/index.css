@@ -286,6 +286,120 @@ body {
 
 
 
+
+
+/* --- STEP 3 --- */
+
+  .preview-section {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .slide-preview {
+    width: 500px;
+    height: 300px;
+    margin: 0 auto;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .slide-text {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .background-choosing-text{
+    text-align: left;
+    margin-left: 120px;
+  }
+  
+  .background-selection {
+    display: flex; 
+    overflow-x: auto;
+    white-space: nowrap; 
+    margin-top: 20px;
+    width: 1200px; 
+    margin-left: 110px
+  }
+  
+  .background-image {
+    width: 270px; 
+    height: 160px; 
+    margin-right: 15px;
+    cursor: pointer;
+    border-radius: 12px;
+  }
+  
+  .background-image.selected {
+    border: 2px solid #b2cc55;
+  }
+
+  
+  .text-input-section {
+    text-align: left;
+    margin-top: 25px;
+  }
+  
+  .custom-text-input {
+    font-size: 16px;
+    color: #000000;
+
+    border: none;
+    background-color: transparent;
+    outline: none;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    display: block;
+    width: 900px;
+    margin: 0 auto;
+    padding-Bottom: 5px;
+  }
+
+  .quote-choosing-text{
+    margin-top: 90px;
+    text-align: left;
+    margin-left: 120px;
+  }
+  
+  .add-slide-button-section {
+    text-align: left;
+    margin-left: 80px;
+
+  }
+  
+  .add-slide-button {
+    background-color: white;
+    font-weight: bold;
+    color: #b2cc55;
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 /* Back & Next Buttons START */
     .navigation-buttons {
