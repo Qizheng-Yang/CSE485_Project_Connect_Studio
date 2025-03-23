@@ -3,8 +3,10 @@ import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 
 import { useImage } from '../context/ImageContext';
+import ToggleSwitch from '../components/ToggleSwitch';
 
-import React, { useRef } from 'react';
+
+import React, { useRef, useState } from 'react';
 
 function Step1() {
   const fileInputRef = useRef<HTMLInputElement>(null); // Create a reference to the file input
@@ -26,6 +28,12 @@ function Step1() {
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);
+    };
+
+    // Toggle
+    const [fullAccessEnabled, setFullAccessEnabled] = useState(false);
+    const handleToggleChange = (checked: boolean) => {
+      setFullAccessEnabled(checked);
     };
 
   return (
@@ -76,11 +84,11 @@ function Step1() {
         {/* Toggle Switch Section */}
         <div className="toggle-switch-section">
           <label className="toggle-switch-label">
-            Enable Full Access to Family
-            <input type="checkbox" id="toggle-switch" className="toggle-switch-input" />
-            <span className="toggle-slider"></span>
+            <ToggleSwitch checked={fullAccessEnabled} onChange={handleToggleChange} />
+            <div className="toggle-switch-text">Enable Full Access to Family</div>
           </label>
         </div>
+
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">

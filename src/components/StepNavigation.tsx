@@ -35,7 +35,7 @@ function StepNavigation() {
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'hidden',
-            backgroundColor: '#f0f0f0'
+            backgroundColor: '#DDDDDD'
           }}
           // onClick={handleCameraClick}
         >

@@ -208,20 +208,69 @@ body {
         padding-Bottom: 5px;
     }
     
-    /* Toggle Switch Section */
+
+    /* Toggle Section */
     .toggle-switch-section {
-        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 20px;
         margin-top: 30px;
+        justify-content: center; 
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 24px;
+        display: inline-block;
+    }
+
+    .toggle-switch-text {
+        text-align: center; 
+    }
+
+    .toggle-switch-label {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .toggle-switch-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
     }
     
-    .toggle-switch-label {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        font-Size: 16px;
-        color: #929396;
-        position: relative;
+    .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 24px;
+    transition: 0.4s;
+    }
+    
+    .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+    }
+    
+    .toggle-switch-checkbox:checked + .toggle-slider {
+    background-color: #b2cc55;
+    }
+        
+    .toggle-switch-checkbox:checked + .toggle-slider:before {
+    transform: translateX(22px);
     }
 
 
