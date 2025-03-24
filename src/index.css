@@ -365,6 +365,91 @@ body {
     margin-left: 120px;
   }
   
+
+  /*-Quote portion-*/
+
+  /* Choosing Quote type */
+  .quote-selection {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-top: 20px;
+    margin-left: 110px;
+  }
+  
+  .quote-image {
+    width: 220px;
+    height: 120px;
+    margin-right: 15px;
+    cursor: pointer;
+    border-radius: 12px;
+  }
+  
+  .quote-image.selected {
+    border: 2px solid #b2cc55;
+  }
+  
+
+/* Quote Text Selection */
+  .content-wrapper {
+    display: flex;
+    margin-left: 240px;
+  }
+  
+  .quote-list {
+    width: 25%;
+  }
+  
+  .quote-list-header {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .quote-scrollable {
+    overflow-y: auto;
+    max-height: 255px;
+  }
+  
+  .quote-button {
+    display: block;
+    width: calc(100% - 20px);
+    margin-bottom: 10px;
+    padding: 5px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    font-size: 17px;
+  }
+
+
+
+
+/* Detailed Edits */
+  .customization-section {
+    margin-top: 50px;
+
+    display: flex;
+    margin-left: 90px;
+    border-top: 1px solid #ccc;
+    width: 1300px
+  }
+  
+  .font-selection,
+  .color-selection,
+  .duration-selection {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .color-button {
+    width: 30px;
+    height: 30px;
+  }
+
+
+  
+
+/* Add Slide */
   .add-slide-button-section {
     text-align: left;
     margin-left: 80px;
@@ -375,8 +460,8 @@ body {
     background-color: white;
     font-weight: bold;
     color: #b2cc55;
+    font-size: 18px;
   }
-  
 
 
 
@@ -384,15 +469,8 @@ body {
 
 
 
-
-
-
-
-
-
-
-
-
+/* --- STEP 4 --- */
+    /* ADD MORE LATER */
 
 
 
