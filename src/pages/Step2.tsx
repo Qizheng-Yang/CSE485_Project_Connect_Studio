@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// Sample theme images - replace with your actual image paths
-const themeImages = [
+interface Theme {
+  id: number;
+  src: string;
+  alt: string;
+}
+
+const themeImages: Theme[] = [
   { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
   { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
   { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
@@ -17,14 +22,20 @@ const themeImages = [
   { id: 10, src: '/themes/theme10.png', alt: 'Theme 10' },
   { id: 11, src: '/themes/theme11.png', alt: 'Theme 11' },
   { id: 12, src: '/themes/theme12.png', alt: 'Theme 12' },
+
 ];
 
 function Step2() {
-  const [selectedTheme, setSelectedTheme] = useState<number | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
 
-  const handleThemeSelect = (themeId: number): void => {
-    setSelectedTheme(themeId);
-    localStorage.setItem('selectedTheme', themeId.toString());
+  // Set first theme as default
+  useEffect(() => {
+    setSelectedTheme(themeImages[0]);
+  }, []);
+
+  const handleThemeSelect = (theme: Theme): void => {
+    setSelectedTheme(theme);
+    localStorage.setItem('selectedTheme', theme.id.toString());
   };
 
   return (
@@ -32,33 +43,61 @@ function Step2() {
       <NavbarBabbo />
       <StepNavigation />
 
-      {/* Main Content */}
       <div className="main-content">
-        {/* Main Information Section */}
         <h2 className="main-information-header">THEME</h2>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <h2>Step 2: Choose a Theme</h2>
-          <p>Select a theme for your video.</p>
-          
-          {/* Theme Selection Grid */}
+          {/* Large preview of selected theme */}
+          {selectedTheme && (
+            <div style={{ 
+              margin: '0 auto 30px', 
+              maxWidth: '500px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '10px',
+              backgroundColor: '#f9f9f9'
+            }}>
+              <img 
+                src={selectedTheme.src} 
+                alt={`Selected: ${selectedTheme.alt}`}
+                style={{
+                  width: '100%',
+                  height: '250px',
+                  objectFit: 'contain',
+                  borderRadius: '4px'
+                }}
+              />
+              <p style={{ 
+                marginTop: '10px', 
+                fontSize: '1.2rem',
+                fontWeight: 'bold'
+              }}>
+                {selectedTheme.alt}
+              </p>
+            </div>
+          )}
+
+          {/* 3x7 Grid of theme thumbnails */}
           <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(3, 1fr)', 
-            gap: '20px', 
-            margin: '30px auto',
-            maxWidth: '800px'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, 1fr)',
+            gap: '10px',
+            maxWidth: '900px',
+            margin: '0 auto 30px'
           }}>
             {themeImages.map((theme) => (
               <div 
                 key={theme.id}
-                onClick={() => handleThemeSelect(theme.id)}
+                onClick={() => handleThemeSelect(theme)}
                 style={{
-                  border: selectedTheme === theme.id ? '3px solid #4CAF50' : '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '10px',
+                  border: selectedTheme?.id === theme.id 
+                    ? '3px solid #4CAF50' 
+                    : '1px solid #ddd',
+                  borderRadius: '6px',
+                  padding: '5px',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.2s ease',
+                  backgroundColor: '#fff'
                 }}
               >
                 <img 
@@ -66,34 +105,40 @@ function Step2() {
                   alt={theme.alt}
                   style={{
                     width: '100%',
-                    height: '150px',
+                    height: '80px',
                     objectFit: 'cover',
-                    borderRadius: '5px'
+                    borderRadius: '3px'
                   }}
                 />
-                <p style={{ marginTop: '8px' }}>{theme.alt}</p>
+                <p style={{ 
+                  margin: '5px 0 0',
+                  fontSize: '0.8rem',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
+                  {theme.alt}
+                </p>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Navigation Buttons */}
-        <div className="navigation-buttons">
-          {/* Back Button */}
-          <Link to="/step/1">
-            <button className="back-button">Back</button>
-          </Link>
-
-          {/* Next Button */}
-          <Link to="/step/3">
-            <button 
-              className="next-button"
-              disabled={!selectedTheme}
-              style={{ opacity: selectedTheme ? 1 : 0.5 }}
-            >
-              Next
-            </button>
-          </Link>
+          {/* Navigation Buttons */}
+          <div className="navigation-buttons" style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            maxWidth: '900px',
+            margin: '0 auto',
+            padding: '20px 0'
+          }}>
+            <Link to="/step/1">
+              <button className="back-button">Back</button>
+            </Link>
+            <Link to="/step/3">
+              <button className="next-button">Next</button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
