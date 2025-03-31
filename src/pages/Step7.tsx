@@ -19,8 +19,6 @@ function Step7() {
 
         {/* Slideshow Section */}
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <h2>Step 7: PREVIEW</h2>
-          <p>Here is a preview of your video slideshow.</p>
 
           {slides.length > 0 ? (
             <div className="slide-container" style={{ width: '600px', margin: '0 auto' }}>
