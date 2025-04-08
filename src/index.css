@@ -611,16 +611,17 @@ body {
     
     button {
         padding: 12px 20px;
-        background-color:#b0cd49;
+        background-color:#b4d334;
         border: none;
         border-radius: 30px;
         font-size: 13px;
         color: white;
         cursor: pointer;
-        padding-left: 43px;
-        padding-right: 43px;
+        padding-left: 35px;
+        padding-right: 35px;
         padding-top: 12px;
         padding-bottom: 12px;
+        margin-left: 10px;
     }
     
     button.back {

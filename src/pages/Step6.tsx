@@ -67,6 +67,11 @@ function Step6() {
           />
         </div>
 
+        <div>
+          <p className='small-text'>Video Length:   5.25 minutes</p>
+          <p className='small-text'>Slide Length: Match to Music  OR  3.5 Seconds</p>
+        </div>
+
         {/* Uploaded Music List */}
         {uploadedMusic.length > 0 && (
           <div className="uploaded-music-list">
