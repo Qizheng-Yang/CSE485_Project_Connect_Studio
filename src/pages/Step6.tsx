@@ -102,7 +102,7 @@ function Step6() {
                 ✕
               </button>
               <h3>Custom Music Licensing</h3>
-              <p>
+              <p className="small-text">
                 By selecting "Agree and Accept," you confirm that you have the proper licenses 
                 for any music you upload to MyBabbo Inc.. You also agree to defend, indemnify, 
                 and hold MyBabbo Inc., as well as its owners, employees, agents, successors, 
