@@ -2,32 +2,51 @@ import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import { useState } from 'react';
+import { getAudioDuration } from '../utils/audioUtils';
 
 function Step6() {
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string}[]>([]);
+  const [licenseAccepted, setLicenseAccepted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [videoLength] = useState('5.25 minutes'); // This could be dynamic in a real app
+  const [slideLength] = useState('3.5 Seconds'); // This could be dynamic in a real app
 
   const handleUploadClick = () => {
-    setShowLicenseModal(true);
+    if (licenseAccepted) {
+      const fileInput = document.getElementById('music-upload') as HTMLInputElement;
+      fileInput.click();
+    } else {
+      setShowLicenseModal(true);
+    }
   };
 
   const handleAcceptLicense = () => {
+    setLicenseAccepted(true);
     setShowLicenseModal(false);
-    // Trigger file input click programmatically
     const fileInput = document.getElementById('music-upload') as HTMLInputElement;
     fileInput.click();
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      const file = files[0];
-      // In a real app, you would process the file and get its duration
-      const newMusic = {
-        name: file.name,
-        duration: '2:30' // Placeholder - you'd calculate this in a real app
-      };
-      setUploadedMusic([...uploadedMusic, newMusic]);
+      setIsLoading(true);
+      try {
+        const file = files[0];
+        const duration = await getAudioDuration(file);
+        const newMusic = {
+          name: file.name,
+          duration: duration
+        };
+        setUploadedMusic([...uploadedMusic, newMusic]);
+      } catch (error) {
+        console.error('Error processing audio file:', error);
+        // Consider adding user feedback for errors
+      } finally {
+        setIsLoading(false);
+        e.target.value = '';
+      }
     }
   };
 
@@ -41,9 +60,7 @@ function Step6() {
       <NavbarBabbo />
       <StepNavigation />
 
-      {/* Main Content */}
       <div className="main-content">
-        {/* Main Information Section */}
         <h2 className="main-information-header">MUSIC</h2>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -51,11 +68,11 @@ function Step6() {
         </div>
 
         {/* Music Selection Buttons */}
-        <div>
-          <button  onClick={handleUploadClick}>
+        <div className="button-group">
+          <button className="action-button" onClick={handleUploadClick}>
             Upload Music
           </button>
-          <button>
+          <button className="action-button secondary">
             Select Music
           </button>
           <input 
@@ -67,15 +84,19 @@ function Step6() {
           />
         </div>
 
-        <div>
-          <p className='small-text'>Video Length:   5.25 minutes</p>
-          <p className='small-text'>Slide Length: Match to Music  OR  3.5 Seconds</p>
-        </div>
+        
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="loading-indicator">
+            Processing audio file...
+          </div>
+        )}
 
         {/* Uploaded Music List */}
         {uploadedMusic.length > 0 && (
           <div className="uploaded-music-list">
-            <h3>Added Songs</h3>
+            <p className='small-text-inside'>Available Songs</p>
             {uploadedMusic.map((music, index) => (
               <div key={index} className="music-item">
                 <span className="music-name">{music.name}</span>
@@ -90,6 +111,11 @@ function Step6() {
             ))}
           </div>
         )}
+        <div className="length-info">
+          <p className='small-text'>Video Length: {videoLength}</p>
+          <p><br /></p>
+          <p className='small-text'>Slide Length: Match to Music OR {slideLength}</p>
+        </div>
 
         {/* License Modal */}
         {showLicenseModal && (
@@ -99,7 +125,7 @@ function Step6() {
                 className="close-modal"
                 onClick={() => setShowLicenseModal(false)}
               >
-                ✕
+                X
               </button>
               <h3>Custom Music Licensing</h3>
               <p className="small-text">
@@ -110,6 +136,7 @@ function Step6() {
                 of this confirmation.
               </p>
               <button 
+                className="action-button"
                 onClick={handleAcceptLicense}
               >
                 Confirm & Accept
@@ -120,12 +147,9 @@ function Step6() {
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
-          {/* Back Button */}
           <Link to="/step/5">
             <button className="back-button">Back</button>
           </Link>
-
-          {/* Next Button */}
           <Link to="/step/7">
             <button className="next-button">Next</button>
           </Link>
