@@ -50,7 +50,68 @@ function Step6() {
           <p className='small-text'>Select or upload the music you would like in your video</p>
         </div>
 
-        
+        {/* Music Selection Buttons */}
+        <div>
+          <button  onClick={handleUploadClick}>
+            Upload Music
+          </button>
+          <button>
+            Select Music
+          </button>
+          <input 
+            id="music-upload"
+            type="file" 
+            accept="audio/*" 
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+          />
+        </div>
+
+        {/* Uploaded Music List */}
+        {uploadedMusic.length > 0 && (
+          <div className="uploaded-music-list">
+            <h3>Added Songs</h3>
+            {uploadedMusic.map((music, index) => (
+              <div key={index} className="music-item">
+                <span className="music-name">{music.name}</span>
+                <span className="music-duration">{music.duration}</span>
+                <button 
+                  className="delete-button"
+                  onClick={() => handleDeleteMusic(index)}
+                >
+                  🗑️
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* License Modal */}
+        {showLicenseModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <button 
+                className="close-modal"
+                onClick={() => setShowLicenseModal(false)}
+              >
+                ✕
+              </button>
+              <h3>Custom Music Licensing</h3>
+              <p>
+                By selecting "Agree and Accept," you confirm that you have the proper licenses 
+                for any music you upload to MyBabbo Inc.. You also agree to defend, indemnify, 
+                and hold MyBabbo Inc., as well as its owners, employees, agents, successors, 
+                and assigns, harmless from any third-party claims arising from a violation 
+                of this confirmation.
+              </p>
+              <button 
+                onClick={handleAcceptLicense}
+              >
+                Confirm & Accept
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
