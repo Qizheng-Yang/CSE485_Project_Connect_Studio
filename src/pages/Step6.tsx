@@ -6,11 +6,13 @@ import { getAudioDuration } from '../utils/audioUtils';
 
 function Step6() {
   const [showLicenseModal, setShowLicenseModal] = useState(false);
-  const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string}[]>([]);
+  const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string, selected: boolean}[]>([]);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [videoLength] = useState('5.25 minutes'); // This could be dynamic in a real app
-  const [slideLength] = useState('3.5 Seconds'); // This could be dynamic in a real app
+  const [videoLength] = useState('5.25 minutes');
+  const [slideLength] = useState('3.5 Seconds');
+  const [showCheckboxes, setShowCheckboxes] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
 
   const handleUploadClick = () => {
     if (licenseAccepted) {
@@ -19,6 +21,20 @@ function Step6() {
     } else {
       setShowLicenseModal(true);
     }
+  };
+
+  const handleSelectClick = () => {
+    setShowCheckboxes(!showCheckboxes);
+    if (!showCheckboxes) {
+      // When showing checkboxes, reset all selections
+      setUploadedMusic(uploadedMusic.map(music => ({...music, selected: false})));
+    }
+  };
+
+  const handleCheckboxChange = (index: number) => {
+    const updatedMusic = [...uploadedMusic];
+    updatedMusic[index].selected = !updatedMusic[index].selected;
+    setUploadedMusic(updatedMusic);
   };
 
   const handleAcceptLicense = () => {
@@ -37,12 +53,12 @@ function Step6() {
         const duration = await getAudioDuration(file);
         const newMusic = {
           name: file.name,
-          duration: duration
+          duration: duration,
+          selected: false
         };
         setUploadedMusic([...uploadedMusic, newMusic]);
       } catch (error) {
         console.error('Error processing audio file:', error);
-        // Consider adding user feedback for errors
       } finally {
         setIsLoading(false);
         e.target.value = '';
@@ -72,8 +88,11 @@ function Step6() {
           <button className="action-button" onClick={handleUploadClick}>
             Upload Music
           </button>
-          <button className="action-button secondary">
-            Select Music
+          <button 
+            className={`action-button secondary ${showCheckboxes ? 'active' : ''}`}
+            onClick={handleSelectClick}
+          >
+            {showCheckboxes ? 'Cancel Selection' : 'Select Music'}
           </button>
           <input 
             id="music-upload"
@@ -86,19 +105,18 @@ function Step6() {
 
         
 
-        {/* Loading Indicator */}
         {isLoading && (
           <div className="loading-indicator">
             Processing audio file...
           </div>
         )}
 
-        {/* Uploaded Music List */}
         {uploadedMusic.length > 0 && (
           <div className="uploaded-music-list">
-            <p className='small-text-inside'>Available Songs</p>
+            <p className='small-text-inside'>Added Songs</p>
             {uploadedMusic.map((music, index) => (
               <div key={index} className="music-item">
+                
                 <span className="music-name">{music.name}</span>
                 <span className="music-duration">{music.duration}</span>
                 <button 
@@ -107,17 +125,24 @@ function Step6() {
                 >
                   🗑️
                 </button>
+                {showCheckboxes && (
+                  <input
+                    type="checkbox"
+                    checked={music.selected}
+                    onChange={() => handleCheckboxChange(index)}
+                    className="music-checkbox"
+                  />
+                )}
+                
               </div>
             ))}
           </div>
         )}
         <div className="length-info">
           <p className='small-text'>Video Length: {videoLength}</p>
-          <p><br /></p>
           <p className='small-text'>Slide Length: Match to Music OR {slideLength}</p>
         </div>
 
-        {/* License Modal */}
         {showLicenseModal && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -125,7 +150,7 @@ function Step6() {
                 className="close-modal"
                 onClick={() => setShowLicenseModal(false)}
               >
-                X
+                ✕
               </button>
               <h3>Custom Music Licensing</h3>
               <p className="small-text">
@@ -145,7 +170,6 @@ function Step6() {
           </div>
         )}
 
-        {/* Navigation Buttons */}
         <div className="navigation-buttons">
           <Link to="/step/5">
             <button className="back-button">Back</button>

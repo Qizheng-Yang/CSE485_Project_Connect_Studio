@@ -501,8 +501,8 @@ body {
 
 .uploaded-music-list {
   max-width: 800px;
-  margin: 40px auto;
-  padding: 50px;
+  margin: 20px auto;
+  padding: 20px;
 
   border-radius: 5px;
 }
@@ -537,6 +537,44 @@ body {
   font-size: 16px;
   color: #ff4444;
 }
+
+/* Music Checkbox Styles */
+.music-checkbox {
+  /* Hide default checkbox */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc; /* Grey border */
+  border-radius: 3px;
+  margin-left: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Green background when checked */
+.music-checkbox:checked {
+  background-color: #b4d334; /* Green */
+  border-color: #b4d334;
+}
+
+/* White checkmark */
+.music-checkbox:checked::before {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Active state for select button */
+.action-button.active {
+  background-color: #4a6fa5;
+  color: white;
+}
+
 
 /* Modal Styles */
 .modal-overlay {
