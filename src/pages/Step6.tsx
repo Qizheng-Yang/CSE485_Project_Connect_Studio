@@ -12,7 +12,7 @@ function Step6() {
   const [videoLength] = useState('5.25 minutes');
   const [slideLength] = useState('3.5 Seconds');
   const [showCheckboxes, setShowCheckboxes] = useState(false);
-  const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
+  // const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
 
   const handleUploadClick = () => {
     if (licenseAccepted) {
