@@ -4,6 +4,19 @@ import StepNavigation from '../components/StepNavigation';
 import React, { useState } from 'react';
 import { useImage } from '../context/ImageContext';
 
+// Font imports (Fonts were also installed)
+import "@fontsource/montserrat"; 
+import "@fontsource/alex-brush"; 
+import "@fontsource/alegreya"; 
+import "@fontsource/dancing-script"; 
+import "@fontsource/great-vibes"; 
+import "@fontsource/pacifico"; 
+import "@fontsource/roboto-slab"; 
+import "@fontsource/playfair-display"; 
+import "@fontsource/lobster"; 
+import "@fontsource/raleway"; 
+import "@fontsource/open-sans"; 
+
 // Import local images
 import image1 from '../assets/image1.png';
 import image2 from '../assets/image2.png';
@@ -34,12 +47,28 @@ const quotes = [
   'Add other quotes'
 ];
 
+const fonts = [
+  'Montserrat',
+  'Alex Brush',
+  'Alegreya',
+  'Memories Last Forever',
+  'Cherished Moments',
+  'Dancing Script',
+  'Great Vibes',
+  'Pacifico',
+  'Roboto Slab',
+  'Playfair Display',
+  'Lobster',
+  'Raleway',
+  'Open Sans'
+];
+
 function Step3() {
   const { slides, setSlides } = useImage();
   const [currentSlide, setCurrentSlide] = useState({
     backgroundImage: '',
     customText: '',
-    font: 'Montserrat',
+    customFont: 'Montserrat',
     color: '#000000',
     duration: '5 seconds',
   });
@@ -66,11 +95,18 @@ function Step3() {
     setIsCustomizationVisible(true); 
   };
 
+  const handleFontChange = (font: string) => {
+    setCurrentSlide((prev) => ({ ...prev, customFont: font }));
+    // setIsCustomizationVisible(true); 
+  };
+
+
+
   const resetState = () => {
     setCurrentSlide({
       backgroundImage: '',
       customText: '',
-      font: 'Montserrat',
+      customFont: 'Montserrat',
       color: '#000000',
       duration: '5 seconds',
 
@@ -101,7 +137,7 @@ function Step3() {
               <span
                 className="slide-text"
                 style={{
-                  fontFamily: currentSlide.font,
+                  fontFamily: currentSlide.customFont,
                   color: currentSlide.color,
                 }}
               >
@@ -196,7 +232,7 @@ function Step3() {
                 <span
                   className="slide-text"
                   style={{
-                    fontFamily: currentSlide.font,
+                    fontFamily: currentSlide.customFont,
                     color: currentSlide.color,
                   }}
                 >
@@ -210,23 +246,31 @@ function Step3() {
         {/* Customization Options */}
         {isCustomizationVisible && (
           <div className="customization-section">
+
+            
             {/* Font Selection */}
-            <div className="font-selection">
-              <p>Font:</p>
-              {['Montserrat', 'Open Sans', 'Alegreya'].map((fontOption) => (
-                <button
-                  key={fontOption}
-                  onClick={() =>
-                    setCurrentSlide((prev) => ({ ...prev, font: fontOption }))
-                  }
-                  className={`font-button ${
-                    currentSlide.font === fontOption ? 'selected' : ''
-                  }`}
-                >
-                  {fontOption}
-                </button>
-              ))}
+            <div className="font-list">
+              <h3 className="font-list-header">FONT:</h3>
+              <div className="font-scrollable">
+                {fonts.map((font, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleFontChange(font)}
+                    className={`font-button ${
+                      currentSlide.customFont === font ? 'selected' : ''
+                    }`}
+                    style={{ fontFamily: font }}
+                  >
+                    {font}
+                  </button>
+                ))}
+              </div>
             </div>
+
+              
+
+
+
 
             {/* Color Selection */}
             <div className="color-selection">
