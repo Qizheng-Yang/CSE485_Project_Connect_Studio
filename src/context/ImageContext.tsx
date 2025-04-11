@@ -1,12 +1,14 @@
 // ImageContext.tsx
 import React, { createContext, useState, useContext } from 'react';
 
+
 interface Slide {
   backgroundImage: string;
   customText: string;
-  customFont: string;       // Added
-  customColor: string;      // Added
-  customDuration: string;   // Added
+  customFont: string;       
+  customColor: string;     
+  customDuration: string;  
+  transition?: string;  // Added
 }
 
 interface ImageContextType {
