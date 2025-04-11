@@ -94,7 +94,8 @@ function Step3() {
             <div
               className="slide-preview"
               style={{
-                backgroundImage: `url(${currentSlide.backgroundImage})`,
+                backgroundImage: currentSlide.backgroundImage
+                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#d8d8d8',
               }}
             >
               <span
@@ -121,7 +122,7 @@ function Step3() {
                   src={imageUrl}
                   alt={`Background ${index + 1}`}
                   className={`background-image ${
-                    currentSlide.backgroundImage === imageUrl ? 'selected' : ''
+                    currentSlide.backgroundImage === imageUrl ? 'selected' : ''        
                   }`}
                   onClick={() => handleBackgroundChange(imageUrl)}
                 />
@@ -188,7 +189,8 @@ function Step3() {
               <div
                 className="slide-preview"
                 style={{
-                  backgroundImage: `url(${currentSlide.backgroundImage})`,
+                  backgroundImage: currentSlide.backgroundImage
+                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#d8d8d8',
                 }}
               >
                 <span
