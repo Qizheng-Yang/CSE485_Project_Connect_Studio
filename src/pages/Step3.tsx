@@ -257,8 +257,11 @@ function Step3() {
 
             
             {/* Font Selection */}
+
+            
+            <p className="font-section">FONT:</p>
             <div className="font-list">
-              <h3 className="font-list-header">FONT:</h3>
+              {/* <h3 className="font-list-header">FONT:</h3> */}
               <div className="font-scrollable">
                 {fonts.map((font, index) => (
                   <button
@@ -276,33 +279,33 @@ function Step3() {
             </div>
 
               
-
             {/* Color Selection */}
-            <div className="color-selection">
-              <p>Select a Color:</p>
-              <div
-                className="color-box"
-                style={{ 
-                  backgroundColor: currentSlide.customColor 
-                }}
-                onClick={() => setIsColorPickerVisible(!isColorPickerVisible)} 
-              ></div>
-              {isColorPickerVisible && (
-                <HexColorPicker
-                  color={
-                    currentSlide.customColor
-                  }
-                  onChange={handleColorChange} 
-                  style={{ marginTop: "10px" }}
-                />
-              )}
-            </div>
+            <p className="color-section">COLOR:</p>
+              {/* <div className="color-selection"> */}
+                <div
+                  className="color-box"
+                  style={{
+                    backgroundColor: currentSlide.customColor,
+                  }}
+                  onClick={() => setIsColorPickerVisible(!isColorPickerVisible)}
+                ></div>
+
+                {isColorPickerVisible && (
+                  <div className="color-picker-wrapper">
+                    <HexColorPicker
+                      color={currentSlide.customColor}
+                      onChange={handleColorChange}
+                    />
+                  </div>
+                )}
+              {/* </div> */}
+              
 
 
 
             {/* Duration Selection */}
+            <p className="duration-section">SLIDE TIME:</p>
             <div className="duration-selection">
-              <p>Slide Duration:</p>
               <div className="duration-input-container">
                 <span className="automatic-label">Automatic:</span>
                 <input
