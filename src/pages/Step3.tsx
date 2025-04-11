@@ -71,7 +71,8 @@ function Step3() {
     customText: '',
     customFont: 'Montserrat',
     customColor: '#000000',
-    duration: '5 seconds',
+    // duration: '5 seconds',
+    customDuration: '5 seconds',
   });
   const [selectedQuote, setSelectedQuote] = useState('');
   const [isCustomizationVisible, setIsCustomizationVisible] = useState(false); 
@@ -115,7 +116,8 @@ function Step3() {
       customText: '',
       customFont: 'Montserrat',
       customColor: '#000000',
-      duration: '5 seconds',
+      // duration: '5 seconds',
+      customDuration: '5 seconds',
 
     });
     setSelectedQuote('');
@@ -299,27 +301,31 @@ function Step3() {
 
 
 
-
             {/* Duration Selection */}
             <div className="duration-selection">
               <p>Slide Duration:</p>
-              {['5 seconds', '10 seconds', '15 seconds'].map((durationOption) => (
-                <button
-                  key={durationOption}
-                  onClick={() =>
+              <div className="duration-input-container">
+                <span className="automatic-label">Automatic:</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="60"
+                  value={parseInt(currentSlide.customDuration || "5")} 
+                  onChange={(e) =>
                     setCurrentSlide((prev) => ({
                       ...prev,
-                      duration: durationOption,
+                      customDuration: `${e.target.value} seconds`, 
                     }))
                   }
-                  className={`duration-button ${
-                    currentSlide.duration === durationOption ? 'selected' : ''
-                  }`}
-                >
-                  {durationOption}
-                </button>
-              ))}
+                  className="duration-input"
+                />
+                <span className="seconds-label">seconds</span>
+              </div>
             </div>
+
+
+
+
 
           </div>
         )}
