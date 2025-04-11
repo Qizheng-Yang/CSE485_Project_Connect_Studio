@@ -71,7 +71,6 @@ function Step3() {
     customText: '',
     customFont: 'Montserrat',
     customColor: '#000000',
-    // duration: '5 seconds',
     customDuration: '5 seconds',
   });
   const [selectedQuote, setSelectedQuote] = useState('');
