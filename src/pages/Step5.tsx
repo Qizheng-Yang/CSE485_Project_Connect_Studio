@@ -3,8 +3,9 @@ import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 
 
-import React, { useState } from 'react';
-import { useImage } from '../context/ImageContext';
+import { useState } from 'react';
+// import React, { useState } from 'react';
+// import { useImage } from '../context/ImageContext';
 
 
 import image1 from '../assets/image1.png';
