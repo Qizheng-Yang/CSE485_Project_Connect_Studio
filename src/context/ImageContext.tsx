@@ -4,6 +4,9 @@ import React, { createContext, useState, useContext } from 'react';
 interface Slide {
   backgroundImage: string;
   customText: string;
+  customFont: string;       // Added
+  customColor: string;      // Added
+  customDuration: string;   // Added
 }
 
 interface ImageContextType {

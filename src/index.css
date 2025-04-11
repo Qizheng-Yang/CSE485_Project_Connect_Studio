@@ -499,30 +499,34 @@ body {
 
 
 
-
-
 /* Duration Selection */
+.duration-selection {
+  margin-top: 20px;
+}
+
 .duration-input-container {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  gap: 10px;
 }
 
 .automatic-label {
-  margin-right: 10px;
+  font-size: 16px;
 }
 
 .duration-input {
-  width: 40px;
-  text-align: center;
+  width: 50px;
   padding: 5px;
-  border: 1px solid #ddd;
-  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
 }
 
 .seconds-label {
-  margin-left: 5px;
+  font-size: 16px;
 }
+
+
 
 /* Customization Section Layout */
 .customization-section {

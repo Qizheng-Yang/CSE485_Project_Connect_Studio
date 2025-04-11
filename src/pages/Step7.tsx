@@ -2,11 +2,31 @@ import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import { useImage } from '../context/ImageContext';
-import { Slide } from 'react-slideshow-image';
+// import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 
+import { useState, useEffect } from 'react';
+
+
 function Step7() {
-  const { slides } = useImage(); // Access slides from context
+  const { slides } = useImage(); // Gets slides
+
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  useEffect(() => {
+    if (slides.length > 0) {
+      const currentSlide = slides[currentSlideIndex];
+      const duration = currentSlide?.customDuration
+        ? parseInt(currentSlide.customDuration.split(' ')[0]) * 1000 
+        : 5000; 
+
+      const timer = setTimeout(() => {
+        setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % slides.length); 
+      }, duration);
+
+      return () => clearTimeout(timer); 
+    }
+  }, [currentSlideIndex, slides]);
 
   return (
     <div className="container">
@@ -22,27 +42,25 @@ function Step7() {
 
           {slides.length > 0 ? (
             <div className="slide-container" style={{ width: '600px', margin: '0 auto' }}>
-              <Slide autoplay={true} duration={3000} transitionDuration={500}>
                 {slides.map((slide, index) => (
                   <div
                     key={index}
                     style={{
+                      display: index === currentSlideIndex ? "flex" : "none",
                       height: '300px',
                       backgroundImage: `url(${slide.backgroundImage})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
                       borderRadius: '10px',
                     }}
                   >
-                    <span style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold' }}>
+                    <span style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold', }}>
                       {slide.customText}
                     </span>
                   </div>
                 ))}
-              </Slide>
             </div>
           ) : (
             <p>No slides added yet. Please go back and add some slides.</p>
