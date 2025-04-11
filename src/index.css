@@ -478,18 +478,28 @@ body {
 
 
 /* Color Selection */
-.color-box {
-  margin-top: 10px;
+.color-selection {
+  margin-top: 20px;
 }
 
-.color-option {
+.color-box {
   width: 30px;
   height: 30px;
   border: 1px solid #ccc;
   cursor: pointer;
-  border-radius: 0;
-  background-color: #000;
 }
+
+.color-box:hover {
+  border-color: #b2cc55;
+}
+
+.react-colorful {
+  margin-top: 10px;
+}
+
+
+
+
 
 /* Duration Selection */
 .duration-input-container {

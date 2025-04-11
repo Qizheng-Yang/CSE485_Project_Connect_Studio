@@ -3,6 +3,7 @@ import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import React, { useState } from 'react';
 import { useImage } from '../context/ImageContext';
+import { HexColorPicker } from "react-colorful";  // Color selection (also installed)
 
 // Font imports (Fonts were also installed)
 import "@fontsource/montserrat"; 
@@ -69,11 +70,13 @@ function Step3() {
     backgroundImage: '',
     customText: '',
     customFont: 'Montserrat',
-    color: '#000000',
+    customColor: '#000000',
     duration: '5 seconds',
   });
   const [selectedQuote, setSelectedQuote] = useState('');
   const [isCustomizationVisible, setIsCustomizationVisible] = useState(false); 
+
+  const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
 
   const handleAddSlide = () => {
     if (currentSlide.backgroundImage && currentSlide.customText) {
@@ -100,6 +103,10 @@ function Step3() {
     // setIsCustomizationVisible(true); 
   };
 
+  const handleColorChange = (color: string) => {
+    setCurrentSlide((prev) => ({ ...prev, customColor: color }));
+  };
+
 
 
   const resetState = () => {
@@ -107,7 +114,7 @@ function Step3() {
       backgroundImage: '',
       customText: '',
       customFont: 'Montserrat',
-      color: '#000000',
+      customColor: '#000000',
       duration: '5 seconds',
 
     });
@@ -138,7 +145,7 @@ function Step3() {
                 className="slide-text"
                 style={{
                   fontFamily: currentSlide.customFont,
-                  color: currentSlide.color,
+                  color: currentSlide.customColor,
                 }}
               >
                 {currentSlide.customText || 'ENTER CUSTOM TEXT'}
@@ -233,7 +240,7 @@ function Step3() {
                   className="slide-text"
                   style={{
                     fontFamily: currentSlide.customFont,
-                    color: currentSlide.color,
+                    color: currentSlide.customColor,
                   }}
                 >
                   {currentSlide.customText || 'ENTER CUSTOM TEXT'}
@@ -269,25 +276,29 @@ function Step3() {
 
               
 
-
-
-
             {/* Color Selection */}
             <div className="color-selection">
               <p>Select a Color:</p>
-              {['#000000', '#FFFFFF', '#b2cc55'].map((colorOption) => (
-                <button
-                  key={colorOption}
-                  onClick={() =>
-                    setCurrentSlide((prev) => ({ ...prev, color: colorOption }))
+              <div
+                className="color-box"
+                style={{ 
+                  backgroundColor: currentSlide.customColor 
+                }}
+                onClick={() => setIsColorPickerVisible(!isColorPickerVisible)} 
+              ></div>
+              {isColorPickerVisible && (
+                <HexColorPicker
+                  color={
+                    currentSlide.customColor
                   }
-                  style={{ backgroundColor: colorOption }}
-                  className={`color-button ${
-                    currentSlide.color === colorOption ? 'selected' : ''
-                  }`}
-                ></button>
-              ))}
+                  onChange={handleColorChange} 
+                  style={{ marginTop: "10px" }}
+                />
+              )}
             </div>
+
+
+
 
             {/* Duration Selection */}
             <div className="duration-selection">
