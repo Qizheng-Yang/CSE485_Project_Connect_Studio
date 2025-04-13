@@ -281,7 +281,7 @@ function Step3() {
               
             {/* Color Selection */}
             <p className="color-section">COLOR:</p>
-              {/* <div className="color-selection"> */}
+              <div className="color-selection">
                 <div
                   className="color-box"
                   style={{
@@ -298,8 +298,8 @@ function Step3() {
                     />
                   </div>
                 )}
-              {/* </div> */}
-              
+              </div> 
+
 
 
 

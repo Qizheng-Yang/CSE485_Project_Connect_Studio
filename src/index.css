@@ -486,7 +486,7 @@ body {
 
 .color-picker-wrapper {
   position: absolute; 
-  top: 50px;
+  top: 100px;
   left: 0;
   z-index: 1000; 
   background-color: white; 
@@ -498,10 +498,16 @@ body {
 
 
 
+
+
+
+
+
+
+
 /* Duration Selection */
 .duration-section{
   margin-top: 50px;
-  margin-left: 140px;
 }
 
 .duration-input-container {
