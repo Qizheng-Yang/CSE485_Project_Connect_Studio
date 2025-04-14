@@ -7,6 +7,19 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect } from 'react';
 
+// Added Fonts
+import "@fontsource/montserrat"; 
+import "@fontsource/alex-brush"; 
+import "@fontsource/alegreya"; 
+import "@fontsource/dancing-script"; 
+import "@fontsource/great-vibes"; 
+import "@fontsource/pacifico"; 
+import "@fontsource/roboto-slab"; 
+import "@fontsource/playfair-display"; 
+import "@fontsource/lobster"; 
+import "@fontsource/raleway"; 
+import "@fontsource/open-sans";
+
 
 function Step7() {
   const { slides } = useImage(); // Gets slides
@@ -56,7 +69,10 @@ function Step7() {
                       borderRadius: '10px',
                     }}
                   >
-                    <span style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold', }}>
+                    <span style={{ color: slide.customColor || '#fff', 
+                                    fontFamily: slide.customFont || 'Montserrat',
+                                  fontSize: '25px', 
+                                  fontWeight: 'bold', }}>
                       {slide.customText}
                     </span>
                   </div>
