@@ -12,12 +12,11 @@ function Step8() {
       <div className="main-content">
         {/* Checkout Section */}
         <div className="checkout-section">
-          <h2 className="checkout-header">CHECK OUT</h2>
           
           <div className="checkout-grid">
             {/* Header Row */}
             <div className="checkout-row header-row">
-              <div className="checkout-col product-col">PRODUCT</div>
+              <div className="checkout-col product-col">CHECK OUT</div>
               <div className="checkout-col price-col">PRICE</div>
               <div className="checkout-col qty-col">QTY</div>
               <div className="checkout-col total-col">TOTAL</div>
