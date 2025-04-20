@@ -781,7 +781,12 @@ body {
 
 /* Step 8 */
 
-
+.qty-select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
 .checkout-section {
   margin-top: 20px;
   width: 100%;
