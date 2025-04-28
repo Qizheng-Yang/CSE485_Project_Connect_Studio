@@ -139,7 +139,7 @@ function Step3() {
               className="slide-preview"
               style={{
                 backgroundImage: currentSlide.backgroundImage
-                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#d8d8d8',
+                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#f7f7f7',
               }}
             >
               <span
@@ -234,7 +234,7 @@ function Step3() {
                 className="slide-preview"
                 style={{
                   backgroundImage: currentSlide.backgroundImage
-                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#d8d8d8',
+                    ? `url(${currentSlide.backgroundImage})` : 'none', backgroundColor: currentSlide.backgroundImage ? 'transparent' : '#f7f7f7',
                 }}
               >
                 <span
