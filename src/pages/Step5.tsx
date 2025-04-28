@@ -45,6 +45,15 @@ const transitionOptions = [
   { image: image6, name: 'dissolve' }
 ]
 
+// Color options
+const backgroundColors = [
+  { name: 'Black', value: '#000000' },
+  { name: 'White', value: '#ffffff' },
+  { name: 'Green', value: '#b2cc55' },
+  { name: 'Blue', value: '#3a86ff' },
+  { name: 'Red', value: '#ff006e' },
+  { name: 'Gray', value: '#6c757d' }
+];
 
 function Step5() {
   const { slides, setSlides } = useImage();
@@ -54,17 +63,6 @@ function Step5() {
     background: '',
     border: ''
   });
-
-
-  const handleTransitionChange = (transitionUrl: string) => {
-    setSelections(prev => ({ ...prev, transition: transitionUrl }));
-    
-    const updatedSlides = slides.map(slide => ({
-      ...slide,
-      transition: transitionUrl
-    }));
-    setSlides(updatedSlides);
-  };
 
   const handleEffectChange = (effect: string, index: number) => {
     setSelections(prev => ({ ...prev, effect }));
@@ -76,12 +74,12 @@ function Step5() {
     setSlides(updatedSlides);
   };
 
-  const handleBackgroundChange = (backgroundValue: string) => {
-    setSelections(prev => ({ ...prev, background: backgroundValue }));
+  const handleBackgroundChange = (colorValue: string) => {
+    setSelections(prev => ({ ...prev, background: colorValue }));
     
     const updatedSlides = slides.map(slide => ({
       ...slide,
-      background: backgroundValue 
+      background: colorValue
     }));
     setSlides(updatedSlides);
   };
@@ -159,24 +157,24 @@ function Step5() {
         <div className="effects-section">
           <p className="section-heading">BACKGROUNDS</p>
           <div className="selection-row">
-            {[image1, image2, image3, image4, image5, image6].map((imageUrl, index) => (
+            {backgroundColors.map((color, index) => (
               <div key={`background-${index}`} className="effect-container">
-                <img
-                  src={imageUrl}
-                  alt={`Background ${index + 1}`}
-                  className={`selection-image ${
-                    selections.background === imageUrl ? 'selected' : ''
+                <div
+                  className={`selection-image color-swatch ${
+                    selections.background === color.value ? 'selected' : ''
                   }`}
-                  onClick={() => handleBackgroundChange(imageUrl)} // Pass image URL
-                />
-                <div className="effect-label">Background {index + 1}</div>
+                  style={{
+                    backgroundColor: color.value,
+                    border: '2px solid #eee'
+                  }}
+                  onClick={() => handleBackgroundChange(color.value)}
+                ></div>
+                <div className="effect-label">{color.name}</div>
               </div>
             ))}
           </div>
         </div>
 
-
-        
 
         {/* Borders Section */}
         <div className="effects-section">
