@@ -28,11 +28,11 @@ const filterEffects = [
 // Border styles
 const borderStyles = [
   { name: 'None', value: 'none' },
-  { name: 'Solid', value: '5px solid #b2cc55' },
-  { name: 'Dashed', value: '5px dashed #b2cc55' },
-  { name: 'Double', value: '5px double #b2cc55' },
-  { name: 'Ridge', value: '5px ridge #b2cc55' },
-  { name: 'Inset', value: '5px inset #b2cc55' }
+  { name: 'Solid', value: '5px solid #000000' },
+  { name: 'Dashed', value: '5px dashed #000000' },
+  { name: 'Double', value: '5px double #000000' },
+  { name: 'Ridge', value: '5px ridge #000000' },
+  { name: 'Inset', value: '5px inset #000000' }
 ];
 
 // Transitions
@@ -48,10 +48,18 @@ const transitionOptions = [
 // Color options
 const backgroundColors = [
   { name: 'Black', value: '#000000' },
-  { name: 'White', value: '#ffffff' },
-  { name: 'Green', value: '#b2cc55' },
+  { name: 'Deep Blue', value: '#355c7d' },
+  { name: 'Sage Green', value: '#99B898' },
+  { name: 'Corral Pink', value: '#FF8C94' },
+  { name: 'Pastel Cyan', value: '#a4d8d8' },
+  { name: 'Pastel Rose', value: '#f6b8d0' },
+  { name: 'Indigo', value: '#5c62d6' }, 
+  { name: 'Pastel Lime', value: '#E1F5C4' },
+  { name: 'Teal', value: '#45ADA8' },
   { name: 'Blue', value: '#3a86ff' },
-  { name: 'Red', value: '#ff006e' },
+  { name: 'Green', value: '#b2cc55' },
+  { name: 'White', value: '#ffffff' },
+  { name: 'Dark Gray', value: '#474747' },
   { name: 'Gray', value: '#6c757d' }
 ];
 
