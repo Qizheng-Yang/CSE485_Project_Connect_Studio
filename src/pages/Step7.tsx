@@ -57,25 +57,30 @@ function Step7() {
             <div className="slide-container" style={{ width: '600px', margin: '0 auto' }}>
                 {slides.map((slide, index) => (
                   <div
-                    key={index}
-                    style={{
-                      display: index === currentSlideIndex ? "flex" : "none",
-                      height: '300px',
-                      backgroundImage: `url(${slide.backgroundImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: '10px',
-                    }}
-                  >
-                    <span style={{ color: slide.customColor || '#fff', 
-                                    fontFamily: slide.customFont || 'Montserrat',
-                                  fontSize: '25px', 
-                                  fontWeight: 'bold', }}>
-                      {slide.customText}
-                    </span>
-                  </div>
+                  key={index}
+                  style={{
+                    display: index === currentSlideIndex ? "flex" : "none",
+                    height: '300px',
+                    backgroundImage: `url(${slide.backgroundImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '10px',
+                    filter: slide.effect || 'none',
+                    border: slide.border || 'none'
+                  }}
+                >
+                  <span style={{ 
+                    color: slide.customColor || '#fff', 
+                    fontSize: '24px', 
+                    fontWeight: 'bold',
+                    fontFamily: slide.customFont || 'Montserrat'
+                  }}>
+                    {slide.customText}
+                  </span>
+                </div>
+                
                 ))}
             </div>
           ) : (

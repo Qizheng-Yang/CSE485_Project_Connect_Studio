@@ -8,7 +8,11 @@ interface Slide {
   customFont: string;       
   customColor: string;     
   customDuration: string;  
-  transition?: string;  // Added
+  
+  transition?: string;
+  effect?: string;
+  border?: string;
+  background?: string;
 }
 
 interface ImageContextType {
