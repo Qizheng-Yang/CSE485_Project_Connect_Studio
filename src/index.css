@@ -681,6 +681,74 @@ body {
     padding-right: 10px;
   }
 
+  /* ----------- Testing for transition ----------- */
+  .slide-animator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+  }
+  
+  .slide-animator.fade {
+    animation-name: fade-animation;
+  }
+  @keyframes fade-animation {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .slide-animator.slide {
+    animation-name: slide-animation;
+  }
+  @keyframes slide-animation {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .slide-animator.zoom {
+    animation-name: zoom-animation;
+  }
+  @keyframes zoom-animation {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  .slide-animator.wipe {
+    animation-name: wipe-animation;
+  }
+  @keyframes wipe-animation {
+    from { clip-path: inset(100% 0 0 0); opacity: 0; }
+    to { clip-path: inset(0 0 0 0); opacity: 1; }
+  }
+  
+  .slide-animator.blur {
+    animation-name: blur-animation;
+  }
+  @keyframes blur-animation {
+    from { filter: blur(10px); opacity: 0; }
+    to { filter: blur(0); opacity: 1; }
+  }
+  
+  .slide-animator.dissolve {
+    animation-name: dissolve-animation;
+  }
+  @keyframes dissolve-animation {
+    from { transform: scale(1.2); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .slide-animator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+  }
+  
 
 
 
