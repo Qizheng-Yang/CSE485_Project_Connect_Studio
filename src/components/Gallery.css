@@ -1,0 +1,317 @@
+/* Photo Gallery Link Section */
+.photo-gallery-link-section {
+    margin: 40px 0;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 8px;
+  }
+  
+  .photo-gallery-link-section h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+  }
+  
+  .photo-gallery-link-section p {
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .link-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #b8d800;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  .toggle-label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .link-box {
+    padding: 12px 15px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .copy-button, .email-button {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #b8d800;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Navigation Buttons */
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .back-button, .next-button {
+    padding: 10px 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .back-button {
+    background: #b8d800;
+    border: 1px solid #ddd;
+  }
+  
+  .next-button {
+    background: #b8d800;
+    border: 1px solid #ddd;
+  }
+  /* Horizontal Layout for Photo Gallery Link Section */
+.link-controls-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+  }
+  
+  .toggle-text {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+  }
+  
+  .right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    min-width: 300px;
+  }
+  
+  .link-box {
+    flex-grow: 1;
+    padding: 10px 15px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 9999px;
+    font-family: monospace;
+    min-width: 100px;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .copy-button, .email-button {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #b8d800;
+    border-radius: 9999px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: black; /* Explicitly set text color to black */
+    font-weight: normal; /* Ensures text isn't bold */
+    font-size: 14px; /* Consistent font size */
+  }
+  
+  /* Optional: Add hover effects */
+  .copy-button:hover, .email-button:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* Optional: Add active/click effects */
+  .copy-button:active, .email-button:active {
+    background-color: #e0e0e0;
+  }
+  
+  /* Toggle Switch Styles (unchanged) */
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #b8d800;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+
+  /* Stacked Layout */
+.link-controls-stacked {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .toggle-with-link {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .link-and-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Toggle Switch Alignment */
+  .toggle-switch {
+    margin-right: 10px; /* Space between toggle and text */
+  }
+  
+  .toggle-text {
+    vertical-align: middle; /* Align text with toggle */
+  }
+  
+  /* Existing button styles remain the same */
+  .copy-button, .email-button {
+    padding: 8px 20px;
+    border-radius: 9999px;
+    /* ... other existing styles ... */
+  }
+ 
+
+
+
+  .toggle-switch-container {
+    display: flex;
+    align-items: center; /* Vertically centers toggle and text */
+    gap: 10px; /* Space between toggle and text */
+    margin-bottom: 10px; /* Space between toggle row and link box */
+  }
+  
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    /* Keep all your existing toggle switch styles */
+  }
+  
+  .toggle-text {
+    font-size: 14px;
+    color: #333;
+    /* Removed any positioning properties */
+  }
+
+  .video-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1;
+  }
+  
+  .remove-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    font-size: 16px;
+    line-height: 1;
+  }
