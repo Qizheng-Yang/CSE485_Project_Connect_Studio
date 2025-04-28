@@ -22,80 +22,98 @@ import "@fontsource/open-sans";
 
 
 function Step7() {
-  const { slides } = useImage(); // Gets slides
-
+  const { slides } = useImage();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
     if (slides.length > 0) {
       const currentSlide = slides[currentSlideIndex];
       const duration = currentSlide?.customDuration
-        ? parseInt(currentSlide.customDuration.split(' ')[0]) * 1000 
-        : 5000; 
+        ? parseInt(currentSlide.customDuration.split(' ')[0]) * 1000
+        : 5000;
 
       const timer = setTimeout(() => {
-        setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % slides.length); 
+        setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % slides.length);
+        setAnimKey((k) => k + 1);
       }, duration);
 
-      return () => clearTimeout(timer); 
+      return () => clearTimeout(timer);
     }
   }, [currentSlideIndex, slides]);
+
+  if (!slides.length) {
+    return (
+      <div className="container">
+        <NavbarBabbo />
+        <StepNavigation />
+        <div className="main-content">
+          <p>No slides added yet. Please go back and add some slides.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentSlide = slides[currentSlideIndex];
+  const transitionClass = currentSlide.transition
+    ? currentSlide.transition.toLowerCase()
+    : "fade";
 
   return (
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
 
-      {/* Main Content */}
       <div className="main-content">
         <h2 className="main-information-header">PREVIEW</h2>
-
-        {/* Slideshow Section */}
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-
-          {slides.length > 0 ? (
-            <div className="slide-container" style={{ width: '600px', margin: '0 auto' }}>
-                {slides.map((slide, index) => (
-                  <div
-                  key={index}
-                  style={{
-                    display: index === currentSlideIndex ? "flex" : "none",
-                    height: '300px',
-                    backgroundImage: `url(${slide.backgroundImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: '10px',
-                    filter: slide.effect || 'none',
-                    border: slide.border || 'none'
-                  }}
-                >
-                  <span style={{ 
-                    color: slide.customColor || '#fff', 
-                    fontSize: '24px', 
-                    fontWeight: 'bold',
-                    fontFamily: slide.customFont || 'Montserrat'
-                  }}>
-                    {slide.customText}
-                  </span>
-                </div>
-                
-                ))}
+          <div 
+            className="slide-frame"
+            style={{
+              width: '600px',
+              height: '300px',
+              margin: '0 auto',
+              backgroundColor: currentSlide.background || '#000',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              position: 'relative' 
+            }}
+          >
+            <div
+              key={animKey}
+              className={`slide-animator ${transitionClass}`}
+              style={{
+                position: 'absolute', 
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${currentSlide.backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                filter: currentSlide.effect || 'none',
+                border: currentSlide.border || 'none'
+              }}
+            >
+              <span style={{
+                color: currentSlide.customColor || '#fff',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                fontFamily: currentSlide.customFont || 'Montserrat'
+              }}>
+                {currentSlide.customText}
+              </span>
             </div>
-          ) : (
-            <p>No slides added yet. Please go back and add some slides.</p>
-          )}
+          </div>
         </div>
 
-        {/* Navigation Buttons */}
         <div className="navigation-buttons">
-          {/* Back Button */}
           <Link to="/step/6">
             <button className="back-button">Back</button>
           </Link>
-
-          {/* Next Button */}
           <Link to="/step/8">
             <button className="next-button">Next</button>
           </Link>
