@@ -74,9 +74,10 @@ function Step7() {
               height: '300px',
               margin: '0 auto',
               backgroundColor: currentSlide.background || '#000',
-              borderRadius: '10px',
+              borderRadius: '2.5px',
               overflow: 'hidden',
-              position: 'relative' 
+              position: 'relative' ,
+              boxSizing: 'border-box'
             }}
           >
             <div

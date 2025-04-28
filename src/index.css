@@ -690,6 +690,8 @@ body {
     height: 100%;
     animation-duration: 1s;
     animation-fill-mode: both;
+
+    box-sizing: border-box;
   }
   
   .slide-animator.fade {
