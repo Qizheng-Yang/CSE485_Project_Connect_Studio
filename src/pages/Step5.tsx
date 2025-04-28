@@ -35,6 +35,17 @@ const borderStyles = [
   { name: 'Inset', value: '5px inset #b2cc55' }
 ];
 
+// Transitions
+const transitionOptions = [
+  { image: image1, name: 'fade' },
+  { image: image2, name: 'slide' },
+  { image: image3, name: 'zoom' },
+  { image: image4, name: 'wipe' },
+  { image: image5, name: 'blur' },
+  { image: image6, name: 'dissolve' }
+]
+
+
 function Step5() {
   const { slides, setSlides } = useImage();
   const [selections, setSelections] = useState({
@@ -65,12 +76,12 @@ function Step5() {
     setSlides(updatedSlides);
   };
 
-  const handleBackgroundChange = (backgroundUrl: string) => {
-    setSelections(prev => ({ ...prev, background: backgroundUrl }));
+  const handleBackgroundChange = (backgroundValue: string) => {
+    setSelections(prev => ({ ...prev, background: backgroundValue }));
     
     const updatedSlides = slides.map(slide => ({
       ...slide,
-      background: backgroundUrl
+      background: backgroundValue 
     }));
     setSlides(updatedSlides);
   };
@@ -101,21 +112,27 @@ function Step5() {
           <p className="section-heading">TRANSITIONS</p>
           <div className="selection-row">
             {[image1, image2, image3, image4, image5, image6].map((imageUrl, index) => (
-
               <div key={`transition-${index}`} className="effect-container">
                 <img
                   src={imageUrl}
                   alt={`Transition ${index + 1}`}
                   className={`selection-image ${
-                    selections.transition === imageUrl ? 'selected' : ''
+                    selections.transition === transitionOptions[index].name ? 'selected' : ''
                   }`}
-                  onClick={() => handleTransitionChange(imageUrl)}
+                  onClick={() => {
+                    setSelections(prev => ({ ...prev, transition: transitionOptions[index].name }));
+                    setSlides(slides.map(slide => ({
+                      ...slide,
+                      transition: transitionOptions[index].name
+                    })));
+                  }}
                 />
-                <div className="effect-label">Transition {index + 1}</div>
+                <div className="effect-label">{transitionOptions[index].name}</div>
               </div>
             ))}
           </div>
         </div>
+
 
         {/* Effects Section */}
         <div className="effects-section">
@@ -144,19 +161,22 @@ function Step5() {
           <div className="selection-row">
             {[image1, image2, image3, image4, image5, image6].map((imageUrl, index) => (
               <div key={`background-${index}`} className="effect-container">
-              <img
-                src={imageUrl}
-                alt={`Background ${index + 1}`}
-                className={`selection-image ${
-                  selections.background === imageUrl ? 'selected' : ''
-                }`}
-                onClick={() => handleBackgroundChange(imageUrl)}
-              />
-              <div className="effect-label">Background {index + 1}</div>
-            </div>
+                <img
+                  src={imageUrl}
+                  alt={`Background ${index + 1}`}
+                  className={`selection-image ${
+                    selections.background === imageUrl ? 'selected' : ''
+                  }`}
+                  onClick={() => handleBackgroundChange(imageUrl)} // Pass image URL
+                />
+                <div className="effect-label">Background {index + 1}</div>
+              </div>
             ))}
           </div>
         </div>
+
+
+        
 
         {/* Borders Section */}
         <div className="effects-section">
