@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
+import ProjectSaver from '../components/ProjectSaver';
+import { useImage } from '../context/ImageContext';
 import { useState, useEffect } from 'react';
 
 interface Theme {
@@ -47,22 +49,26 @@ const themeImages: Theme[] = [
 ];
 
 function Step2() {
+  const { selectedTheme, setSelectedTheme } = useImage();
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
 
   // Set first theme as default
   useEffect(() => {
-    setSelectedTheme(themeImages[0]);
+    if (!selectedTheme) {
+      setSelectedTheme(themeImages[0]);
+    }
   }, []);
 
   const handleThemeSelect = (theme: Theme): void => {
     setSelectedTheme(theme);
-    localStorage.setItem('selectedTheme', theme.id.toString());
+    setSelectedTheme(theme.src); // Store theme URL in context
   };
 
   return (
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
+      <ProjectSaver />
 
       <div className="main-content">
         <h2 className="main-information-header">THEME</h2>
