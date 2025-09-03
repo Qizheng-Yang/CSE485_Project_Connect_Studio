@@ -1,17 +1,9 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import ProjectSaver from '../components/ProjectSaver';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useImage } from '../context/ImageContext';
-import { generateVideo, getVideoStatus } from '../services/api';
 import { useState } from 'react';
 
 function Step8() {
-  const { currentProject, slides, media, music } = useImage();
-  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
-  const [orderComplete, setOrderComplete] = useState(false);
-  
   // Prices
   const mp4Price = 20.00;
   const photoBookPrice = 53.00;
@@ -29,49 +21,10 @@ function Step8() {
     setPhotoBookQty(newQty);
   };
 
-  const handlePlaceOrder = async () => {
-    if (!currentProject) return;
-    
-    setIsProcessingOrder(true);
-    try {
-      // Generate final video
-      const result = await generateVideo({
-        projectId: currentProject.id,
-        slides,
-        media,
-        music,
-        settings: {
-          quality: 'high',
-          format: 'mp4'
-        }
-      });
-
-      // Poll for completion
-      const checkStatus = async () => {
-        const status = await getVideoStatus(result.videoId);
-        if (status.status === 'completed') {
-          setOrderComplete(true);
-          setIsProcessingOrder(false);
-        } else if (status.status === 'error') {
-          throw new Error('Video generation failed');
-        } else {
-          setTimeout(checkStatus, 2000); // Check again in 2 seconds
-        }
-      };
-
-      checkStatus();
-    } catch (error) {
-      console.error('Order processing failed:', error);
-      setIsProcessingOrder(false);
-      alert('Order processing failed. Please try again.');
-    }
-  };
-
   return (
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
-      <ProjectSaver />
 
       {/* Main Content */}
       <div className="main-content">
@@ -136,28 +89,6 @@ function Step8() {
           </div>
         </div>
 
-        {isProcessingOrder && (
-          <div style={{ textAlign: 'center', margin: '20px 0' }}>
-            <LoadingSpinner message="Processing your order and generating video..." />
-          </div>
-        )}
-
-        {orderComplete && (
-          <div style={{ 
-            textAlign: 'center', 
-            margin: '20px 0', 
-            padding: '20px',
-            backgroundColor: '#d4edda',
-            borderRadius: '8px',
-            border: '1px solid #c3e6cb'
-          }}>
-            <h3 style={{ color: '#155724', margin: '0 0 10px 0' }}>Order Complete!</h3>
-            <p style={{ color: '#155724', margin: 0 }}>
-              Your memorial video has been generated successfully. You will receive download links via email.
-            </p>
-          </div>
-        )}
-
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
           {/* Back Button */}
@@ -166,17 +97,7 @@ function Step8() {
           </Link>
 
           {/* Next Button */}
-          <button 
-            className="next-button"
-            onClick={handlePlaceOrder}
-            disabled={isProcessingOrder || orderComplete}
-            style={{
-              opacity: (isProcessingOrder || orderComplete) ? 0.6 : 1,
-              cursor: (isProcessingOrder || orderComplete) ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {isProcessingOrder ? 'Processing...' : orderComplete ? 'Order Complete' : 'Place Order'}
-          </button>
+          <button className="next-button">Place Order</button>
         </div>
       </div>
     </div>

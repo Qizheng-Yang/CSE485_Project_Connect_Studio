@@ -1,8 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useImage } from '../context/ImageContext';
-import { uploadMultipleFiles, deleteFile } from '../services/api';
-import LoadingSpinner from './LoadingSpinner';
 import {
   DndContext,
   closestCenter,
@@ -21,7 +18,13 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import './Gallery.css';
-import type { MediaFile } from '../services/api';
+
+interface GalleryProps {}
+
+interface GalleryItem {
+  url: string;
+  type: 'image' | 'video';
+}
 
 interface SortableItemProps {
   id: string;
@@ -52,28 +55,23 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
   );
 };
 
-const Gallery: React.FC = () => {
-  const { media, setMedia, isLoading, setIsLoading, setError } = useImage();
+const Gallery: React.FC<GalleryProps> = () => {
+  const [items, setItems] = useState<GalleryItem[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) return;
-    
+
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
     setUploadError(null);
-    setIsUploading(true);
-    
-    try {
-      const uploadedFiles = await uploadMultipleFiles(acceptedFiles);
-      setMedia([...media, ...uploadedFiles]);
-    } catch (error) {
-      console.error('Upload failed:', error);
-      setUploadError(error instanceof Error ? error.message : 'Upload failed');
-    } finally {
-      setIsUploading(false);
-    }
-  }, [media, setMedia]);
+    const newItems = acceptedFiles.map(file => ({
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith('video/') ? 'video' as const : 'image' as const
+    }));
+    setItems(prev => [...prev, ...newItems]);
+  }, []);
 
+
+  
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -93,29 +91,24 @@ const Gallery: React.FC = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      setMedia((currentMedia) => {
-        const oldIndex = currentMedia.findIndex(item => item.id === active.id);
-        const newIndex = currentMedia.findIndex(item => item.id === over.id);
-        return arrayMove(currentMedia, oldIndex, newIndex);
+      setItems((items) => {
+        const oldIndex = items.findIndex(item => item.url === active.id);
+        const newIndex = items.findIndex(item => item.url === over.id);
+        return arrayMove(items, oldIndex, newIndex);
       });
     }
   };
 
-  const removeMedia = async (mediaFile: MediaFile) => {
-    try {
-      await deleteFile(mediaFile.filename);
-      setMedia(media.filter(item => item.id !== mediaFile.id));
-    } catch (error) {
-      console.error('Failed to delete file:', error);
-      setError('Failed to delete file');
-    }
+  const removeImage = (url: string) => {
+    setItems(items.filter(item => item.url !== url));
+    URL.revokeObjectURL(url);
   };
 
   const downloadAll = () => {
-    media.forEach((item, index) => {
+    items.forEach((item, index) => {
       const link = document.createElement('a');
-      link.href = `/uploads/${item.filename}`;
-      link.download = item.originalName;
+      link.href = item.url;
+      link.download = `media-${index + 1}.${item.type === 'image' ? 'jpg' : 'mp4'}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -127,46 +120,37 @@ const Gallery: React.FC = () => {
       <div className="upload-actions">
         <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
           <input {...getInputProps()} />
-          <button className="upload-button" disabled={isUploading}>
-            {isUploading ? 'Uploading...' : 'Upload Photos / Videos'}
-          </button>
+          <button className="upload-button">Upload Photos / Videos</button>
           {isDragActive ? (
             <p>Drop the files here...</p>
           ) : (
             <p>Drag & drop files here, or click to select</p>
           )}
         </div>
-        <button 
-          onClick={downloadAll} 
-          className="download-button"
-          disabled={media.length === 0}
-        >
-          Download All ({media.length})
-        </button>
+        <button onClick={downloadAll} className="download-button">Download Photos</button>
       </div>
 
-      {isUploading && <LoadingSpinner message="Uploading files..." />}
       {uploadError && <div className="error-message">{uploadError}</div>}
 
-      {media.length > 0 ? (
+      {items.length > 0 ? (
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
           <SortableContext 
-            items={media.map(item => item.id)}
+            items={items.map(item => item.url)}
             strategy={rectSortingStrategy}
           >
             <div className="gallery-grid">
-              {media.map((item) => (
-                <SortableItem key={item.id} id={item.id}>
+              {items.map((item) => (
+                <SortableItem key={item.url} id={item.url}>
                   <div className="gallery-item">
-                    {item.mimetype.startsWith('image/') ? (
-                      <img src={`/uploads/${item.filename}`} alt={item.originalName} />
+                    {item.type === 'image' ? (
+                      <img src={item.url} alt="Uploaded content" />
                     ) : (
                       <>
-                        <video src={`/uploads/${item.filename}`} controls />
+                        <video src={item.url} controls />
                         <div className="video-badge">VIDEO</div>
                       </>
                     )}
@@ -175,7 +159,7 @@ const Gallery: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        removeMedia(item);
+                        removeImage(item.url);
                       }}
                       aria-label="Remove media"
                     >

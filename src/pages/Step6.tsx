@@ -1,20 +1,18 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import ProjectSaver from '../components/ProjectSaver';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useImage } from '../context/ImageContext';
-import { uploadFile } from '../services/api';
 import { useState } from 'react';
+import { getAudioDuration } from '../utils/audioUtils';
 
 function Step6() {
-  const { music, setMusic, setError } = useImage();
   const [showLicenseModal, setShowLicenseModal] = useState(false);
+  const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string, selected: boolean}[]>([]);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [videoLength] = useState('5.25 minutes');
   const [slideLength] = useState('3.5 Seconds');
   const [showCheckboxes, setShowCheckboxes] = useState(false);
+  // const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
 
   const handleUploadClick = () => {
     if (licenseAccepted) {
@@ -28,15 +26,15 @@ function Step6() {
   const handleSelectClick = () => {
     setShowCheckboxes(!showCheckboxes);
     if (!showCheckboxes) {
-      // Reset selections when showing checkboxes
-      setMusic(music.map(m => ({ ...m, selected: false })));
+      // When showing checkboxes, reset all selections
+      setUploadedMusic(uploadedMusic.map(music => ({...music, selected: false})));
     }
   };
 
   const handleCheckboxChange = (index: number) => {
-    const updatedMusic = [...music];
+    const updatedMusic = [...uploadedMusic];
     updatedMusic[index].selected = !updatedMusic[index].selected;
-    setMusic(updatedMusic);
+    setUploadedMusic(updatedMusic);
   };
 
   const handleAcceptLicense = () => {
@@ -50,23 +48,17 @@ function Step6() {
     const files = e.target.files;
     if (files && files.length > 0) {
       setIsLoading(true);
-      setError(null);
-      
       try {
         const file = files[0];
-        const uploadedFile = await uploadFile(file);
-        
-        // Add duration calculation here if needed
-        const musicFile = {
-          ...uploadedFile,
-          duration: '0:00', // Placeholder - implement audio duration calculation
+        const duration = await getAudioDuration(file);
+        const newMusic = {
+          name: file.name,
+          duration: duration,
           selected: false
         };
-        
-        setMusic([...music, musicFile]);
+        setUploadedMusic([...uploadedMusic, newMusic]);
       } catch (error) {
-        console.error('Error uploading audio file:', error);
-        setError('Failed to upload music file');
+        console.error('Error processing audio file:', error);
       } finally {
         setIsLoading(false);
         e.target.value = '';
@@ -75,15 +67,14 @@ function Step6() {
   };
 
   const handleDeleteMusic = (index: number) => {
-    const updatedMusic = music.filter((_, i) => i !== index);
-    setMusic(updatedMusic);
+    const updatedMusic = uploadedMusic.filter((_, i) => i !== index);
+    setUploadedMusic(updatedMusic);
   };
 
   return (
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
-      <ProjectSaver />
 
       <div className="main-content">
         <h2 className="main-information-header">MUSIC</h2>
@@ -112,16 +103,22 @@ function Step6() {
           />
         </div>
 
-        {isLoading && <LoadingSpinner message="Uploading music file..." />}
+        
 
-        {music.length > 0 && (
+        {isLoading && (
+          <div className="loading-indicator">
+            Processing audio file...
+          </div>
+        )}
+
+        {uploadedMusic.length > 0 && (
           <div className="uploaded-music-list">
             <p className='small-text-inside'>Added Songs</p>
-            {music.map((musicFile, index) => (
-              <div key={musicFile.id} className="music-item">
+            {uploadedMusic.map((music, index) => (
+              <div key={index} className="music-item">
                 
-                <span className="music-name">{musicFile.originalName}</span>
-                <span className="music-duration">{musicFile.duration || '0:00'}</span>
+                <span className="music-name">{music.name}</span>
+                <span className="music-duration">{music.duration}</span>
                 <button 
                   className="delete-button"
                   onClick={() => handleDeleteMusic(index)}
@@ -131,7 +128,7 @@ function Step6() {
                 {showCheckboxes && (
                   <input
                     type="checkbox"
-                    checked={musicFile.selected || false}
+                    checked={music.selected}
                     onChange={() => handleCheckboxChange(index)}
                     className="music-checkbox"
                   />

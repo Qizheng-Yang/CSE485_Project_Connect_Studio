@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import ProjectSaver from '../components/ProjectSaver';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { generatePreview } from '../services/api';
 import { useImage } from '../context/ImageContext';
+// import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect } from 'react';
@@ -24,30 +22,9 @@ import "@fontsource/open-sans";
 
 
 function Step7() {
-  const { slides, currentProject, media, music } = useImage();
+  const { slides } = useImage();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [animKey, setAnimKey] = useState(0);
-  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const handleGeneratePreview = async () => {
-    if (!currentProject) return;
-    
-    setIsGeneratingPreview(true);
-    try {
-      const result = await generatePreview({
-        projectId: currentProject.id,
-        slides,
-        media,
-        music
-      });
-      setPreviewUrl(result.url);
-    } catch (error) {
-      console.error('Preview generation failed:', error);
-    } finally {
-      setIsGeneratingPreview(false);
-    }
-  };
 
   useEffect(() => {
     if (slides.length > 0) {
@@ -70,17 +47,8 @@ function Step7() {
       <div className="container">
         <NavbarBabbo />
         <StepNavigation />
-        <ProjectSaver />
         <div className="main-content">
           <p>No slides added yet. Please go back and add some slides.</p>
-          <div className="navigation-buttons">
-            <Link to="/step/6">
-              <button className="back-button">Back</button>
-            </Link>
-            <Link to="/step/3">
-              <button className="next-button">Add Slides</button>
-            </Link>
-          </div>
         </div>
       </div>
     );
@@ -95,47 +63,9 @@ function Step7() {
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
-      <ProjectSaver />
 
       <div className="main-content">
         <h2 className="main-information-header">PREVIEW</h2>
-        
-        {/* Preview Controls */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <button
-            onClick={handleGeneratePreview}
-            disabled={isGeneratingPreview}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#b2cc55',
-              color: 'white',
-              border: 'none',
-              borderRadius: '20px',
-              cursor: isGeneratingPreview ? 'not-allowed' : 'pointer',
-              opacity: isGeneratingPreview ? 0.6 : 1
-            }}
-          >
-            {isGeneratingPreview ? 'Generating...' : 'Generate Video Preview'}
-          </button>
-        </div>
-
-        {isGeneratingPreview && <LoadingSpinner message="Generating video preview..." />}
-
-        {previewUrl && (
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <video 
-              src={previewUrl} 
-              controls 
-              style={{ 
-                maxWidth: '600px', 
-                width: '100%',
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-              }}
-            />
-          </div>
-        )}
-        
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <div 
             className="slide-frame"
