@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useImage } from '../context/ImageContext';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -49,21 +49,6 @@ import weddingChoice from '../assets/weddingQuote.png';
 import retirementChoice from '../assets/retirementQuote.png';
 import anniversaryChoice from '../assets/anniversaryQuote.png';
 
-const quotes = [
-  'Time With Those We Love',
-  'Footprints',
-  'Life Is Measured',
-  'Memories Last Forever',
-  'Cherished Moments',
-  'Forever in Our Hearts',
-  'Gone But Not Forgotten',
-  'In Loving Memory',
-  'Always Remembered',
-  'With Love Always',
-  'Celebrating a Life Well Lived',
-  'Until We Meet Again',
-  'Your Memory Lives On'
-];
 
 const fonts = [
   'Montserrat',
@@ -132,6 +117,7 @@ function Step3() {
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
   const [selectedEffect, setSelectedEffect] = useState('Normal');
   const [selectedTransition, setSelectedTransition] = useState('fade');
+  const colorPickerRef = useRef<HTMLDivElement>(null);
   
   // Current slide being created
   const [currentSlide, setCurrentSlide] = useState({
@@ -143,6 +129,23 @@ function Step3() {
   });
   
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
+
+  // Click outside handler for color picker
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerVisible(false);
+      }
+    };
+
+    if (isColorPickerVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isColorPickerVisible]);
 
   // Photo upload handling
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -175,19 +178,17 @@ function Step3() {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       if (activeTab === 'slides') {
-        setSlides((items) => {
-          const oldIndex = items.findIndex(item => item.id === active.id);
-          const newIndex = items.findIndex(item => item.id === over.id);
-          const reorderedItems = arrayMove(items, oldIndex, newIndex);
-          return reorderedItems.map((item, index) => ({ ...item, order: index }));
-        });
+        const oldIndex = slides.findIndex(item => item.id === active.id);
+        const newIndex = slides.findIndex(item => item.id === over.id);
+        const reorderedItems = arrayMove(slides, oldIndex, newIndex);
+        const updatedSlides = reorderedItems.map((item, index) => ({ ...item, order: index }));
+        setSlides(updatedSlides);
       } else {
-        setMediaItems((items) => {
-          const oldIndex = items.findIndex(item => item.id === active.id);
-          const newIndex = items.findIndex(item => item.id === over.id);
-          const reorderedItems = arrayMove(items, oldIndex, newIndex);
-          return reorderedItems.map((item, index) => ({ ...item, order: index }));
-        });
+        const oldIndex = mediaItems.findIndex(item => item.id === active.id);
+        const newIndex = mediaItems.findIndex(item => item.id === over.id);
+        const reorderedItems = arrayMove(mediaItems, oldIndex, newIndex);
+        const updatedItems = reorderedItems.map((item, index) => ({ ...item, order: index }));
+        setMediaItems(updatedItems);
       }
     }
   };
@@ -337,13 +338,19 @@ function Step3() {
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto' }}>
                   {[memorialChoice, weddingChoice, retirementChoice, anniversaryChoice].map((quoteImg, index) => {
                     const labels = ['Memorial', 'Wedding', 'Retirement', 'Anniversary'];
+                    const categoryQuotes = [
+                      'In Loving Memory',
+                      'With Love Always', 
+                      'Celebrating a Life Well Lived',
+                      'Cherished Moments'
+                    ];
                     return (
                       <div key={index} style={{ textAlign: 'center', cursor: 'pointer' }}>
                         <img
                           src={quoteImg}
                           alt={labels[index]}
                           style={{ width: '100px', height: '60px', borderRadius: '5px' }}
-                          onClick={() => setCurrentSlide(prev => ({ ...prev, customText: quotes[index] }))}
+                          onClick={() => setCurrentSlide(prev => ({ ...prev, customText: categoryQuotes[index] }))}
                         />
                         <p style={{ fontSize: '12px', margin: '5px 0' }}>{labels[index]}</p>
                       </div>
@@ -381,11 +388,30 @@ function Step3() {
                         onClick={() => setIsColorPickerVisible(!isColorPickerVisible)}
                       />
                       {isColorPickerVisible && (
-                        <div style={{ position: 'absolute', zIndex: 1000, marginTop: '5px' }}>
-                          <HexColorPicker
-                            color={currentSlide.customColor}
-                            onChange={(color) => setCurrentSlide(prev => ({ ...prev, customColor: color }))}
-                          />
+                        <div ref={colorPickerRef} style={{ position: 'absolute', zIndex: 1000, marginTop: '5px' }}>
+                          <div style={{ position: 'relative' }}>
+                            <HexColorPicker
+                              color={currentSlide.customColor}
+                              onChange={(color) => setCurrentSlide(prev => ({ ...prev, customColor: color }))}
+                            />
+                            <button
+                              onClick={() => setIsColorPickerVisible(false)}
+                              style={{
+                                position: 'absolute',
+                                top: '-5px',
+                                right: '-5px',
+                                background: '#ccc',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '20px',
+                                height: '20px',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
