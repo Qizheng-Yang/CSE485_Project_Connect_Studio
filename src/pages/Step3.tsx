@@ -101,11 +101,24 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    cursor: 'move'
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes}>
+      <div 
+        {...listeners}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 30, // Leave space for delete button
+          bottom: 20, // Leave space for order text
+          cursor: 'move',
+          zIndex: 1,
+          backgroundColor: 'transparent'
+        }}
+        title="Drag to reorder"
+      />
       {children}
     </div>
   );
@@ -222,14 +235,22 @@ function Step3() {
   };
 
   const removeSlide = (id: string) => {
-    setSlides(slides.filter(slide => slide.id !== id));
+    console.log('removeSlide called with id:', id);
+    const filteredSlides = slides.filter(slide => slide.id !== id);
+    // Reorder the remaining slides
+    const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index }));
+    setSlides(reorderedSlides);
   };
 
   const removeMediaItem = (id: string) => {
+    console.log('removeMediaItem called with id:', id);
     const item = mediaItems.find(item => item.id === id);
     if (item) {
       URL.revokeObjectURL(item.url);
-      setMediaItems(mediaItems.filter(item => item.id !== id));
+      const filteredItems = mediaItems.filter(item => item.id !== id);
+      // Reorder the remaining items
+      const reorderedItems = filteredItems.map((item, index) => ({ ...item, order: index }));
+      setMediaItems(reorderedItems);
     }
   };
 
@@ -552,7 +573,14 @@ function Step3() {
                               Duration: {slide.customDuration}s
                             </p>
                             <button 
-                              onClick={() => removeSlide(slide.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                removeSlide(slide.id);
+                              }}
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                              }}
                               style={{
                                 position: 'absolute',
                                 top: '5px',
@@ -564,7 +592,8 @@ function Step3() {
                                 width: '25px',
                                 height: '25px',
                                 cursor: 'pointer',
-                                fontSize: '12px'
+                                fontSize: '12px',
+                                zIndex: 100
                               }}
                             >
                               ×
@@ -706,7 +735,14 @@ function Step3() {
                               </div>
                             )}
                             <button 
-                              onClick={() => removeMediaItem(item.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                removeMediaItem(item.id);
+                              }}
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                              }}
                               style={{
                                 position: 'absolute',
                                 top: '5px',
@@ -718,7 +754,8 @@ function Step3() {
                                 width: '25px',
                                 height: '25px',
                                 cursor: 'pointer',
-                                fontSize: '12px'
+                                fontSize: '12px',
+                                zIndex: 100
                               }}
                             >
                               ×
