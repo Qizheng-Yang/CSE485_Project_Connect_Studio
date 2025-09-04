@@ -2,17 +2,34 @@
 import React, { createContext, useState, useContext } from 'react';
 
 
+interface Theme {
+  id: number;
+  src: string;
+  alt: string;
+}
+
 interface Slide {
-  backgroundImage: string;
-  customText: string;
-  customFont: string;       
-  customColor: string;     
-  customDuration: string;  
+  id: string;
+  type: 'text' | 'image';
+  backgroundImage?: string;
+  imageUrl?: string;
+  customText?: string;
+  customFont?: string;       
+  customColor?: string;     
+  customDuration?: string;
+  order: number;
   
   transition?: string;
   effect?: string;
   border?: string;
   background?: string;
+}
+
+interface MediaItem {
+  id: string;
+  url: string;
+  type: 'image' | 'video';
+  order: number;
 }
 
 interface ImageContextType {
@@ -22,8 +39,12 @@ interface ImageContextType {
   setIntro: (intro: string) => void;
   name: string;
   setName: (name: string) => void;
+  selectedTheme: Theme | null;
+  setSelectedTheme: (theme: Theme | null) => void;
   slides: Slide[];
   setSlides: (slides: Slide[]) => void;
+  mediaItems: MediaItem[];
+  setMediaItems: (items: MediaItem[]) => void;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -32,10 +53,25 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [intro, setIntro] = useState<string>('In Loving Memory of');
   const [name, setName] = useState<string>('');
+  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   return (
-    <ImageContext.Provider value={{ uploadedImage, setUploadedImage, intro, setIntro, name, setName, slides, setSlides }}>
+    <ImageContext.Provider value={{ 
+      uploadedImage, 
+      setUploadedImage, 
+      intro, 
+      setIntro, 
+      name, 
+      setName, 
+      selectedTheme, 
+      setSelectedTheme,
+      slides, 
+      setSlides,
+      mediaItems,
+      setMediaItems
+    }}>
       {children}
     </ImageContext.Provider>
   );

@@ -1,224 +1,253 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-
-
-import { useState } from 'react';
-// import React, { useState } from 'react';
 import { useImage } from '../context/ImageContext';
+import 'react-slideshow-image/dist/styles.css';
 
+import { useState, useEffect } from 'react';
 
-import image1 from '../assets/image1.png';
-import image2 from '../assets/image2.png';
-import image3 from '../assets/image3.png';
-import image4 from '../assets/image4.png';
-import image5 from '../assets/image5.png';
-import image6 from '../assets/image6.png';
+// Added Fonts
+import "@fontsource/montserrat"; 
+import "@fontsource/alex-brush"; 
+import "@fontsource/alegreya"; 
+import "@fontsource/dancing-script"; 
+import "@fontsource/great-vibes"; 
+import "@fontsource/pacifico"; 
+import "@fontsource/roboto-slab"; 
+import "@fontsource/playfair-display"; 
+import "@fontsource/lobster"; 
+import "@fontsource/raleway"; 
+import "@fontsource/open-sans";
 
-// Filter effects
-const filterEffects = [
-  { name: 'Normal', value: 'none' },
-  { name: 'Grayscale', value: 'grayscale(100%)' },
-  { name: 'Sepia', value: 'sepia(100%)' },
-  { name: 'Invert', value: 'invert(100%)' },
-  { name: 'Blur', value: 'blur(2px)' },
-  { name: 'Saturate', value: 'saturate(200%)' }
-];
-
-// Border styles
-const borderStyles = [
-  { name: 'None', value: 'none' },
-  { name: 'Solid', value: '5px solid #000000' },
-  { name: 'Dashed', value: '5px dashed #000000' },
-  { name: 'Double', value: '5px double #000000' },
-  { name: 'Ridge', value: '5px ridge #000000' },
-  { name: 'Inset', value: '5px inset #000000' }
-];
-
-// Transitions
-const transitionOptions = [
-  { image: image1, name: 'fade' },
-  { image: image2, name: 'slide' },
-  { image: image3, name: 'zoom' },
-  { image: image4, name: 'wipe' },
-  { image: image5, name: 'blur' },
-  { image: image6, name: 'dissolve' }
-]
-
-// Color options
-const backgroundColors = [
-  { name: 'Black', value: '#000000' },
-  { name: 'Deep Blue', value: '#355c7d' },
-  { name: 'Sage Green', value: '#99B898' },
-  { name: 'Corral Pink', value: '#FF8C94' },
-  { name: 'Pastel Cyan', value: '#a4d8d8' },
-  { name: 'Pastel Rose', value: '#f6b8d0' },
-  { name: 'Indigo', value: '#5c62d6' }, 
-  { name: 'Pastel Lime', value: '#E1F5C4' },
-  { name: 'Teal', value: '#45ADA8' },
-  { name: 'Blue', value: '#3a86ff' },
-  { name: 'Green', value: '#b2cc55' },
-  { name: 'White', value: '#ffffff' },
-  { name: 'Dark Gray', value: '#474747' },
-  { name: 'Gray', value: '#6c757d' }
-];
 
 function Step5() {
-  const { slides, setSlides } = useImage();
-  const [selections, setSelections] = useState({
-    transition: '',
-    effect: '',
-    background: '',
-    border: ''
+  const { slides, mediaItems, selectedTheme } = useImage();
+  const [currentItemIndex, setCurrentItemIndex] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  
+  // Combine theme, slides, and media items in order
+  const allItems = [];
+  
+  // Add theme as first item if selected
+  if (selectedTheme) {
+    allItems.push({
+      id: 'theme',
+      type: 'theme',
+      src: selectedTheme.src,
+      duration: 3000, // 3 seconds for theme
+      customText: '',
+      customFont: 'Montserrat',
+      customColor: '#ffffff'
+    });
+  }
+  
+  // Add slides
+  slides.forEach(slide => {
+    allItems.push({
+      id: slide.id,
+      type: 'slide',
+      src: slide.backgroundImage,
+      duration: parseInt(slide.customDuration || '5') * 1000,
+      customText: slide.customText,
+      customFont: slide.customFont,
+      customColor: slide.customColor,
+      effect: slide.effect,
+      transition: slide.transition
+    });
+  });
+  
+  // Add media items
+  mediaItems.forEach(item => {
+    allItems.push({
+      id: item.id,
+      type: item.type,
+      src: item.url,
+      duration: 4000, // 4 seconds default for images/videos
+      customText: '',
+      customFont: 'Montserrat',
+      customColor: '#ffffff'
+    });
   });
 
-  const handleEffectChange = (effect: string, index: number) => {
-    setSelections(prev => ({ ...prev, effect }));
+  useEffect(() => {
+    if (allItems.length > 0 && isPlaying) {
+      const currentItem = allItems[currentItemIndex];
+      const duration = currentItem?.duration || 5000;
 
-    const updatedSlides = slides.map(slide => ({
-      ...slide,
-      effect: filterEffects[index].value
-    }));
-    setSlides(updatedSlides);
+      const timer = setTimeout(() => {
+        setCurrentItemIndex((prevIndex) => (prevIndex + 1) % allItems.length);
+        setAnimKey((k) => k + 1);
+        setProgress(0); // Reset progress for next item
+      }, duration);
+
+      // Update progress bar
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          const increment = 100 / (duration / 100);
+          return prev + increment > 100 ? 100 : prev + increment;
+        });
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(progressInterval);
+      };
+    }
+  }, [currentItemIndex, allItems, isPlaying]);
+
+  const togglePlayback = () => {
+    setIsPlaying(!isPlaying);
+    if (!isPlaying) {
+      setProgress(0);
+    }
   };
 
-  const handleBackgroundChange = (colorValue: string) => {
-    setSelections(prev => ({ ...prev, background: colorValue }));
-    
-    const updatedSlides = slides.map(slide => ({
-      ...slide,
-      background: colorValue
-    }));
-    setSlides(updatedSlides);
+  const resetPreview = () => {
+    setCurrentItemIndex(0);
+    setProgress(0);
+    setIsPlaying(false);
+    setAnimKey(k => k + 1);
   };
 
-  const handleBorderChange = (border: string, index: number) => {
-    setSelections(prev => ({ ...prev, border }));
+  if (allItems.length === 0) {
+    return (
+      <div className="container">
+        <NavbarBabbo />
+        <StepNavigation />
+        <div className="main-content">
+          <h2 className="main-information-header">PREVIEW</h2>
+          <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <p>No content added yet. Please go back and add slides or photos.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-    const updatedSlides = slides.map(slide => ({
-      ...slide,
-      border: borderStyles[index].value
-    }));
-    setSlides(updatedSlides);
-  };
+  const currentItem = allItems[currentItemIndex];
+  const transitionClass = currentItem.transition
+    ? currentItem.transition.toLowerCase()
+    : "fade";
 
-  
   return (
     <div className="container">
       <NavbarBabbo />
       <StepNavigation />
 
-      {/* Main Content */}
       <div className="main-content">
-        {/* Main Information Section */}
-        <h2 className="main-information-header">SLIDE AND TRANSITION EFFECTS</h2>
+        <h2 className="main-information-header">PREVIEW</h2>
+        
+        {/* Control Buttons */}
+        <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '20px' }}>
+          <button 
+            onClick={togglePlayback}
+            style={{
+              backgroundColor: '#b2cc55',
+              color: 'white',
+              border: 'none',
+              borderRadius: '25px',
+              padding: '10px 20px',
+              marginRight: '10px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+          </button>
+          <button 
+            onClick={resetPreview}
+            style={{
+              backgroundColor: '#666',
+              color: 'white',
+              border: 'none',
+              borderRadius: '25px',
+              padding: '10px 20px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            🔄 Reset
+          </button>
+        </div>
 
-        {/* Transitions Section */}
-        <div className="effects-section">
-          <p className="section-heading">TRANSITIONS</p>
-          <div className="selection-row">
-            {[image1, image2, image3, image4, image5, image6].map((imageUrl, index) => (
-              <div key={`transition-${index}`} className="effect-container">
-                <img
-                  src={imageUrl}
-                  alt={`Transition ${index + 1}`}
-                  className={`selection-image ${
-                    selections.transition === transitionOptions[index].name ? 'selected' : ''
-                  }`}
-                  onClick={() => {
-                    setSelections(prev => ({ ...prev, transition: transitionOptions[index].name }));
-                    setSlides(slides.map(slide => ({
-                      ...slide,
-                      transition: transitionOptions[index].name
-                    })));
-                  }}
-                />
-                <div className="effect-label">{transitionOptions[index].name}</div>
-              </div>
-            ))}
+        {/* Progress Bar */}
+        <div style={{ 
+          width: '600px', 
+          margin: '0 auto 20px', 
+          backgroundColor: '#e0e0e0', 
+          borderRadius: '10px', 
+          height: '8px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            width: `${progress}%`,
+            height: '100%',
+            backgroundColor: '#b2cc55',
+            borderRadius: '10px',
+            transition: 'width 0.1s ease'
+          }} />
+        </div>
+
+        {/* Current Item Info */}
+        <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '14px', color: '#666' }}>
+          {currentItemIndex + 1} of {allItems.length} | {currentItem.type === 'theme' ? 'Theme' : currentItem.type === 'slide' ? 'Text Slide' : 'Photo/Video'}
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <div 
+            className="slide-frame"
+            style={{
+              width: '600px',
+              height: '300px',
+              margin: '0 auto',
+              backgroundColor: '#000',
+              borderRadius: '2.5px',
+              overflow: 'hidden',
+              position: 'relative',
+              boxSizing: 'border-box'
+            }}
+          >
+            <div
+              key={animKey}
+              className={`slide-animator ${transitionClass}`}
+              style={{
+                position: 'absolute', 
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${currentItem.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                filter: currentItem.effect || 'none'
+              }}
+            >
+              {currentItem.customText && (
+                <span style={{
+                  color: currentItem.customColor || '#fff',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  fontFamily: currentItem.customFont || 'Montserrat',
+                  textAlign: 'center',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  padding: '10px'
+                }}>
+                  {currentItem.customText}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-
-        {/* Effects Section */}
-        <div className="effects-section">
-          <p className="section-heading">EFFECTS</p>
-          <div className="selection-row">
-          {filterEffects.map((effect, index) => (
-              <div key={`effect-${index}`} className="effect-container">
-                <img
-                  src={image1}
-                  alt={effect.name}
-                  className={`selection-image ${
-                    selections.effect === effect.name ? 'selected' : ''
-                  }`}
-                  style={{ filter: effect.value }}
-                  onClick={() => handleEffectChange(effect.name, index)}
-                />
-                <div className="effect-label">{effect.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Backgrounds Section */}
-        <div className="effects-section">
-          <p className="section-heading">BACKGROUNDS</p>
-          <div className="selection-row">
-            {backgroundColors.map((color, index) => (
-              <div key={`background-${index}`} className="effect-container">
-                <div
-                  className={`selection-image color-swatch ${
-                    selections.background === color.value ? 'selected' : ''
-                  }`}
-                  style={{
-                    backgroundColor: color.value,
-                    border: '2px solid #eee'
-                  }}
-                  onClick={() => handleBackgroundChange(color.value)}
-                ></div>
-                <div className="effect-label">{color.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* Borders Section */}
-        <div className="effects-section">
-          <p className="section-heading">BORDERS</p>
-          <div className="selection-row-border">
-            {borderStyles.map((border, index) => (
-              <div key={`border-${index}`} className="effect-container">
-                <div
-                    className={`selection-image-border border-preview ${
-                      selections.border === border.name ? 'selected' : ''
-                    }`}
-                    style={{
-                      border: border.value !== 'none' ? border.value : '1px solid #eee',
-                      outline: selections.border === border.name ? '3px solid #b2cc55' : 'none',
-                      backgroundImage: `url(${image1})`,
-                      backgroundSize: 'cover',
-                    }}
-                    onClick={() => handleBorderChange(border.name, index)}
-                  ></div>
-                <div className="effect-label">{border.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-
-
-        {/* Navigation Buttons */}
         <div className="navigation-buttons">
-          {/* Back Button */}
           <Link to="/step/4">
             <button className="back-button">Back</button>
           </Link>
-
-          {/* Next Button */}
           <Link to="/step/6">
             <button className="next-button">Next</button>
           </Link>

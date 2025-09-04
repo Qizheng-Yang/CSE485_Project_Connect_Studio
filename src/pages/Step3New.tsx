@@ -126,7 +126,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
   );
 };
 
-function Step3() {
+function Step3New() {
   const { slides, setSlides, mediaItems, setMediaItems } = useImage();
   const [activeTab, setActiveTab] = useState<'slides' | 'photos'>('slides');
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
@@ -729,4 +729,4 @@ function Step3() {
   );
 }
 
-export default Step3;
+export default Step3New;

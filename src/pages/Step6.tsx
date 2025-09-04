@@ -2,73 +2,23 @@ import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import { useState } from 'react';
-import { getAudioDuration } from '../utils/audioUtils';
 
 function Step6() {
-  const [showLicenseModal, setShowLicenseModal] = useState(false);
-  const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string, selected: boolean}[]>([]);
-  const [licenseAccepted, setLicenseAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [videoLength] = useState('5.25 minutes');
-  const [slideLength] = useState('3.5 Seconds');
-  const [showCheckboxes, setShowCheckboxes] = useState(false);
-  // const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
+  // Prices
+  const mp4Price = 20.00;
+  const photoBookPrice = 53.00;
+  
+  // State for photo book quantity
+  const [photoBookQty, setPhotoBookQty] = useState(1);
+  
+  // Calculate totals
+  const mp4Total = mp4Price * 1; // Fixed quantity of 1
+  const photoBookTotal = photoBookPrice * photoBookQty;
+  const subTotal = mp4Total + photoBookTotal;
 
-  const handleUploadClick = () => {
-    if (licenseAccepted) {
-      const fileInput = document.getElementById('music-upload') as HTMLInputElement;
-      fileInput.click();
-    } else {
-      setShowLicenseModal(true);
-    }
-  };
-
-  const handleSelectClick = () => {
-    setShowCheckboxes(!showCheckboxes);
-    if (!showCheckboxes) {
-      // When showing checkboxes, reset all selections
-      setUploadedMusic(uploadedMusic.map(music => ({...music, selected: false})));
-    }
-  };
-
-  const handleCheckboxChange = (index: number) => {
-    const updatedMusic = [...uploadedMusic];
-    updatedMusic[index].selected = !updatedMusic[index].selected;
-    setUploadedMusic(updatedMusic);
-  };
-
-  const handleAcceptLicense = () => {
-    setLicenseAccepted(true);
-    setShowLicenseModal(false);
-    const fileInput = document.getElementById('music-upload') as HTMLInputElement;
-    fileInput.click();
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      setIsLoading(true);
-      try {
-        const file = files[0];
-        const duration = await getAudioDuration(file);
-        const newMusic = {
-          name: file.name,
-          duration: duration,
-          selected: false
-        };
-        setUploadedMusic([...uploadedMusic, newMusic]);
-      } catch (error) {
-        console.error('Error processing audio file:', error);
-      } finally {
-        setIsLoading(false);
-        e.target.value = '';
-      }
-    }
-  };
-
-  const handleDeleteMusic = (index: number) => {
-    const updatedMusic = uploadedMusic.filter((_, i) => i !== index);
-    setUploadedMusic(updatedMusic);
+  const handleQtyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newQty = parseInt(e.target.value);
+    setPhotoBookQty(newQty);
   };
 
   return (
@@ -76,107 +26,78 @@ function Step6() {
       <NavbarBabbo />
       <StepNavigation />
 
+      {/* Main Content */}
       <div className="main-content">
-        <h2 className="main-information-header">MUSIC</h2>
-
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <p className='small-text'>Select or upload the music you would like in your video</p>
-        </div>
-
-        {/* Music Selection Buttons */}
-        <div className="button-group">
-          <button className="action-button" onClick={handleUploadClick}>
-            Upload Music
-          </button>
-          <button 
-            className={`action-button secondary ${showCheckboxes ? 'active' : ''}`}
-            onClick={handleSelectClick}
-          >
-            {showCheckboxes ? 'Cancel Selection' : 'Select Music'}
-          </button>
-          <input 
-            id="music-upload"
-            type="file" 
-            accept="audio/*" 
-            style={{ display: 'none' }}
-            onChange={handleFileUpload}
-          />
-        </div>
-
-        
-
-        {isLoading && (
-          <div className="loading-indicator">
-            Processing audio file...
-          </div>
-        )}
-
-        {uploadedMusic.length > 0 && (
-          <div className="uploaded-music-list">
-            <p className='small-text-inside'>Added Songs</p>
-            {uploadedMusic.map((music, index) => (
-              <div key={index} className="music-item">
-                
-                <span className="music-name">{music.name}</span>
-                <span className="music-duration">{music.duration}</span>
-                <button 
-                  className="delete-button"
-                  onClick={() => handleDeleteMusic(index)}
-                >
-                  🗑️
-                </button>
-                {showCheckboxes && (
-                  <input
-                    type="checkbox"
-                    checked={music.selected}
-                    onChange={() => handleCheckboxChange(index)}
-                    className="music-checkbox"
-                  />
-                )}
-                
+        {/* Checkout Section */}
+        <div className="checkout-section">
+          
+          <div className="checkout-grid">
+            {/* Header Row */}
+            <div className="checkout-row header-row">
+              <div className="checkout-col product-col">CHECK OUT</div>
+              <div className="checkout-col price-col">PRICE</div>
+              <div className="checkout-col qty-col">QTY</div>
+              <div className="checkout-col total-col">TOTAL</div>
+            </div>
+            
+            {/* MP4 Download Row */}
+            <div className="checkout-row">
+              <div className="checkout-col product-col">
+                <strong>MP4 DOWNLOAD</strong>
+                <div className="product-description">
+                  Digital MP4 download that can be played on any device
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-        <div className="length-info">
-          <p className='small-text'>Video Length: {videoLength}</p>
-          <p className='small-text'>Slide Length: Match to Music OR {slideLength}</p>
-        </div>
-
-        {showLicenseModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <button 
-                className="close-modal"
-                onClick={() => setShowLicenseModal(false)}
-              >
-                ✕
-              </button>
-              <h3>Custom Music Licensing</h3>
-              <p className="small-text">
-                By selecting "Agree and Accept," you confirm that you have the proper licenses 
-                for any music you upload to MyBabbo Inc.. You also agree to defend, indemnify, 
-                and hold MyBabbo Inc., as well as its owners, employees, agents, successors, 
-                and assigns, harmless from any third-party claims arising from a violation 
-                of this confirmation.
-              </p>
-              <button 
-                className="action-button"
-                onClick={handleAcceptLicense}
-              >
-                Confirm & Accept
-              </button>
+              <div className="checkout-col price-col">${mp4Price.toFixed(2)} (CAD)</div>
+              <div className="checkout-col qty-col">1</div>
+              <div className="checkout-col total-col">${mp4Total.toFixed(2)} (CAD)</div>
+            </div>
+            
+            {/* Photo Book Row */}
+            <div className="checkout-row">
+              <div className="checkout-col product-col">
+                <strong>HARD COVER PHOTO BOOK</strong>
+              </div>
+              <div className="checkout-col price-col">${photoBookPrice.toFixed(2)} (CAD)</div>
+              <div className="checkout-col qty-col">
+                <select 
+                  value={photoBookQty} 
+                  onChange={handleQtyChange}
+                  className="qty-select"
+                >
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div className="checkout-col total-col">${photoBookTotal.toFixed(2)} (CAD)</div>
+            </div>
+            
+            {/* Total Row */}
+            <div className="checkout-row total-row">
+              <div className="checkout-col product-col">
+                <strong>TOTAL</strong>
+                <div className="tax-note">Taxes and Shipping extra</div>
+              </div>
+              <div className="checkout-col price-col"></div>
+              <div className="checkout-col qty-col">{1 + photoBookQty}</div>
+              <div className="checkout-col total-col">${subTotal.toFixed(2)} (CAD)</div>
             </div>
           </div>
-        )}
+        </div>
 
+        {/* Navigation Buttons */}
         <div className="navigation-buttons">
+          {/* Back Button */}
           <Link to="/step/5">
             <button className="back-button">Back</button>
           </Link>
-          <Link to="/step/7">
-            <button className="next-button">Next</button>
-          </Link>
+
+          {/* Next Button */}
+          <button className="next-button">Place Order</button>
         </div>
       </div>
     </div>

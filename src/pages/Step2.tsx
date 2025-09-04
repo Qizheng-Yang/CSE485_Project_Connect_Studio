@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import { useState, useEffect } from 'react';
+import { useImage } from '../context/ImageContext';
 
 interface Theme {
   id: number;
@@ -47,14 +48,18 @@ const themeImages: Theme[] = [
 ];
 
 function Step2() {
-  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
+  const { selectedTheme, setSelectedTheme } = useImage();
+  const [localSelectedTheme, setLocalSelectedTheme] = useState<Theme | null>(null);
 
   // Set first theme as default
   useEffect(() => {
-    setSelectedTheme(themeImages[0]);
-  }, []);
+    const defaultTheme = themeImages[0];
+    setLocalSelectedTheme(defaultTheme);
+    setSelectedTheme(defaultTheme);
+  }, [setSelectedTheme]);
 
   const handleThemeSelect = (theme: Theme): void => {
+    setLocalSelectedTheme(theme);
     setSelectedTheme(theme);
     localStorage.setItem('selectedTheme', theme.id.toString());
   };
@@ -69,15 +74,15 @@ function Step2() {
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           {/* Large preview of selected theme */}
-          {selectedTheme && (
+          {localSelectedTheme && (
             <div style={{ 
               margin: '0 auto 30px', 
               maxWidth: '500px',
               padding: '0px',
             }}>
               <img 
-                src={selectedTheme.src} 
-                alt={`Selected: ${selectedTheme.alt}`}
+                src={localSelectedTheme.src} 
+                alt={`Selected: ${localSelectedTheme.alt}`}
                 style={{
                   width: '100%',
                   height: '100%'
@@ -99,7 +104,7 @@ function Step2() {
                 key={theme.id}
                 onClick={() => handleThemeSelect(theme)}
                 style={{
-                  border: selectedTheme?.id === theme.id 
+                  border: localSelectedTheme?.id === theme.id 
                     ? '3px solid #4CAF50' 
                     : '1px solid #ddd',
                   borderRadius: '6px',

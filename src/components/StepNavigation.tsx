@@ -6,9 +6,7 @@ import { useImage } from '../context/ImageContext';
 const labels = [
   'Info',
   'Theme',
-  'Title Slides',
-  'Gallery',
-  'Effects',
+  'Media',
   'Music',
   'Preview',
   'Finalize',
@@ -58,7 +56,7 @@ function StepNavigation() {
       
       {/* Step Buttons */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((num, index) => (
+        {[1, 2, 3, 4, 5, 6].map((num, index) => (
           <div
             key={num}
             style={{
