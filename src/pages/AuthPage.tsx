@@ -16,6 +16,9 @@ function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Password confirmation
+  const [confirmPassword, setConfirmPassword] = useState(''); 
+
   // Error messages for user
   const [error, setError] = useState('');
 
@@ -28,6 +31,11 @@ function AuthPage() {
     setError('');
 
     if (mode === 'signup') {
+
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
 
       if (AuthModel.userExists(email)) {    // Checks if alr exists
         setError('Account already exists.');
@@ -65,6 +73,7 @@ function AuthPage() {
   function toggleMode() {   // Between login & signup
     setMode(mode === 'login' ? 'signup' : 'login');
     setError('');
+    setConfirmPassword('');
 
   }
 
@@ -90,6 +99,17 @@ function AuthPage() {
             onChange={e => setPassword(e.target.value)}
             required
           />
+
+          {mode === 'signup' && (
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="auth-input"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              required
+            />
+          )}
 
           <button className="auth-submit" type="submit">
             {mode === 'login' ? 'Login' : 'Sign Up'}
