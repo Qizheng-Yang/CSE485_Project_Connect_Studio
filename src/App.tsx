@@ -8,10 +8,11 @@ import Step3 from './pages/Step3';
 import Step4 from './pages/Step4';
 import Step5 from './pages/Step5';
 import Step6 from './pages/Step6';
+import AuthPage from './pages/AuthPage'; // import your full-page auth component
 
 function App() {
   return (
-    <ImageProvider> {/* Wrap the Routes with ImageProvider */}
+    <ImageProvider> {/* Provide context to all routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<CreateVideo />} />
@@ -21,6 +22,7 @@ function App() {
         <Route path="/step/4" element={<Step4 />} />
         <Route path="/step/5" element={<Step5 />} />
         <Route path="/step/6" element={<Step6 />} />
+        <Route path="/auth" element={<AuthPage />} /> {/* <-- Add this line! */}
       </Routes>
     </ImageProvider>
   );
