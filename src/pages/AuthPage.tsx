@@ -122,6 +122,16 @@ function AuthPage() {
           {mode === 'login' ? 'Need an account? Sign Up' : 'Already signed up? Log In'}
         </button>
 
+
+        <button 
+          className="auth-back-button" 
+          type="button" 
+          onClick={() => navigate('/')}
+        >
+          Back
+        </button>
+
+
       </div>
     </div>
 

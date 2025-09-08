@@ -111,6 +111,15 @@ body {
   font-size: 0.97em;
 }
 
+.auth-back-button {
+  margin-top: 30px;
+  background: rgb(203, 199, 199);
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+
+
 /* REGISTRATION  - Signup/Login/Logout END */
 
   
