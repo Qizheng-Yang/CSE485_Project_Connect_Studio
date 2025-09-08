@@ -39,8 +39,7 @@ body {
         padding-right: 15px;
         padding-top: 0px;
         padding-bottom: 0px;
-    }
-    
+    } 
 
     .myBabbo-logo {
         width: 200px;
@@ -49,8 +48,9 @@ body {
         padding-right: 45px;
     }
 
-/* REGISTRATION  - Signup/Login/Logout */
 
+
+/* REGISTRATION  - Signup/Login/Logout */
 .auth-welcome {
   display: flex;
   align-items: center;
@@ -62,7 +62,8 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #f9f9f9;
+  /* background: #f9f9f9; */
+  background: #c2da6e;
 }
 
 .auth-container {
