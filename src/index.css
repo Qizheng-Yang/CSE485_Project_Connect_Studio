@@ -84,7 +84,7 @@ body {
 }
 
 .auth-submit, .auth-alt {
-  margin: 0 auto;         /* Center button horizontally if width is less than container */
+  margin: 0 auto;
   display: block; 
   
   width: 100%;

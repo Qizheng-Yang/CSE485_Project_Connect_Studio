@@ -8,7 +8,7 @@ function Home() {
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
         {/* <Link to="/create"> */}
         <Link to="/create">
-          <button style={{ fontSize: '24px', padding: '10px 20px' }}>Create Video</button>
+          <button style={{ fontSize: '45px', padding: '10px 20px' , marginTop: '150px'}}>Create Video</button>
         </Link>
       </div>
     </div>
