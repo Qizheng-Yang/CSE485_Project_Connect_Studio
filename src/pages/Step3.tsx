@@ -82,6 +82,54 @@ const transitionOptions = [
   { name: 'dissolve' }
 ];
 
+// --- QUOTE CATEGORIES and QUOTES ---
+const quoteCategories = [
+  {
+    label: "Memorial",
+    img: memorialChoice,
+    quotes: [
+      "In Loving Memory",
+      "Those we love remain with us",
+      "Your life was a blessing",
+      "Forever in our hearts",
+      "Gone but never forgotten",
+    ],
+  },
+  {
+    label: "Wedding",
+    img: weddingChoice,
+    quotes: [
+      "With Love Always",
+      "Two hearts, one soul",
+      "Our journey begins",
+      "To have and to hold",
+      "Celebrating our love",
+    ],
+  },
+  {
+    label: "Retirement",
+    img: retirementChoice,
+    quotes: [
+      "Celebrating a Life Well Lived",
+      "Happy Retirement",
+      "Endless adventures await",
+      "Thank you for your dedication",
+      "Enjoy your new chapter",
+    ],
+  },
+  {
+    label: "Anniversary",
+    img: anniversaryChoice,
+    quotes: [
+      "Cherished Moments",
+      "Years of Love",
+      "Growing Together",
+      "Here's to many more",
+      "Our love story continues",
+    ],
+  },
+];
+
 interface SortableItemProps {
   id: string;
   children: React.ReactNode;
@@ -140,6 +188,8 @@ function Step3() {
     customColor: '#000000',
     customDuration: '5',
   });
+
+  const [categoryIdx, setCategoryIdx] = useState(0); // Category
   
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
 
@@ -354,29 +404,76 @@ function Step3() {
                   />
                 </div>
 
-                {/* Quick Quote Selection */}
-                <p>Or choose a quote:</p>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto' }}>
-                  {[memorialChoice, weddingChoice, retirementChoice, anniversaryChoice].map((quoteImg, index) => {
-                    const labels = ['Memorial', 'Wedding', 'Retirement', 'Anniversary'];
-                    const categoryQuotes = [
-                      'In Loving Memory',
-                      'With Love Always', 
-                      'Celebrating a Life Well Lived',
-                      'Cherished Moments'
-                    ];
-                    return (
-                      <div key={index} style={{ textAlign: 'center', cursor: 'pointer' }}>
-                        <img
-                          src={quoteImg}
-                          alt={labels[index]}
-                          style={{ width: '100px', height: '60px', borderRadius: '5px' }}
-                          onClick={() => setCurrentSlide(prev => ({ ...prev, customText: categoryQuotes[index] }))}
-                        />
-                        <p style={{ fontSize: '12px', margin: '5px 0' }}>{labels[index]}</p>
-                      </div>
-                    );
-                  })}
+                {/* Quote Categories */}
+                <div style={{ marginBottom: 14 }}>
+                  <div>Or choose a quote:</div>
+                  <div style={{
+                    display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto'
+                  }}>
+                    {quoteCategories.map((cat, idx) => (
+                      <button
+                        key={cat.label}
+                        onClick={() => setCategoryIdx(idx)}
+                        style={{
+                          border: "none",
+                          background: "none",
+                          outline: idx === categoryIdx ? "2.5px solid #b2cc55" : "none",
+                          borderRadius: 8,
+                          padding: 0,
+                          cursor: "pointer",
+                          opacity: idx === categoryIdx ? 1 : 0.75,
+                          boxShadow: idx === categoryIdx ? "0 0 8px #d6f5a6" : "none"
+                        }}
+                        tabIndex={0}
+                      >
+                        <img src={cat.img} alt={cat.label} style={{ width: 200, borderRadius: 8 }} />
+                      </button>
+                    ))}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      overflowX: "auto",
+                      gap: 8,
+                      marginTop: 0,
+                      marginBottom: 12,
+                      paddingBottom: 8,
+                    }}
+                  >
+                    {quoteCategories[categoryIdx].quotes.map((quote, qidx) => (
+                      <button
+                        key={qidx}
+                        style={{
+                          background:
+                            currentSlide.customText === quote
+                              ? "#b2cc55"
+                              : "#f4f4f4",
+                          color:
+                            currentSlide.customText === quote
+                              ? "#fff"
+                              : "#333",
+                          border: "1.5px solid #eee",
+                          borderRadius: 8,
+                          minWidth: 120,
+                          minHeight: 44,
+                          padding: "6px 10px",
+                          fontSize: 14,
+                          marginRight: 7,
+                          cursor: "pointer",
+                          fontWeight: 500,
+                          boxShadow:
+                            currentSlide.customText === quote
+                              ? "0 1px 8px #e0eeca"
+                              : undefined,
+                        }}
+                        onClick={() =>
+                          setCurrentSlide((s) => ({ ...s, customText: quote }))
+                        }
+                      >
+                        {quote}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Font and Color Selection */}
