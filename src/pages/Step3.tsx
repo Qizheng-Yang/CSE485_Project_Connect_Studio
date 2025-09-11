@@ -296,7 +296,6 @@ function Step3() {
   };
 
   const removeSlide = (id: string) => {
-    console.log('removeSlide called with id:', id);
     const filteredSlides = slides.filter(slide => slide.id !== id);
     // Reorder the remaining slides
     const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index }));
@@ -304,7 +303,6 @@ function Step3() {
   };
 
   const removeMediaItem = (id: string) => {
-    console.log('removeMediaItem called with id:', id);
     const item = mediaItems.find(item => item.id === id);
     if (item) {
       URL.revokeObjectURL(item.url);
@@ -674,20 +672,23 @@ function Step3() {
                               onMouseDown={(e) => {
                                 e.stopPropagation();
                               }}
-                              style={{
-                                position: 'absolute',
-                                top: '5px',
-                                right: '5px',
-                                background: 'rgba(255,0,0,0.7)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '25px',
-                                height: '25px',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                                zIndex: 100
-                              }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '8px',
+                                  right: '8px',
+                                  background: 'rgba(255,0,0,0.8)',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '50%',
+                                  width: '24px',
+                                  height: '24px',
+                                  cursor: 'pointer',
+                                  fontSize: '14px',
+                                  zIndex: 100,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}
                             >
                               ×
                             </button>
@@ -836,20 +837,23 @@ function Step3() {
                               onMouseDown={(e) => {
                                 e.stopPropagation();
                               }}
-                              style={{
-                                position: 'absolute',
-                                top: '5px',
-                                right: '5px',
-                                background: 'rgba(255,0,0,0.7)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '25px',
-                                height: '25px',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                                zIndex: 100
-                              }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '8px',
+                                  right: '8px',
+                                  background: 'rgba(255,0,0,0.8)',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '50%',
+                                  width: '24px',
+                                  height: '24px',
+                                  cursor: 'pointer',
+                                  fontSize: '14px',
+                                  zIndex: 100,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}
                             >
                               ×
                             </button>
