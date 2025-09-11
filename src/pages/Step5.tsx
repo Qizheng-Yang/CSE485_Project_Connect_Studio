@@ -6,6 +6,19 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect } from 'react';
 
+// Define the item type for preview
+interface PreviewItem {
+  id: string;
+  type: 'theme' | 'slide' | 'image' | 'video';
+  src: string;
+  duration: number;
+  customText?: string;
+  customFont?: string;
+  customColor?: string;
+  effect?: string;
+  transition?: string;
+}
+
 // Added Fonts
 import "@fontsource/montserrat"; 
 import "@fontsource/alex-brush"; 
@@ -28,7 +41,7 @@ function Step5() {
   const [progress, setProgress] = useState(0);
   
   // Combine theme, slides, and media items in order
-  const allItems = [];
+  const allItems: PreviewItem[] = [];
   
   // Add theme as first item if selected
   if (selectedTheme) {
@@ -39,7 +52,9 @@ function Step5() {
       duration: 3000, // 3 seconds for theme
       customText: '',
       customFont: 'Montserrat',
-      customColor: '#ffffff'
+      customColor: '#ffffff',
+      effect: 'none',
+      transition: 'fade'
     });
   }
   
@@ -48,13 +63,13 @@ function Step5() {
     allItems.push({
       id: slide.id,
       type: 'slide',
-      src: slide.backgroundImage,
+      src: slide.backgroundImage || '',
       duration: parseInt(slide.customDuration || '5') * 1000,
-      customText: slide.customText,
-      customFont: slide.customFont,
-      customColor: slide.customColor,
-      effect: slide.effect,
-      transition: slide.transition
+      customText: slide.customText || '',
+      customFont: slide.customFont || 'Montserrat',
+      customColor: slide.customColor || '#ffffff',
+      effect: slide.effect || 'none',
+      transition: slide.transition || 'fade'
     });
   });
   
@@ -67,7 +82,9 @@ function Step5() {
       duration: 4000, // 4 seconds default for images/videos
       customText: '',
       customFont: 'Montserrat',
-      customColor: '#ffffff'
+      customColor: '#ffffff',
+      effect: 'none',
+      transition: 'fade'
     });
   });
 
@@ -127,7 +144,7 @@ function Step5() {
   }
 
   const currentItem = allItems[currentItemIndex];
-  const transitionClass = currentItem.transition
+  const transitionClass = currentItem?.transition
     ? currentItem.transition.toLowerCase()
     : "fade";
 
@@ -192,7 +209,7 @@ function Step5() {
 
         {/* Current Item Info */}
         <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '14px', color: '#666' }}>
-          {currentItemIndex + 1} of {allItems.length} | {currentItem.type === 'theme' ? 'Theme' : currentItem.type === 'slide' ? 'Text Slide' : 'Photo/Video'}
+          {currentItemIndex + 1} of {allItems.length} | {currentItem?.type === 'theme' ? 'Theme' : currentItem?.type === 'slide' ? 'Text Slide' : 'Photo/Video'}
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -218,26 +235,26 @@ function Step5() {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                backgroundImage: `url(${currentItem.src})`,
+                backgroundImage: `url(${currentItem?.src})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                filter: currentItem.effect || 'none'
+                filter: currentItem?.effect || 'none'
               }}
             >
-              {currentItem.customText && (
+              {currentItem?.customText && (
                 <span style={{
-                  color: currentItem.customColor || '#fff',
+                  color: currentItem?.customColor || '#fff',
                   fontSize: '24px',
                   fontWeight: 'bold',
-                  fontFamily: currentItem.customFont || 'Montserrat',
+                  fontFamily: currentItem?.customFont || 'Montserrat',
                   textAlign: 'center',
                   textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                   padding: '10px'
                 }}>
-                  {currentItem.customText}
+                  {currentItem?.customText}
                 </span>
               )}
             </div>
