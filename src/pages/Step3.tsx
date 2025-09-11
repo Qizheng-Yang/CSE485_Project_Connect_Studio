@@ -149,24 +149,35 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    position: 'relative' as const,
   };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
+      {/* Drag Handle - small area in top-left corner */}
       <div 
         {...listeners}
         style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 30, // Leave space for delete button
-          bottom: 20, // Leave space for order text
+          top: '8px',
+          left: '8px',
+          width: '24px',
+          height: '24px',
           cursor: 'move',
-          zIndex: 1,
-          backgroundColor: 'transparent'
+          zIndex: 50,
+          backgroundColor: 'rgba(178, 204, 85, 0.8)',
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          color: 'white',
+          fontWeight: 'bold'
         }}
         title="Drag to reorder"
-      />
+      >
+        ⋮⋮
+      </div>
       {children}
     </div>
   );
