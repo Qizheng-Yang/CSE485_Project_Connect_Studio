@@ -381,8 +381,7 @@ function Step3() {
                       src={imageUrl}
                       alt={`Background ${index + 1}`}
                       style={{
-                        width: '120px',
-                        height: '80px',
+                        width: '200px',
                         cursor: 'pointer',
                         border: currentSlide.backgroundImage === imageUrl ? '3px solid #b2cc55' : '1px solid #ddd',
                         borderRadius: '5px'
@@ -394,13 +393,13 @@ function Step3() {
 
                 {/* Text Input */}
                 <div style={{ marginBottom: '20px' }}>
-                  <label>Text:</label>
+                  <label style={{fontSize: '16px'}}>Text:</label>
                   <input
                     type="text"
                     value={currentSlide.customText}
                     onChange={(e) => setCurrentSlide(prev => ({ ...prev, customText: e.target.value }))}
                     placeholder="Enter your text"
-                    style={{ width: '100%', padding: '10px', marginTop: '5px', borderRadius: '5px', border: '1px solid #ddd' }}
+                    style={{ width: '100%', padding: '10px', marginTop: '5px', borderRadius: '5px', border: '1px solid #ddd', fontSize: '15px'}}
                   />
                 </div>
 
@@ -408,7 +407,7 @@ function Step3() {
                 <div style={{ marginBottom: 14 }}>
                   <div>Or choose a quote:</div>
                   <div style={{
-                    display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto'
+                    display: 'flex', gap: '10px', marginTop: '5px', marginBottom: '20px', overflowX: 'auto'
                   }}>
                     {quoteCategories.map((cat, idx) => (
                       <button
@@ -483,7 +482,7 @@ function Step3() {
                     <select 
                       value={currentSlide.customFont}
                       onChange={(e) => setCurrentSlide(prev => ({ ...prev, customFont: e.target.value }))}
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                      style={{ width: '100%', padding: '8px', marginTop: '5px', fontSize: '15px'}}
                     >
                       {fonts.map(font => (
                         <option key={font} value={font} style={{ fontFamily: font }}>{font}</option>
@@ -491,49 +490,31 @@ function Step3() {
                     </select>
                   </div>
                   
-                  <div style={{ flex: 1 }}>
-                    <label>Color:</label>
-                    <div style={{ marginTop: '5px' }}>
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          backgroundColor: currentSlide.customColor,
-                          border: '1px solid #ddd',
-                          borderRadius: '5px',
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => setIsColorPickerVisible(!isColorPickerVisible)}
-                      />
-                      {isColorPickerVisible && (
-                        <div ref={colorPickerRef} style={{ position: 'absolute', zIndex: 1000, marginTop: '5px' }}>
-                          <div style={{ position: 'relative' }}>
-                            <HexColorPicker
-                              color={currentSlide.customColor}
-                              onChange={(color) => setCurrentSlide(prev => ({ ...prev, customColor: color }))}
-                            />
-                            <button
-                              onClick={() => setIsColorPickerVisible(false)}
-                              style={{
-                                position: 'absolute',
-                                top: '-5px',
-                                right: '-5px',
-                                background: '#ccc',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '20px',
-                                height: '20px',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
-                              ×
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px' }}>Color:</label>
+                    <HexColorPicker
+                      color={currentSlide.customColor}
+                      onChange={color => setCurrentSlide(prev => ({ ...prev, customColor: color }))}
+                      style={{ boxShadow: '0 2px 10px #ddd', borderRadius: '8px' }}
+                    />
                   </div>
+                  <div>
+                    <div
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: currentSlide.customColor,
+                        border: '1px solid #ddd',
+                        borderRadius: '5px'
+                      }}
+                    />
+                    <span style={{ display: 'block', marginTop: '8px', fontSize: '14px' }}>
+                      {currentSlide.customColor}
+                    </span>
+                  </div>
+                </div>
+
 
                   <div style={{ flex: 1 }}>
                     <label>Duration (seconds):</label>
@@ -543,7 +524,7 @@ function Step3() {
                       max="60"
                       value={currentSlide.customDuration}
                       onChange={(e) => setCurrentSlide(prev => ({ ...prev, customDuration: e.target.value }))}
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                      style={{ width: '100%', padding: '8px', marginTop: '5px', fontSize: '15px' }}
                     />
                   </div>
                 </div>
@@ -590,7 +571,9 @@ function Step3() {
                       border: 'none',
                       borderRadius: '20px',
                       padding: '10px 20px',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      marginTop: '15px',
+                      fontSize: '16px'
                     }}
                   >
                     Cancel
@@ -604,7 +587,9 @@ function Step3() {
                       border: 'none',
                       borderRadius: '20px',
                       padding: '10px 20px',
-                      cursor: currentSlide.backgroundImage && currentSlide.customText ? 'pointer' : 'not-allowed'
+                      cursor: currentSlide.backgroundImage && currentSlide.customText ? 'pointer' : 'not-allowed',
+                      marginTop: '15px',
+                      fontSize: '16px'
                     }}
                   >
                     Add Slide
