@@ -23,6 +23,9 @@ export interface Slide {
   effect?: string;
   border?: string;
   background?: string;
+
+  filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
+
 }
 
 export interface MediaItem {
@@ -30,6 +33,8 @@ export interface MediaItem {
   url: string;
   type: 'image' | 'video';
   order: number;
+
+  filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
 }
 
 interface ImageContextType {
@@ -42,9 +47,13 @@ interface ImageContextType {
   selectedTheme: Theme | null;
   setSelectedTheme: (theme: Theme | null) => void;
   slides: Slide[];
-  setSlides: (slides: Slide[]) => void;
+  // setSlides: (slides: Slide[]) => void;
   mediaItems: MediaItem[];
-  setMediaItems: (items: MediaItem[]) => void;
+  // setMediaItems: (items: MediaItem[]) => void;
+
+  setMediaItems: React.Dispatch<React.SetStateAction<MediaItem[]>>;
+  setSlides: React.Dispatch<React.SetStateAction<Slide[]>>;
+
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);

@@ -209,7 +209,7 @@ async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<strin
       }
 
       ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, 1250, 760);
-      
+
       canvas.toBlob(blob => {
         if (!blob) reject(new Error('Canvas is empty'));
         else resolve(URL.createObjectURL(blob));
@@ -249,7 +249,85 @@ function Step3() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
+  // Filters state
+  const [brightness, setBrightness] = useState(100);   // default 100%
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const [blur, setBlur] = useState(0);                // default 0px
 
+  // OG state stored
+  const originalFilters = useRef({
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    blur: 0,
+  });
+
+  // Filters reset for new image for editing
+  useEffect(() => { 
+    if (selectedImage) {
+      originalFilters.current = { brightness, contrast, saturation, blur };
+      setBrightness(100);
+      setContrast(100);
+      setSaturation(100);
+      setBlur(0);
+    }
+  }, [selectedImage]);
+  
+  // CSS filter string
+  const filterStyle = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px)`;
+
+
+  // Save & Exit
+  const handleSaveAndExit = () => {
+    if (!selectedImage) return;
+    const filters = { brightness, contrast, saturation, blur };
+  
+    setMediaItems((prevItems: MediaItem[]): MediaItem[] =>
+      prevItems.map((item: MediaItem) =>
+        item.id === selectedImage.id ? { ...item, filters } : item
+      )
+    );
+  
+    setSlides((prevSlides: Slide[]): Slide[] =>
+      prevSlides.map((slide: Slide) =>
+        slide.backgroundImage === selectedImage.url ? { ...slide, filters } : slide
+      )
+    );
+  
+    setSelectedImage(null);
+    setIsEditing(false);
+    setIsCropping(false);
+  
+    setBrightness(100);
+    setContrast(100);
+    setSaturation(100);
+    setBlur(0);
+  };
+  
+  
+  
+  useEffect(() => {
+    if (selectedImage) {
+      // Try loading filters from slide or media (id or url match)
+      const foundMedia = mediaItems.find(item => item.id === selectedImage.id);
+      const foundSlide = slides.find(slide => slide.backgroundImage === selectedImage.url);
+  
+      const filters =
+        foundMedia?.filters ||
+        foundSlide?.filters || 
+        { brightness: 100, contrast: 100, saturation: 100, blur: 0 };
+      setBrightness(filters.brightness);
+      setContrast(filters.contrast);
+      setSaturation(filters.saturation);
+      setBlur(filters.blur);
+    }
+  }, [selectedImage, slides, mediaItems]);
+  
+  
+  
+
+  // Handling the Crop
   const handleCropSave = async () => {
     if (!selectedImage || !croppedAreaPixels) return;
   
@@ -721,7 +799,11 @@ function Step3() {
                                 justifyContent: 'center',
                                 borderRadius: '5px',
                                 marginBottom: '10px',
-                                cursor: slide.backgroundImage ? 'pointer' : 'default'
+                                cursor: slide.backgroundImage ? 'pointer' : 'default',
+
+                                filter: slide.filters
+                                  ? `brightness(${slide.filters.brightness}%) contrast(${slide.filters.contrast}%) saturate(${slide.filters.saturation}%) blur(${slide.filters.blur}px)`
+                                  : 'none'
                               }}
                               onClick={() => {
                                 if (!slide.backgroundImage) return;
@@ -886,7 +968,10 @@ function Step3() {
                                   width: '100%', 
                                   height: '150px', 
                                   objectFit: 'cover',
-                                  filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none',
+                                  filter: item.filters
+                                    ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
+                                    : 'none',
+                                  // filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none',
                                   cursor: 'pointer'
                                 }}
                                 onClick={() => {
@@ -902,7 +987,10 @@ function Step3() {
                                     width: '100%', 
                                     height: '150px', 
                                     objectFit: 'cover',
-                                    filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
+                                    // filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
+                                    filter: item.filters
+                                      ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
+                                      : 'none'
                                   }}
                                 />
                                 <div style={{
@@ -983,6 +1071,8 @@ function Step3() {
                 src={selectedImage.url}
                 alt="Selected"
                 style={{
+                  filter: filterStyle,
+
                   maxWidth: '80%',
                   maxHeight: '80%',
                   borderRadius: 8,
@@ -1021,36 +1111,21 @@ function Step3() {
           }}>
             {/* Close X button top-right */}
             <button
-              onClick={() => {
-                setSelectedImage(null);
-                setIsCropping(false);
-                setIsEditing(false);
-              }}
+              onClick= {handleSaveAndExit}
+
+                // setSelectedImage(null);
+                // setIsCropping(false);
+                // setIsEditing(false);
+              
               style={{
                 alignSelf: 'flex-end',
-                background: 'red',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: 32,
-                height: 32,
-                fontSize: 20,
-                fontWeight: 900,
-                cursor: 'pointer',
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                lineHeight: 0,
-                padding: 0,
-                boxShadow: '0 1px 6px rgba(0,0,0,0.08)',
-                zIndex: 1
+                // background: 'green',
+                fontSize: 17,
+                marginBottom: 16 
               }}
               aria-label="Close"
             >
-              ×
+              Save & Exit
             </button>
 
 
@@ -1066,6 +1141,51 @@ function Step3() {
                 <button onClick={() => setIsCropping(false)}>Cancel</button>
               </>
             )}
+
+            <div style={{ marginTop: 20 }}>
+              <label>Brightness: </label>
+              <input 
+                type="range" 
+                min={0} max={200}  
+                onChange={(e) => setBrightness(Number(e.target.value))}
+                value={brightness}
+              />
+              <label>{brightness}%</label>
+            </div>
+
+            <div>
+              <label>Contrast: </label>
+              <input 
+                type="range" 
+                min={0} max={200}
+                onChange={(e) => setContrast(Number(e.target.value))}
+                value={contrast}
+              />
+              <label>{contrast}%</label>
+            </div>
+
+            <div>
+              <label>Saturation: </label>
+              <input 
+                type="range" 
+                min={0} max={200} 
+                onChange={(e) => setSaturation(Number(e.target.value))}
+                value={saturation}
+              />
+              <label>{saturation}%</label>
+            </div>
+
+            <div>
+              <label>Blur: </label>
+              <input 
+                type="range" 
+                min={0} max={10} 
+                onChange={(e) => setBlur(Number(e.target.value))}
+                value={blur}
+              />
+              <label>{blur}px</label>
+            </div>
+
           </div>
         )}
 
