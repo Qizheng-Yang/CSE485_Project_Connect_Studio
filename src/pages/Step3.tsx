@@ -36,6 +36,11 @@ import "@fontsource/lobster";
 import "@fontsource/raleway"; 
 import "@fontsource/open-sans"; 
 
+// Cropping import
+import Cropper from 'react-easy-crop';
+import { Area } from 'react-easy-crop';
+
+
 // Import local images for text slide backgrounds
 import image1 from '../assets/image1.png';
 import image2 from '../assets/image2.png';
@@ -183,6 +188,21 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
   );
 };
 
+// Helper for cropping
+async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<string> {
+  // ADD CROPPING LOGIC
+  return imageSrc;
+}
+
+type MediaItem = {
+  id: string;
+  url: string;
+  type: 'image' | 'video';
+  order: number;
+};
+
+
+
 function Step3() {
   const { slides, setSlides, mediaItems, setMediaItems } = useImage();
   const [activeTab, setActiveTab] = useState<'slides' | 'photos'>('slides');
@@ -203,6 +223,23 @@ function Step3() {
   const [categoryIdx, setCategoryIdx] = useState(0); // Category
   
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
+
+  // Cropping state
+  const [selectedImage, setSelectedImage] = useState<MediaItem | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCropping, setIsCropping] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+  const handleCropSave = async () => {
+    if (!selectedImage) return;
+    const croppedImage = await getCroppedImg(selectedImage.url, croppedAreaPixels);
+    setMediaItems(mediaItems.map(item => item.id === selectedImage.id
+      ? { ...item, url: croppedImage }
+      : item));
+    setIsEditing(false);
+  };
 
   // Click outside handler for color picker
   useEffect(() => {
@@ -646,7 +683,19 @@ function Step3() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 borderRadius: '5px',
-                                marginBottom: '10px'
+                                marginBottom: '10px',
+                                cursor: slide.backgroundImage ? 'pointer' : 'default'
+                              }}
+                              onClick={() => {
+                                if (!slide.backgroundImage) return;
+                                setSelectedImage({
+                                  id: slide.id,
+                                  url: slide.backgroundImage ?? '',
+                                  type: 'image',
+                                  order: slide.order
+                                });
+                                setIsEditing(true);
+                                setIsCropping(false);
                               }}
                             >
                               <span style={{
@@ -800,7 +849,12 @@ function Step3() {
                                   width: '100%', 
                                   height: '150px', 
                                   objectFit: 'cover',
-                                  filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
+                                  filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => {
+                                  setSelectedImage(item);
+                                  setIsEditing(true);
                                 }}
                               />
                             ) : (
@@ -871,6 +925,110 @@ function Step3() {
               <div style={{ textAlign: 'center', color: '#666' }}>
                 <p>No photos or videos uploaded yet.</p>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* Cropping Pop Up*/}
+        {selectedImage && (
+          <div style={{
+            position: 'fixed',
+            top: 0, bottom: 0, left: 0,
+            width: `calc(100vw - 400px)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            zIndex: 300,
+          }}>
+            {!isCropping ? (
+              <img
+                src={selectedImage.url}
+                alt="Selected"
+                style={{
+                  maxWidth: '80%',
+                  maxHeight: '80%',
+                  borderRadius: 8,
+                  userSelect: 'none',
+                  boxShadow: '0 0 12px black'
+                }}
+              />
+            ) : (
+              <div style={{ width: '80%', height: '80%', position: 'relative' }}>
+                <Cropper
+                  image={selectedImage.url}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1.73}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(_c, pixels) => setCroppedAreaPixels(pixels)}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/*Side Cropping Panel*/}
+        {selectedImage && (
+          <div style={{
+            position: 'fixed',
+            top: 0, right: 0,
+            width: 400, height: '100%',
+            background: '#fff',
+            padding: 16,
+            boxShadow: '-4px 0 12px rgba(0,0,0,0.2)',
+            zIndex: 310, // above popup overlay
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            {/* Close X button top-right */}
+            <button
+              onClick={() => {
+                setSelectedImage(null);
+                setIsCropping(false);
+                setIsEditing(false);
+              }}
+              style={{
+                alignSelf: 'flex-end',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                fontSize: 20,
+                fontWeight: 900,
+                cursor: 'pointer',
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                lineHeight: 0,
+                padding: 0,
+                boxShadow: '0 1px 6px rgba(0,0,0,0.08)',
+                zIndex: 1
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+
+            <h3>Edit Image</h3>
+
+            {!isCropping ? (
+              <>
+                <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16 }}>Start Crop</button>
+                {/* <button onClick={() => { setSelectedImage(null); setIsCropping(false); }}>Close</button> */}
+              </>
+            ) : (
+              <>
+                <button onClick={handleCropSave} style={{ marginBottom: 12 }}>Crop & Save</button>
+                <button onClick={() => setIsCropping(false)}>Cancel</button>
+              </>
             )}
           </div>
         )}
