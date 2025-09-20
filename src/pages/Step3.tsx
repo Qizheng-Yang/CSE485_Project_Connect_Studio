@@ -1022,7 +1022,6 @@ function Step3() {
             {!isCropping ? (
               <>
                 <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16 }}>Start Crop</button>
-                {/* <button onClick={() => { setSelectedImage(null); setIsCropping(false); }}>Close</button> */}
               </>
             ) : (
               <>
