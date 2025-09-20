@@ -250,10 +250,10 @@ function Step3() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   // Filters state
-  const [brightness, setBrightness] = useState(100);   // default 100%
+  const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
-  const [blur, setBlur] = useState(0);                // default 0px
+  const [blur, setBlur] = useState(0);
 
   // OG state stored
   const originalFilters = useRef({
@@ -971,7 +971,6 @@ function Step3() {
                                   filter: item.filters
                                     ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
                                     : 'none',
-                                  // filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none',
                                   cursor: 'pointer'
                                 }}
                                 onClick={() => {
@@ -987,7 +986,6 @@ function Step3() {
                                     width: '100%', 
                                     height: '150px', 
                                     objectFit: 'cover',
-                                    // filter: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
                                     filter: item.filters
                                       ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
                                       : 'none'
@@ -1105,17 +1103,13 @@ function Step3() {
             background: '#fff',
             padding: 16,
             boxShadow: '-4px 0 12px rgba(0,0,0,0.2)',
-            zIndex: 310, // above popup overlay
+            zIndex: 310,
             display: 'flex',
             flexDirection: 'column',
           }}>
-            {/* Close X button top-right */}
+            {/* Save & Exit button top-right */}
             <button
               onClick= {handleSaveAndExit}
-
-                // setSelectedImage(null);
-                // setIsCropping(false);
-                // setIsEditing(false);
               
               style={{
                 alignSelf: 'flex-end',
@@ -1134,7 +1128,7 @@ function Step3() {
             <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Crop</h4>
             {!isCropping ? (
               <>
-                <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16 }}>Start Crop</button>
+                <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16, fontSize: '16px', marginRight: '70px', marginLeft: '100px'}}>Start Crop</button>
               </>
             ) : (
               <>
@@ -1143,55 +1137,89 @@ function Step3() {
               </>
             )}
 
-            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Adjust Filters</h4>
+            <div>
+              <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Adjust Filters</h4>
+              
+              {/*Slider UI*/}
+              <style>
+              {`
+                input[type="range"] {
+                  -webkit-appearance: none;
+                  appearance: none;
+                }
+                input[type="range"]:focus {
+                  outline: none;
+                }
+                input[type="range"]::-webkit-slider-thumb {
+                  -webkit-appearance: none;
+                  appearance: none;
+                  background: #b2cc55;
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  border: 2px solid #669900;
+                  box-shadow: 0 0 4px rgba(0,0,0,0.12);
+                  margin-top: -7px;
+                }
+                input[type="range"]::-webkit-slider-runnable-track {
+                  height: 3px;
+                  background: #bbb;
+                  border-radius: 2px;
+                }
+              `}
+              </style>
 
-            <div className="my-slider" style={{ display: 'flex', alignItems: 'center', marginBottom: '12px'}}>
-              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Brightness: </label>
-              <input 
-                type="range" 
-                min={0} max={200}  
-                onChange={(e) => setBrightness(Number(e.target.value))}
-                style={{ flex: '1 1 auto', marginLeft:'25px'}}
-                value={brightness}
-              />
-              <label style={{textAlign: 'right', marginLeft: '20px' }}>{brightness}%</label>
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Contrast: </label>
-              <input 
-                type="range" 
-                min={0} max={200}
-                onChange={(e) => setContrast(Number(e.target.value))}
-                style={{ flex: '1 1 auto', marginLeft:'43px'}}
-                value={contrast}
-              />
-              <label style={{textAlign: 'right', marginLeft: '20px' }}>{contrast}%</label>
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Saturation: </label>
-              <input 
-                type="range" 
-                min={0} max={200} 
-                onChange={(e) => setSaturation(Number(e.target.value))}
-                style={{ flex: '1 1 auto', marginLeft:'28px'}}
-                value={saturation}
-                
-              />
-              <label style={{textAlign: 'right', marginLeft: '20px' }}>{saturation}%</label>
-            </div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px'}}>
+                <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Brightness: </label>
+                <input 
+                  type="range" 
+                  min={0} max={200}  
+                  onChange={(e) => setBrightness(Number(e.target.value))}
+                  style={{ flex: '1 1 auto', marginLeft:'25px'}}
+                  value={brightness}
+                />
+                <label style={{textAlign: 'right', marginLeft: '20px' }}>{brightness}%</label>
+              </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Blur: </label>
-              <input 
-                type="range" 
-                min={0} max={10} 
-                onChange={(e) => setBlur(Number(e.target.value))}
-                style={{ flex: '1 1 auto', marginLeft:'78px'}}
-                value={blur}
-              />
-              <label style={{textAlign: 'right', marginLeft: '36px' }}>{blur}px</label>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Contrast: </label>
+                <input 
+                  type="range" 
+                  min={0} max={200}
+                  onChange={(e) => setContrast(Number(e.target.value))}
+                  style={{ flex: '1 1 auto', marginLeft:'43px'}}
+                  value={contrast}
+                />
+                <label style={{textAlign: 'right', marginLeft: '20px' }}>{contrast}%</label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Saturation: </label>
+                <input 
+                  type="range" 
+                  min={0} max={200} 
+                  onChange={(e) => setSaturation(Number(e.target.value))}
+                  style={{ flex: '1 1 auto', marginLeft:'28px'}}
+                  value={saturation}
+                  
+                />
+                <label style={{textAlign: 'right', marginLeft: '20px' }}>{saturation}%</label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Blur: </label>
+                <input 
+                  type="range" 
+                  min={0} max={10} 
+                  onChange={(e) => setBlur(Number(e.target.value))}
+                  style={{ flex: '1 1 auto', marginLeft:'78px'}}
+                  value={blur}
+                />
+                <label style={{textAlign: 'right', marginLeft: '36px' }}>{blur}px</label>
+              </div>
             </div>
 
           </div>
