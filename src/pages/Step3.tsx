@@ -1113,7 +1113,7 @@ function Step3() {
               
               style={{
                 alignSelf: 'flex-end',
-                // background: 'green',
+                background: '#97d154',
                 fontSize: 17,
                 marginBottom: 16
               }}
@@ -1149,7 +1149,7 @@ function Step3() {
                     setBlur(0);
                   }}
                   style={{
-                    backgroundColor: 'red',
+                    backgroundColor: '#f05a4f',
                     border: 'none',
                     color: 'white',
                     padding: '6px 12px',
