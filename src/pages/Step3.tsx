@@ -259,6 +259,11 @@ function Step3() {
         slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: croppedImage } : slide
       );
     
+    setSelectedImage(prev =>
+      prev ? { ...prev, url: croppedImage } : null
+    );
+      
+    
     setMediaItems(updateMediaItems(mediaItems));
     setSlides(updateSlides(slides));
       
