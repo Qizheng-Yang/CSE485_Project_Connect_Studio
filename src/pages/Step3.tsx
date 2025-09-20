@@ -198,14 +198,18 @@ async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<strin
     image.src = imageSrc;
     image.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = crop.width;
-      canvas.height = crop.height;
+
+      canvas.width = 1250;
+      canvas.height = 760;
+
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         reject(new Error('Canvas context not available'));
         return;
       }
-      ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height);
+
+      ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, 1250, 760);
+      
       canvas.toBlob(blob => {
         if (!blob) reject(new Error('Canvas is empty'));
         else resolve(URL.createObjectURL(blob));
