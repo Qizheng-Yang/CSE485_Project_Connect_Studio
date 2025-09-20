@@ -3,6 +3,7 @@ import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useImage } from '../context/ImageContext';
+import { MediaItem, Slide } from '../context/ImageContext';
 import { useDropzone } from 'react-dropzone';
 import {
   DndContext,
@@ -190,17 +191,29 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
 
 // Helper for cropping
 async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<string> {
-  // ADD CROPPING LOGIC
-  return imageSrc;
+  if (!crop) return imageSrc;
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = imageSrc;
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = crop.width;
+      canvas.height = crop.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+      ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height);
+      canvas.toBlob(blob => {
+        if (!blob) reject(new Error('Canvas is empty'));
+        else resolve(URL.createObjectURL(blob));
+      }, 'image/png');
+    };
+    image.onerror = error => reject(error);
+  });
 }
-
-type MediaItem = {
-  id: string;
-  url: string;
-  type: 'image' | 'video';
-  order: number;
-};
-
 
 
 function Step3() {
@@ -232,14 +245,29 @@ function Step3() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
+
   const handleCropSave = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage || !croppedAreaPixels) return;
+  
     const croppedImage = await getCroppedImg(selectedImage.url, croppedAreaPixels);
-    setMediaItems(mediaItems.map(item => item.id === selectedImage.id
-      ? { ...item, url: croppedImage }
-      : item));
+
+    const updateMediaItems = (prevItems: MediaItem[]) => 
+      prevItems.map(item => item.id === selectedImage.id ? { ...item, url: croppedImage } : item);
+
+    const updateSlides = (prevSlides: Slide[]) =>
+      prevSlides.map(slide =>
+        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: croppedImage } : slide
+      );
+    
+    setMediaItems(updateMediaItems(mediaItems));
+    setSlides(updateSlides(slides));
+      
+
     setIsEditing(false);
+    setIsCropping(false);
   };
+  
+  
 
   // Click outside handler for color picker
   useEffect(() => {

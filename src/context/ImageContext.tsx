@@ -8,7 +8,7 @@ interface Theme {
   alt: string;
 }
 
-interface Slide {
+export interface Slide {
   id: string;
   type: 'text' | 'image';
   backgroundImage?: string;
@@ -25,7 +25,7 @@ interface Slide {
   background?: string;
 }
 
-interface MediaItem {
+export interface MediaItem {
   id: string;
   url: string;
   type: 'image' | 'video';
