@@ -1115,7 +1115,7 @@ function Step3() {
                 alignSelf: 'flex-end',
                 // background: 'green',
                 fontSize: 17,
-                marginBottom: 16 
+                marginBottom: 16
               }}
               aria-label="Close"
             >
@@ -1138,8 +1138,35 @@ function Step3() {
             )}
 
             <div>
-              <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Adjust Filters</h4>
-              
+              {/*Title & reset for filters*/}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 15}}>
+                <h4 style={{ fontSize: '19px', marginBottom: 30}}>Adjust Filters</h4>
+                <button 
+                  onClick={() => {
+                    setBrightness(100);
+                    setContrast(100);
+                    setSaturation(100);
+                    setBlur(0);
+                  }}
+                  style={{
+                    backgroundColor: 'red',
+                    border: 'none',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    marginLeft: '10px',
+                  }}
+                >
+                  Reset Filters
+                </button>
+              </div>
+
+
+
+
+
               {/*Slider UI*/}
               <style>
               {`
@@ -1172,7 +1199,7 @@ function Step3() {
 
 
 
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px'}}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px', marginTop: '1px'}}>
                 <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Brightness: </label>
                 <input 
                   type="range" 
@@ -1184,7 +1211,7 @@ function Step3() {
                 <label style={{textAlign: 'right', marginLeft: '20px' }}>{brightness}%</label>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px', marginTop: '1px'}}>
                 <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Contrast: </label>
                 <input 
                   type="range" 
@@ -1196,7 +1223,7 @@ function Step3() {
                 <label style={{textAlign: 'right', marginLeft: '20px' }}>{contrast}%</label>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px', marginTop: '1px'}}>
                 <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Saturation: </label>
                 <input 
                   type="range" 
@@ -1209,7 +1236,7 @@ function Step3() {
                 <label style={{textAlign: 'right', marginLeft: '20px' }}>{saturation}%</label>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px', marginTop: '1px'}}>
                 <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Blur: </label>
                 <input 
                   type="range" 
