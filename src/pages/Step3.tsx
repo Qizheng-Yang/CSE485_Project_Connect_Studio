@@ -1129,8 +1129,9 @@ function Step3() {
             </button>
 
 
-            <h3>Edit Image</h3>
+            <h2>Edit Image</h2>
 
+            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Crop</h4>
             {!isCropping ? (
               <>
                 <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16 }}>Start Crop</button>
@@ -1142,48 +1143,55 @@ function Step3() {
               </>
             )}
 
-            <div style={{ marginTop: 20 }}>
-              <label>Brightness: </label>
+            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Adjust Filters</h4>
+
+            <div className="my-slider" style={{ display: 'flex', alignItems: 'center', marginBottom: '12px'}}>
+              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Brightness: </label>
               <input 
                 type="range" 
                 min={0} max={200}  
                 onChange={(e) => setBrightness(Number(e.target.value))}
+                style={{ flex: '1 1 auto', marginLeft:'25px'}}
                 value={brightness}
               />
-              <label>{brightness}%</label>
+              <label style={{textAlign: 'right', marginLeft: '20px' }}>{brightness}%</label>
             </div>
 
-            <div>
-              <label>Contrast: </label>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Contrast: </label>
               <input 
                 type="range" 
                 min={0} max={200}
                 onChange={(e) => setContrast(Number(e.target.value))}
+                style={{ flex: '1 1 auto', marginLeft:'43px'}}
                 value={contrast}
               />
-              <label>{contrast}%</label>
+              <label style={{textAlign: 'right', marginLeft: '20px' }}>{contrast}%</label>
             </div>
 
-            <div>
-              <label>Saturation: </label>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Saturation: </label>
               <input 
                 type="range" 
                 min={0} max={200} 
                 onChange={(e) => setSaturation(Number(e.target.value))}
+                style={{ flex: '1 1 auto', marginLeft:'28px'}}
                 value={saturation}
+                
               />
-              <label>{saturation}%</label>
+              <label style={{textAlign: 'right', marginLeft: '20px' }}>{saturation}%</label>
             </div>
 
-            <div>
-              <label>Blur: </label>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+              <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Blur: </label>
               <input 
                 type="range" 
                 min={0} max={10} 
                 onChange={(e) => setBlur(Number(e.target.value))}
+                style={{ flex: '1 1 auto', marginLeft:'78px'}}
                 value={blur}
               />
-              <label>{blur}px</label>
+              <label style={{textAlign: 'right', marginLeft: '36px' }}>{blur}px</label>
             </div>
 
           </div>

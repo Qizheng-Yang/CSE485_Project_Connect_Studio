@@ -1103,4 +1103,9 @@ body {
 
 
 
+/* Editing Sliders*/
+.my-slider input[type="range"]::-webkit-slider-thumb {
+  background: #b2cc55;
+}
+
 
