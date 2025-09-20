@@ -1132,8 +1132,8 @@ function Step3() {
               </>
             ) : (
               <>
-                <button onClick={handleCropSave} style={{ marginBottom: 12 }}>Crop & Save</button>
-                <button onClick={() => setIsCropping(false)}>Cancel</button>
+                <button onClick={handleCropSave} style={{ marginBottom: 12, fontSize: '16px', marginRight: '70px', marginLeft: '100px' }}>Crop & Save</button>
+                <button onClick={() => setIsCropping(false)} style={{fontSize: '16px', marginRight: '70px', marginLeft: '100px' }}>Cancel</button>
               </>
             )}
 
@@ -1178,7 +1178,7 @@ function Step3() {
                   type="range" 
                   min={0} max={200}  
                   onChange={(e) => setBrightness(Number(e.target.value))}
-                  style={{ flex: '1 1 auto', marginLeft:'25px'}}
+                  style={{ flex: '1 1 auto', marginLeft:'22px'}}
                   value={brightness}
                 />
                 <label style={{textAlign: 'right', marginLeft: '20px' }}>{brightness}%</label>
@@ -1202,7 +1202,7 @@ function Step3() {
                   type="range" 
                   min={0} max={200} 
                   onChange={(e) => setSaturation(Number(e.target.value))}
-                  style={{ flex: '1 1 auto', marginLeft:'28px'}}
+                  style={{ flex: '1 1 auto', marginLeft:'26px'}}
                   value={saturation}
                   
                 />
@@ -1215,7 +1215,7 @@ function Step3() {
                   type="range" 
                   min={0} max={10} 
                   onChange={(e) => setBlur(Number(e.target.value))}
-                  style={{ flex: '1 1 auto', marginLeft:'78px'}}
+                  style={{ flex: '1 1 auto', marginLeft:'83px'}}
                   value={blur}
                 />
                 <label style={{textAlign: 'right', marginLeft: '36px' }}>{blur}px</label>
