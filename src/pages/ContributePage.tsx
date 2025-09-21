@@ -1,4 +1,3 @@
-// src/pages/ContributePage.tsx
 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,9 +9,6 @@ const ContributePage = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [message, setMessage] = useState('');
 
-  // In a real app, you would upload these files to a server,
-  // associating them with the `tributeId`. For this project,
-  // we can just log them to the console.
   const onDrop = (acceptedFiles: File[]) => {
     setUploadedFiles(prev => [...prev, ...acceptedFiles]);
     setMessage(`${acceptedFiles.length} file(s) added! Thank you for contributing.`);
@@ -29,7 +25,6 @@ const ContributePage = () => {
     },
   });
 
-  // --- ADD EVERYTHING FROM HERE DOWN ---
 
   return (
     <div className="container">
@@ -71,5 +66,6 @@ const ContributePage = () => {
     </div>
   );
 };
+
 
 export default ContributePage;
