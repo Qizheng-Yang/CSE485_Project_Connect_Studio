@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { ImageProvider } from './context/ImageContext'; // Import the ImageProvider
 import Home from './pages/Home';
 import CreateVideo from './pages/CreateVideo';
 import Step1 from './pages/Step1';
@@ -9,10 +8,10 @@ import Step4 from './pages/Step4';
 import Step5 from './pages/Step5';
 import Step6 from './pages/Step6';
 import AuthPage from './pages/AuthPage'; // import your full-page auth component
+import ContributePage from './pages/ContributePage';
 
 function App() {
   return (
-    <ImageProvider> {/* Provide context to all routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<CreateVideo />} />
@@ -22,9 +21,13 @@ function App() {
         <Route path="/step/4" element={<Step4 />} />
         <Route path="/step/5" element={<Step5 />} />
         <Route path="/step/6" element={<Step6 />} />
-        <Route path="/auth" element={<AuthPage />} /> {/* <-- Add this line! */}
+        <Route path="/auth" element={<AuthPage />} /> 
+        <Route path="/contribute/:tributeId" element={<ContributePage />} />
+
+        <Route path="*" element={<h1>404: Page Not Found</h1>} />
+
+
       </Routes>
-    </ImageProvider>
   );
 }
 
