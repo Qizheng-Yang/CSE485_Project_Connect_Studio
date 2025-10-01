@@ -399,3 +399,162 @@ input:checked + .slider:before {
   z-index: 1000;
 }
 }
+
+
+
+
+/* This section is for the sharable link*/
+
+.photo-gallery-link-section {
+  margin: 40px auto;
+  padding: 20px;
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  max-width: 1000px;
+}
+
+.photo-gallery-link-section h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.photo-gallery-link-section p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Flex container for the whole row */
+.link-controls-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Container for the toggle switch and its text */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-text {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Container for the link box and buttons */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1; /* Allows this section to fill available space */
+}
+
+/* The text box for the link */
+.link-box {
+  flex-grow: 1;
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  min-width: 250px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Style for Copy and Email buttons */
+.copy-button, .email-button {
+  padding: 10px 24px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: black;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover, .email-button:hover {
+  border-color: #888;
+  background-color: #f9f9f9;
+}
+
+
+/*           */
+
+/* In Gallery.css or your main stylesheet */
+
+/* 
+  This is the main flex container for the whole row.
+  'justify-content: space-between' is the key change. It pushes the
+  toggle switch to the left and the link section to the right.
+*/
+.link-controls-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes children to opposite ends */
+  gap: 20px;
+  flex-wrap: wrap; /* Allows stacking on very small screens */
+  margin-top: 20px; /* Adds space below the toggle */
+}
+
+/* This container for the link box and buttons remains the same */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1; /* Allows this section to fill available space */
+}
+
+/* 
+  This is the text box for the link.
+  'flex-grow: 1' makes it expand to fill the space.
+  We've also added the green border on focus.
+*/
+.link-box {
+  flex-grow: 1; /* This makes the input field take up all available space */
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 9999px; /* This makes it pill-shaped like the buttons */
+  font-family: monospace;
+  min-width: 250px;
+  transition: border-color 0.2s ease-in-out; /* Smooth transition for the border */
+}
+
+/* This is the new rule for the green highlight */
+.link-box:focus {
+  outline: none; /* Removes the default blue outline */
+  border-color: var(--primary-green); /* Uses your project's green variable */
+}
+
+
+/* --- You can also update your button styles to match the image better --- */
+
+.copy-button, .email-button {
+  padding: 10px 24px;
+  background-color: var(--primary-green); /* Green background */
+  color: black;
+  border: none; /* Remove the border */
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.copy-button:hover, .email-button:hover {
+  background-color: #a0c000; /* A slightly darker green for hover */
+}
