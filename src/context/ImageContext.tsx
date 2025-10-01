@@ -1,14 +1,14 @@
-// ImageContext.tsx
-import React, { createContext, useState, useContext } from 'react';
+// src/context/ImageContext.tsx
 
+import { createContext, useState, useContext, ReactNode } from 'react';
 
+// --- Interfaces ---
 interface Theme {
   id: number;
   src: string;
   alt: string;
 }
-
-export interface Slide {
+interface Slide {
   id: string;
   type: 'text' | 'image';
   backgroundImage?: string;
@@ -18,25 +18,15 @@ export interface Slide {
   customColor?: string;     
   customDuration?: string;
   order: number;
-  
   transition?: string;
   effect?: string;
-  border?: string;
-  background?: string;
-
-  filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
-
 }
-
-export interface MediaItem {
+interface MediaItem {
   id: string;
   url: string;
   type: 'image' | 'video';
   order: number;
-
-  filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
 }
-
 interface ImageContextType {
   uploadedImage: string | null;
   setUploadedImage: (imageUrl: string | null) => void;
@@ -47,48 +37,46 @@ interface ImageContextType {
   selectedTheme: Theme | null;
   setSelectedTheme: (theme: Theme | null) => void;
   slides: Slide[];
-  // setSlides: (slides: Slide[]) => void;
+  setSlides: (slides: Slide[]) => void;
   mediaItems: MediaItem[];
-  // setMediaItems: (items: MediaItem[]) => void;
-
-  setMediaItems: React.Dispatch<React.SetStateAction<MediaItem[]>>;
-  setSlides: React.Dispatch<React.SetStateAction<Slide[]>>;
-
+  setMediaItems: (items: MediaItem[]) => void;
+  isLinkEnabled: boolean;
+  setIsLinkEnabled: (enabled: boolean) => void;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
 
-export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ImageProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [intro, setIntro] = useState<string>('In Loving Memory of');
   const [name, setName] = useState<string>('');
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [slides, setSlides] = useState<Slide[]>([]);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [isLinkEnabled, setIsLinkEnabled] = useState(false);
+
+  
+  const value = { 
+    uploadedImage, setUploadedImage, 
+    intro, setIntro, 
+    name, setName, 
+    selectedTheme, setSelectedTheme,
+    slides, setSlides,
+    mediaItems, setMediaItems,
+    isLinkEnabled,
+    setIsLinkEnabled // This line is the key to fixing the bug.
+  };
 
   return (
-    <ImageContext.Provider value={{ 
-      uploadedImage, 
-      setUploadedImage, 
-      intro, 
-      setIntro, 
-      name, 
-      setName, 
-      selectedTheme, 
-      setSelectedTheme,
-      slides, 
-      setSlides,
-      mediaItems,
-      setMediaItems
-    }}>
+    <ImageContext.Provider value={value}>
       {children}
     </ImageContext.Provider>
   );
 };
 
-export const useImage = (): ImageContextType => {
+export const useImage = () => {
   const context = useContext(ImageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useImage must be used within an ImageProvider');
   }
   return context;
