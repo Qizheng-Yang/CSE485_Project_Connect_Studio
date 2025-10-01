@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import NavbarBabbo from '../components/NavbarBabbo'; // Or a simpler guest navbar
@@ -66,6 +67,5 @@ const ContributePage = () => {
     </div>
   );
 };
-
 
 export default ContributePage;
