@@ -1,6 +1,6 @@
 // src/components/PhotoGalleryLink.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useImage } from '../context/ImageContext';
 import ToggleSwitch from './ToggleSwitch';
 
@@ -8,19 +8,25 @@ const PhotoGalleryLink = () => {
   const { name, isLinkEnabled, setIsLinkEnabled } = useImage();
   const [isCopied, setIsCopied] = useState(false);
 
-  // Generate a URL-friendly version of the name
+
   const tributeIdentifier = name ? name.toLowerCase().replace(/\s+/g, '-') : 'your-tribute';
   const uploadLink = `${window.location.origin}/contribute/${tributeIdentifier}`;
+  console.log('isLinkEnabled value is:', isLinkEnabled);
 
+  // Function to copy the link to the clipboard
   const handleCopy = () => {
     navigator.clipboard.writeText(uploadLink);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+   
+    setTimeout(() => setIsCopied(false), 2000); 
   };
+
 
   const handleEmail = () => {
     const subject = `Contribute photos to the tribute for ${name || 'our loved one'}`;
     const body = `Hi there,\n\nWe're creating a tribute video and would love for you to contribute your favorite photos and videos. Please use the link below to upload your memories:\n\n${uploadLink}\n\nThank you!`;
+    
+    // Create a mailto link and navigate to it
     const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoLink;
   };
@@ -31,10 +37,12 @@ const PhotoGalleryLink = () => {
       <p>Send this link to your family and friends and allow them to contribute Photos and Videos</p>
       
       <div className="link-controls-horizontal">
+
         <div className="toggle-container">
           <ToggleSwitch checked={isLinkEnabled} onChange={setIsLinkEnabled} />
           <span className="toggle-text">Enable Upload Link</span>
         </div>
+
 
         {isLinkEnabled && (
           <div className="right-section">
@@ -54,6 +62,7 @@ const PhotoGalleryLink = () => {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
