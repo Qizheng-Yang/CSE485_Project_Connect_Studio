@@ -448,6 +448,7 @@ function Step3() {
   };
 
   const removeSlide = (id: string) => {
+    console.log('removeSlide called with id:', id);
     const filteredSlides = slides.filter(slide => slide.id !== id);
     // Reorder the remaining slides
     const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index }));
@@ -455,6 +456,7 @@ function Step3() {
   };
 
   const removeMediaItem = (id: string) => {
+    console.log('removeMediaItem called with id:', id);
     const item = mediaItems.find(item => item.id === id);
     if (item) {
       URL.revokeObjectURL(item.url);
@@ -542,7 +544,9 @@ function Step3() {
                       src={imageUrl}
                       alt={`Background ${index + 1}`}
                       style={{
-                        width: '200px',
+                        width: '120px',
+
+                        height: '80px',
                         cursor: 'pointer',
                         border: currentSlide.backgroundImage === imageUrl ? '3px solid #b2cc55' : '1px solid #ddd',
                         borderRadius: '5px'
