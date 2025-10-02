@@ -1,2 +1,12 @@
 node_modules/
 .env
+
+# Large image files - these should be hosted elsewhere or compressed
+src/assets/*.png
+src/assets/*.jpg
+src/assets/*.jpeg
+src/assets/*.gif
+src/assets/*.svg
+
+# System files
+.DS_Store
