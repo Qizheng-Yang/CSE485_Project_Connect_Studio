@@ -1,0 +1,30 @@
+{
+  "name": "connect-studio-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Connect Studio video generation website",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "init-db": "node scripts/init-database.js",
+    "view-db": "node scripts/view-database.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.6",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["video", "generation", "api", "express", "sqlite"],
+  "author": "Connect Studio Team",
+  "license": "MIT"
+}
