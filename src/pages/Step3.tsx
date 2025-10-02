@@ -229,7 +229,8 @@ function Step3() {
     uploadMediaFiles,
     currentProject,
     isLoading,
-    error 
+    error,
+    saveSlides
   } = useImage();
   const [activeTab, setActiveTab] = useState<'slides' | 'photos'>('slides');
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
@@ -421,7 +422,7 @@ function Step3() {
     })
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       if (activeTab === 'slides') {
@@ -430,6 +431,14 @@ function Step3() {
         const reorderedItems = arrayMove(slides, oldIndex, newIndex);
         const updatedSlides = reorderedItems.map((item, index) => ({ ...item, order: index }));
         setSlides(updatedSlides);
+        
+        // Save slides to database
+        try {
+          await saveSlides();
+          console.log('Slides reordered and saved to database');
+        } catch (error) {
+          console.error('Failed to save slides:', error);
+        }
       } else {
         const oldIndex = mediaItems.findIndex(item => item.id === active.id);
         const newIndex = mediaItems.findIndex(item => item.id === over.id);
@@ -440,7 +449,7 @@ function Step3() {
     }
   };
 
-  const handleAddSlide = () => {
+  const handleAddSlide = async () => {
     if (currentSlide.backgroundImage && currentSlide.customText) {
       const newSlide = {
         id: Date.now().toString(),
@@ -454,7 +463,18 @@ function Step3() {
         transition: selectedTransition,
         effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
       };
-      setSlides([...slides, newSlide]);
+      
+      const updatedSlides = [...slides, newSlide];
+      setSlides(updatedSlides);
+      
+      // Save slides to database
+      try {
+        await saveSlides();
+        console.log('Slide saved to database');
+      } catch (error) {
+        console.error('Failed to save slide:', error);
+        // Continue anyway - slide is still in local state
+      }
       
       // Reset form
       setCurrentSlide({
@@ -468,11 +488,19 @@ function Step3() {
     }
   };
 
-  const removeSlide = (id: string) => {
+  const removeSlide = async (id: string) => {
     const filteredSlides = slides.filter(slide => slide.id !== id);
     // Reorder the remaining slides
     const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index }));
     setSlides(reorderedSlides);
+    
+    // Save slides to database
+    try {
+      await saveSlides();
+      console.log('Slides updated in database');
+    } catch (error) {
+      console.error('Failed to save slides:', error);
+    }
   };
 
   const removeMediaItem = (id: string) => {

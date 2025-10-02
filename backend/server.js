@@ -13,6 +13,7 @@ import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import mediaRoutes from './routes/media.js';
 import themeRoutes from './routes/themes.js';
+import slideRoutes from './routes/slides.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -64,6 +65,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/media', mediaRoutes);
 app.use('/api/themes', themeRoutes);
+app.use('/api/slides', slideRoutes);
 
 // Serve static files (uploaded media)
 app.use('/uploads', express.static(config.UPLOAD_DIR));
@@ -128,6 +130,10 @@ API Endpoints:
   
   GET  /api/themes            - Get all themes
   GET  /api/themes/:id        - Get theme by ID
+  
+  GET  /api/slides/project/:projectId    - Get project slides
+  POST /api/slides/project/:projectId    - Save project slides
+  DELETE /api/slides/project/:projectId  - Delete project slides
 
 Ready to accept connections! 🎉
       `);

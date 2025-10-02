@@ -1,6 +1,6 @@
 // ImageContext.tsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { projectsAPI, mediaAPI } from '../services/api';
+import { projectsAPI, mediaAPI, slidesAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 
 interface Theme {
@@ -31,11 +31,12 @@ export interface Slide {
 export interface MediaItem {
   id: string;
   url: string;
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'audio';
   order: number;
   fileId?: string; // Backend file ID
   filename?: string;
   originalFilename?: string;
+  duration?: string; // For audio files
 
   filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
 }
@@ -76,6 +77,11 @@ interface ImageContextType {
   // File upload functions
   uploadMainImage: (file: File) => Promise<string | null>;
   uploadMediaFiles: (files: File[]) => Promise<MediaItem[]>;
+  uploadMusicFiles: (files: File[]) => Promise<MediaItem[]>;
+  
+  // Slide management functions
+  saveSlides: () => Promise<void>;
+  loadSlides: () => Promise<void>;
   
   // Loading states
   isLoading: boolean;
@@ -203,7 +209,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           order: file.order_index,
           fileId: file.id.toString(),
           filename: file.filename,
-          originalFilename: file.original_filename
+          originalFilename: file.original_filename,
+          duration: file.duration || '0:00' // For audio files
         }));
         setMediaItems(mediaItems);
         
@@ -212,6 +219,31 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (mainImage) {
           setUploadedImage(mediaAPI.getFileUrl(mainImage.id));
         }
+      }
+
+      // Load slides for this project
+      try {
+        const slidesResponse = await slidesAPI.getProjectSlides(projectData.id);
+        if (slidesResponse.slides) {
+          const loadedSlides: Slide[] = slidesResponse.slides.map((slide: any) => ({
+            id: slide.id,
+            type: slide.type,
+            backgroundImage: slide.backgroundImage,
+            mediaFileId: slide.mediaFileId,
+            order: slide.order,
+            customText: slide.customText,
+            customFont: slide.customFont,
+            customColor: slide.customColor,
+            customDuration: slide.customDuration,
+            transition: slide.transition,
+            effect: slide.effect,
+            filters: slide.filters
+          }));
+          setSlides(loadedSlides);
+        }
+      } catch (slidesError) {
+        console.warn('Could not load slides:', slidesError);
+        // Continue without slides - not critical
       }
       
     } catch (err: any) {
@@ -299,6 +331,117 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Upload music files specifically
+  const uploadMusicFiles = async (files: File[]): Promise<MediaItem[]> => {
+    if (!currentProject) {
+      setError('Please create a project first');
+      return [];
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await mediaAPI.upload(currentProject.id, files);
+      
+      if (response.files) {
+        const newMusicItems: MediaItem[] = response.files.map((file: any) => ({
+          id: file.id.toString(),
+          url: mediaAPI.getFileUrl(file.id),
+          type: file.fileType,
+          order: file.orderIndex,
+          fileId: file.id.toString(),
+          filename: file.filename,
+          originalFilename: file.originalFilename,
+          duration: file.duration || '0:00' // Will be calculated on frontend
+        }));
+        
+        // Add to mediaItems (music files are also media files)
+        setMediaItems(prev => [...prev, ...newMusicItems]);
+        return newMusicItems;
+      }
+      
+      return [];
+    } catch (err: any) {
+      setError(err.message || 'Failed to upload music files');
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Save slides to database
+  const saveSlides = async (): Promise<void> => {
+    if (!currentProject) {
+      setError('Please create a project first');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Prepare slides data for API
+      const slidesData = slides.map(slide => ({
+        id: slide.id,
+        type: slide.type,
+        backgroundImage: slide.backgroundImage,
+        mediaFileId: slide.mediaFileId || null,
+        order: slide.order,
+        duration: parseFloat(slide.customDuration || '5'),
+        transition: slide.transition || 'fade',
+        filters: slide.filters || null,
+        customText: slide.customText || '',
+        customFont: slide.customFont || 'Montserrat',
+        customColor: slide.customColor || '#000000'
+      }));
+
+      await slidesAPI.saveProjectSlides(currentProject.id, slidesData);
+      console.log('Slides saved successfully');
+    } catch (err: any) {
+      setError(err.message || 'Failed to save slides');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load slides from database
+  const loadSlides = async (): Promise<void> => {
+    if (!currentProject) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await slidesAPI.getProjectSlides(currentProject.id);
+      
+      if (response.slides) {
+        const loadedSlides: Slide[] = response.slides.map((slide: any) => ({
+          id: slide.id,
+          type: slide.type,
+          backgroundImage: slide.backgroundImage,
+          mediaFileId: slide.mediaFileId,
+          order: slide.order,
+          customText: slide.customText,
+          customFont: slide.customFont,
+          customColor: slide.customColor,
+          customDuration: slide.customDuration,
+          transition: slide.transition,
+          effect: slide.effect,
+          filters: slide.filters
+        }));
+        
+        setSlides(loadedSlides);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to load slides');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Auto-create project when user starts entering data (disabled for now to avoid conflicts)
   // useEffect(() => {
   //   if (isAuthenticated && !currentProject && (name || intro !== 'In Loving Memory of')) {
@@ -339,6 +482,11 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // File uploads
       uploadMainImage,
       uploadMediaFiles,
+      uploadMusicFiles,
+      
+      // Slide management
+      saveSlides,
+      loadSlides,
       
       // Loading states
       isLoading,

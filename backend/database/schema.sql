@@ -49,6 +49,10 @@ CREATE TABLE IF NOT EXISTS slides (
     duration FLOAT DEFAULT 3.0, -- seconds
     transition VARCHAR(50) DEFAULT 'fade',
     filters TEXT, -- JSON string for filters (saturation, blur, etc.)
+    -- Text slide specific fields
+    custom_text TEXT,
+    custom_font VARCHAR(100) DEFAULT 'Montserrat',
+    custom_color VARCHAR(20) DEFAULT '#000000',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
     FOREIGN KEY (media_file_id) REFERENCES media_files(id) ON DELETE SET NULL

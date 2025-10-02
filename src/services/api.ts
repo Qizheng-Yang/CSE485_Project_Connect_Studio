@@ -163,4 +163,24 @@ export const themesAPI = {
   },
 };
 
+// Slides API calls
+export const slidesAPI = {
+  getProjectSlides: async (projectId: string) => {
+    return apiRequest(`/slides/project/${projectId}`);
+  },
+
+  saveProjectSlides: async (projectId: string, slides: any[]) => {
+    return apiRequest(`/slides/project/${projectId}`, {
+      method: 'POST',
+      body: JSON.stringify({ slides }),
+    });
+  },
+
+  deleteProjectSlides: async (projectId: string) => {
+    return apiRequest(`/slides/project/${projectId}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
 export { getAuthToken, setAuthToken, removeAuthToken };

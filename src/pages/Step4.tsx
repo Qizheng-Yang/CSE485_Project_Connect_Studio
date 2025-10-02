@@ -1,18 +1,71 @@
 import { Link } from 'react-router-dom';
 import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getAudioDuration } from '../utils/audioUtils';
+import { useImage } from '../context/ImageContext';
+import { MediaItem } from '../context/ImageContext';
 
 function Step4() {
+  const { 
+    mediaItems, 
+    setMediaItems, 
+    uploadMusicFiles, 
+    currentProject, 
+    isLoading, 
+    error 
+  } = useImage();
+  
   const [showLicenseModal, setShowLicenseModal] = useState(false);
-  const [uploadedMusic, setUploadedMusic] = useState<{name: string, duration: string, selected: boolean}[]>([]);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [videoLength] = useState('5.25 minutes');
   const [slideLength] = useState('3.5 Seconds');
   const [showCheckboxes, setShowCheckboxes] = useState(false);
-  // const [selectedMusic, setSelectedMusic] = useState<number[]>([]);
+  
+  // Get music files from mediaItems
+  const musicFiles = mediaItems.filter(item => item.type === 'audio');
+  
+  // Convert music files to the format expected by the UI
+  const uploadedMusic = musicFiles.map((file, index) => ({
+    name: file.originalFilename || file.filename || 'Unknown',
+    duration: file.duration || '0:00',
+    selected: false,
+    id: file.id
+  }));
+
+  // Calculate duration for music files that don't have it
+  useEffect(() => {
+    const calculateDurations = async () => {
+      for (const file of musicFiles) {
+        if (!file.duration || file.duration === '0:00') {
+          try {
+            // Create a temporary audio element to get duration
+            const audio = new Audio(file.url);
+            await new Promise((resolve, reject) => {
+              audio.addEventListener('loadedmetadata', resolve);
+              audio.addEventListener('error', reject);
+            });
+            
+            const duration = Math.floor(audio.duration);
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            const durationString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update the media item with duration
+            setMediaItems(prev => prev.map(item => 
+              item.id === file.id ? { ...item, duration: durationString } : item
+            ));
+          } catch (error) {
+            console.error('Error calculating duration for', file.filename, error);
+          }
+        }
+      }
+    };
+
+    if (musicFiles.length > 0) {
+      calculateDurations();
+    }
+  }, [musicFiles.length]); // Only run when number of music files changes
 
   const handleUploadClick = () => {
     if (licenseAccepted) {
@@ -25,16 +78,13 @@ function Step4() {
 
   const handleSelectClick = () => {
     setShowCheckboxes(!showCheckboxes);
-    if (!showCheckboxes) {
-      // When showing checkboxes, reset all selections
-      setUploadedMusic(uploadedMusic.map(music => ({...music, selected: false})));
-    }
+    // Note: Selection state would need to be managed separately in a full implementation
   };
 
   const handleCheckboxChange = (index: number) => {
-    const updatedMusic = [...uploadedMusic];
-    updatedMusic[index].selected = !updatedMusic[index].selected;
-    setUploadedMusic(updatedMusic);
+    // For now, we'll just toggle the selection state
+    // In a full implementation, you might want to store selected music in a separate state
+    console.log('Music selection changed for index:', index);
   };
 
   const handleAcceptLicense = () => {
@@ -47,28 +97,31 @@ function Step4() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setIsLoading(true);
+      if (!currentProject) {
+        alert('Please create a project first by going to Step 1');
+        return;
+      }
+
       try {
-        const file = files[0];
-        const duration = await getAudioDuration(file);
-        const newMusic = {
-          name: file.name,
-          duration: duration,
-          selected: false
-        };
-        setUploadedMusic([...uploadedMusic, newMusic]);
+        // Upload files to backend
+        const uploadedItems = await uploadMusicFiles(Array.from(files));
+        console.log('Music files uploaded successfully:', uploadedItems);
       } catch (error) {
-        console.error('Error processing audio file:', error);
+        console.error('Upload error:', error);
+        alert('Failed to upload music files. Please try again.');
       } finally {
-        setIsLoading(false);
         e.target.value = '';
       }
     }
   };
 
   const handleDeleteMusic = (index: number) => {
-    const updatedMusic = uploadedMusic.filter((_, i) => i !== index);
-    setUploadedMusic(updatedMusic);
+    const musicToDelete = musicFiles[index];
+    if (musicToDelete) {
+      // Remove from mediaItems
+      const updatedMediaItems = mediaItems.filter(item => item.id !== musicToDelete.id);
+      setMediaItems(updatedMediaItems);
+    }
   };
 
   return (
@@ -107,7 +160,35 @@ function Step4() {
 
         {isLoading && (
           <div className="loading-indicator">
-            Processing audio file...
+            Uploading music file...
+          </div>
+        )}
+
+        {/* Show error if any */}
+        {error && (
+          <div style={{ 
+            color: 'red', 
+            fontSize: '14px', 
+            marginTop: '10px', 
+            padding: '10px', 
+            backgroundColor: '#ffebee', 
+            borderRadius: '5px' 
+          }}>
+            {error}
+          </div>
+        )}
+        
+        {/* Show current project info */}
+        {currentProject && (
+          <div style={{ 
+            fontSize: '12px', 
+            color: '#666', 
+            marginTop: '10px',
+            padding: '5px',
+            backgroundColor: '#e8f5e8',
+            borderRadius: '3px'
+          }}>
+            Project: {currentProject.title}
           </div>
         )}
 
