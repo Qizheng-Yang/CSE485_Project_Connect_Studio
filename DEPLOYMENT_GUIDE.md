@@ -14,7 +14,7 @@ Make sure you have installed:
 
 1. **Open terminal and navigate to your project**
    ```bash
-   cd CSE485_Project_Connect_Studio
+   cd CSE486/CSE485_Project_Connect_Studio
    ```
 
 2. **Install backend dependencies**
@@ -39,7 +39,7 @@ Make sure you have installed:
 
 1. **Open a new terminal tab/window**
    ```bash
-   cd CSE485_Project_Connect_Studio
+   cd CSE486/CSE485_Project_Connect_Studio
    ```
 
 2. **Install frontend dependencies**
