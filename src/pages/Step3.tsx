@@ -1201,17 +1201,10 @@ function Step3() {
 
             <h2>Edit Image</h2>
 
-            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Crop</h4>
-            {!isCropping ? (
+            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Image Position</h4>
               <>
-                <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16, fontSize: '16px', marginRight: '70px', marginLeft: '100px'}}>Start Crop</button>
+                <button onClick={() => setIsCropping(true)} style={{ marginBottom: 16, fontSize: '16px', marginRight: '70px', marginLeft: '100px'}}>Crop</button>
               </>
-            ) : (
-              <>
-                <button onClick={handleCropSave} style={{ marginBottom: 12, fontSize: '16px', marginRight: '70px', marginLeft: '100px' }}>Crop & Save</button>
-                <button onClick={() => setIsCropping(false)} style={{fontSize: '16px', marginRight: '70px', marginLeft: '100px' }}>Cancel</button>
-              </>
-            )}
 
             <div>
               {/*Title & reset for filters*/}
