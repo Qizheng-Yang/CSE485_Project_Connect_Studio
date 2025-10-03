@@ -1142,50 +1142,36 @@ function Step3() {
           </div>
         )}
 
-        {/* Cropping Pop Up*/}
-        {selectedImage && (
+        {/*Editing Image*/}
+        {selectedImage && !isCropping && (
+          <>
+          {/* Preview PopUp */}
           <div style={{
             position: 'fixed',
             top: 0, bottom: 0, left: 0,
-            width: `calc(100vw - 400px)`,
+            width: 'calc(100vw - 400px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'rgba(0,0,0,0.6)',
             zIndex: 300,
           }}>
-            {!isCropping ? (
-              <img
-                src={selectedImage.url}
-                alt="Selected"
-                style={{
-                  filter: filterStyle,
-
-                  maxWidth: '80%',
-                  maxHeight: '80%',
-                  borderRadius: 8,
-                  userSelect: 'none',
-                  boxShadow: '0 0 12px black'
-                }}
-              />
-            ) : (
-              <div style={{ width: '80%', height: '80%', position: 'relative' }}>
-                <Cropper
-                  image={selectedImage.url}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1.73}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={(_c, pixels) => setCroppedAreaPixels(pixels)}
-                />
-              </div>
-            )}
+            <img
+              src={selectedImage.url}
+              alt="Selected"
+              style={{
+                filter: filterStyle,
+                maxWidth: '80%',
+                maxHeight: '80%',
+                borderRadius: 8,
+                userSelect: 'none',
+                boxShadow: '0 0 12px black'
+              }}
+            />
           </div>
-        )}
 
-        {/*Side Cropping Panel*/}
-        {selectedImage && (
+
+          {/* Side Cropping Panel */}
           <div style={{
             position: 'fixed',
             top: 0, right: 0,
@@ -1340,7 +1326,75 @@ function Step3() {
             </div>
 
           </div>
+          </>
         )}
+
+        {selectedImage && isCropping && (
+          <div style={{
+            position: 'fixed',
+            top: 0, bottom: 0, left: 0, right: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            // display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            zIndex: 400,
+          }}>
+            {/* Cropper in center */}
+            <div style={{
+              width: '80vw', 
+              height: '60vh',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              borderRadius: 12,
+              marginBottom: 32
+            }}>
+              <Cropper
+                image={selectedImage.url}
+                crop={crop}
+                zoom={zoom}
+                aspect={1.73}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_c, pixels) => setCroppedAreaPixels(pixels)}
+              />
+            </div>
+            {/* Action popup */}
+            <div style={{
+              background: "#fff",
+              borderRadius: "24px",
+              boxShadow: "0 2px 16px rgba(0,0,0,0.18)",
+              display: "flex",
+              alignItems: "center"
+            }}>
+
+            <div style={{
+              position: 'fixed',
+              bottom: 0,
+              width: '100%', height: 120,
+              background: '#fff',
+              zIndex: 310,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center'
+            }}>
+              {/* Action buttons */}
+              <button onClick={handleCropSave} style={{alignSelf: 'flex-end',fontSize: "25px", padding: "14px 27px", marginBottom: 25, marginRight: 85}}>Crop & Save</button>
+              <button onClick={() => setIsCropping(false)} style={{alignSelf: 'flex-end', fontSize: "25px", padding: "15px 27px", marginBottom: 25}}>Cancel</button>
+
+
+              </div>
+            </div>
+          </div>
+        )}
+
+
+
+
+
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
