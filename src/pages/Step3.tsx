@@ -289,28 +289,6 @@ function Step3() {
     }
   }, [selectedImage, activeTool]);
   
-// useEffect(() => {
-//   if (!selectedImage || activeTool !== 'blemish') return;
-//   const img = new window.Image();
-//   img.crossOrigin = "Anonymous";
-//   img.src = selectedImage.url;
-//   img.onload = () => {
-//     setCanvasSize({ width: img.naturalWidth, height: img.naturalHeight });
-//     const canvas = canvasRef.current;
-//     const ctx = canvas?.getContext('2d');
-//     if (canvas && ctx) {
-//       // Set actual pixel size!
-//       canvas.width = img.naturalWidth;
-//       canvas.height = img.naturalHeight;
-//       ctx.clearRect(0, 0, img.naturalWidth, img.naturalHeight);
-//       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-//     }
-//   };
-// }, [selectedImage, activeTool]);
-
-  
-
-
   // OG state stored
   const originalFilters = useRef({
     brightness: 100,
