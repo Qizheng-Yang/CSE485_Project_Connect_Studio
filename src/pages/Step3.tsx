@@ -265,6 +265,52 @@ function Step3() {
   const [saturation, setSaturation] = useState(100);
   const [blur, setBlur] = useState(0);
 
+  // Blemish & red eye
+  const [activeTool, setActiveTool] = useState<null | "blemish" | "redeye">(null);
+  const [brushSize, setBrushSize] = useState(25);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [mousePos, setMousePos] = useState<{x: number, y: number} | null>(null);
+
+  const [canvasSize, setCanvasSize] = useState({ width: 600, height:400 });
+
+
+ useEffect(() => {
+    if (!selectedImage || activeTool !== 'blemish') return;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx) {
+      const img = new window.Image();
+      img.crossOrigin = "Anonymous";
+      img.src = selectedImage.url;
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+    }
+  }, [selectedImage, activeTool]);
+  
+// useEffect(() => {
+//   if (!selectedImage || activeTool !== 'blemish') return;
+//   const img = new window.Image();
+//   img.crossOrigin = "Anonymous";
+//   img.src = selectedImage.url;
+//   img.onload = () => {
+//     setCanvasSize({ width: img.naturalWidth, height: img.naturalHeight });
+//     const canvas = canvasRef.current;
+//     const ctx = canvas?.getContext('2d');
+//     if (canvas && ctx) {
+//       // Set actual pixel size!
+//       canvas.width = img.naturalWidth;
+//       canvas.height = img.naturalHeight;
+//       ctx.clearRect(0, 0, img.naturalWidth, img.naturalHeight);
+//       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+//     }
+//   };
+// }, [selectedImage, activeTool]);
+
+  
+
+
   // OG state stored
   const originalFilters = useRef({
     brightness: 100,
@@ -364,6 +410,39 @@ function Step3() {
     setIsCropping(false);
   };
   
+  // Handler Blemish
+  const handleBlemishSave = () => {
+    if (!selectedImage || !canvasRef.current) return;
+  
+    const blemishedImage = canvasRef.current.toDataURL("image/png");
+  
+    // Update media items
+    const updateMediaItems = (prevItems: MediaItem[]) =>
+      prevItems.map(item => item.id === selectedImage.id ? { ...item, url: blemishedImage } : item);
+  
+    // Update slides
+    const updateSlides = (prevSlides: Slide[]) =>
+      prevSlides.map(slide =>
+        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: blemishedImage } : slide
+      );
+  
+    setSelectedImage(prev =>
+      prev ? { ...prev, url: blemishedImage } : null
+    );
+    
+    setMediaItems(updateMediaItems(mediaItems));
+    setSlides(updateSlides(slides));
+      
+    setIsEditing(false); 
+    setActiveTool(null); 
+  };
+  
+
+
+  // Handler RedEye
+  const handleRedEyeSave = () => { setActiveTool(null); };
+
+
   
 
   // Click outside handler for color picker
@@ -1142,8 +1221,38 @@ function Step3() {
           </div>
         )}
 
+        {/* Slider UI */}
+        <style>
+        {`
+          input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+          }
+          input[type="range"]:focus {
+            outline: none;
+          }
+          input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #b2cc55;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #669900;
+            box-shadow: 0 0 4px rgba(0,0,0,0.12);
+            margin-top: -7px;
+          }
+          input[type="range"]::-webkit-slider-runnable-track {
+            height: 3px;
+            background: #bbb;
+            border-radius: 2px;
+          }
+        `}
+        </style>
+
         {/*Editing Image*/}
-        {selectedImage && !isCropping && (
+        {selectedImage && !isCropping && activeTool !== 'blemish'&& (
           <>
           {/* Preview PopUp */}
           <div style={{
@@ -1232,42 +1341,6 @@ function Step3() {
                 </button>
               </div>
 
-
-
-
-
-              {/*Slider UI*/}
-              <style>
-              {`
-                input[type="range"] {
-                  -webkit-appearance: none;
-                  appearance: none;
-                }
-                input[type="range"]:focus {
-                  outline: none;
-                }
-                input[type="range"]::-webkit-slider-thumb {
-                  -webkit-appearance: none;
-                  appearance: none;
-                  background: #b2cc55;
-                  width: 18px;
-                  height: 18px;
-                  border-radius: 50%;
-                  cursor: pointer;
-                  border: 2px solid #669900;
-                  box-shadow: 0 0 4px rgba(0,0,0,0.12);
-                  margin-top: -7px;
-                }
-                input[type="range"]::-webkit-slider-runnable-track {
-                  height: 3px;
-                  background: #bbb;
-                  border-radius: 2px;
-                }
-              `}
-              </style>
-
-
-
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px', marginTop: '1px'}}>
                 <label style={{textAlign: 'left' , marginLeft: '30px', fontSize: '18px'}}>Brightness: </label>
                 <input 
@@ -1317,6 +1390,12 @@ function Step3() {
                 <label style={{textAlign: 'right', marginLeft: '36px' }}>{blur}px</label>
               </div>
             </div>
+
+            <h4 style={{ display: 'flex', alignItems: 'left', fontSize: '19px'}}>Adjust Image</h4>
+              <>
+                <button onClick={() => setActiveTool('blemish')} style={{ marginBottom: 16, fontSize: '16px', marginRight: '70px', marginLeft: '100px'}}>Blemish Concealer</button>
+                <button onClick={() => setActiveTool('redeye')} style={{ marginBottom: 16, fontSize: '16px', marginRight: '70px', marginLeft: '100px'}}>Red Eye Remover</button>
+              </>
 
           </div>
           </>
@@ -1384,7 +1463,154 @@ function Step3() {
           </div>
         )}
 
+        {/* Blemish Tool*/}
+        {selectedImage && activeTool === 'blemish' && (
+          <div style={{
+            position: 'fixed',
+            top: 0, bottom: 0, left: 0, right: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            zIndex: 400,
+          }}>
+            <div style={{
+              width: '80vw', height: '60vh',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 12, marginBottom: 32
+            }}>
+              <div style={{ marginTop: 320,marginLeft: 430, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', width: canvasSize.width*2.3, height: canvasSize.height*2.3}}>
+                
+                <canvas
+                  ref={canvasRef}
+                  width={canvasSize.width*2.3}
+                  height={canvasSize.height*2.3}
+                  style={{
+                    position: "static", left: 0, top: 0,
+                    borderRadius: 12, pointerEvents: "auto", zIndex: 1,
+                    width: '100%', height: '100%'
+                  }}
+                  
+                  onMouseMove={e => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) * ((canvasSize.width * 2.3) / rect.width);
+                    const y = (e.clientY - rect.top) * ((canvasSize.height * 2.3) / rect.height);
+                    setMousePos({ x, y });
+                  }}
+                  
+                  
+                  onMouseLeave={() => setMousePos(null)}
+                  onClick={e => {
+                    if (!mousePos) return;
+                    const canvas = canvasRef.current;
+                    const ctx = canvas?.getContext('2d');
+                    if (canvas && ctx) {
+                      // Get the region as image data
+                      const r = brushSize / 2;
+                      const sx = Math.max(mousePos.x - r, 0);
+                      const sy = Math.max(mousePos.y - r, 0);
+                      const sw = Math.min(brushSize, canvas.width - sx);
+                      const sh = Math.min(brushSize, canvas.height - sy);
+                  
+                      // Offscreen canvas to blur
+                      const tempCanvas = document.createElement('canvas');
+                      tempCanvas.width = sw;
+                      tempCanvas.height = sh;
+                      const tctx = tempCanvas.getContext('2d');
+                      if (tctx) {
+                        tctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+                        tctx.globalAlpha = 1.0;
+                        tctx.filter = 'blur(200px)';
+                        tctx.drawImage(tempCanvas, 0, 0);
+                        tctx.filter = 'none';
+                        // Drawing only on image
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(mousePos.x, mousePos.y, r, 0, 2 * Math.PI);
+                        ctx.clip();
+                        ctx.drawImage(tempCanvas, 0, 0, sw, sh, sx, sy, sw, sh);
+                        ctx.restore();
+                      }
+                    }
+                  }}
+                  
+                />
+                {mousePos && (
+                  <div style={{
+                    position: 'absolute',
+                    left: mousePos.x - brushSize / 2,
+                    top: mousePos.y - brushSize / 2,
+                    width: brushSize,
+                    height: brushSize,
+                    borderRadius: '50%',
+                    border: '2px solid #b2cc55',
+                    pointerEvents: 'none',
+                    background: 'rgba(178,204,85,0.10)',
+                    zIndex: 10
+                  }} />
+                  
+                )}
+              </div>
+            </div>
 
+            <div style={{
+              position: 'fixed',
+              bottom: 0, left: 0,
+              width: '100%',
+              height: 175,
+              background: '#fff',
+              zIndex: 310,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* Brush Size Slider*/}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                marginBottom: 25 
+              }}>
+                <label style={{ fontSize: "20px", marginRight: 16 }}>Brush Size</label>
+                <input
+                  style={{ width: 1700 }} 
+                  type="range"
+                  min={10}
+                  max={220}
+                  value={brushSize}
+                  onChange={e => setBrushSize(Number(e.target.value))}
+                />
+
+              </div>
+
+              {/* Action buttons*/}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                marginBottom: -20,
+                gap: 24
+              }}>
+                <button onClick={handleBlemishSave}
+                  style={{ fontSize: "25px", padding: "14px 27px", marginBottom: 10 }}>
+                  Save & Exit
+                </button>
+                <button onClick={() => setActiveTool(null)}
+                  style={{ fontSize: "25px", padding: "15px 27px", marginBottom: 10 }}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+            </div>
+
+        )}
 
 
 
