@@ -389,6 +389,55 @@ function Step3() {
   };
   
   // Handler Blemish
+  function healBlemish(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    radius: number
+  ) {
+    const offset = Math.round(radius * 1.1);
+    const canvas = ctx.canvas;
+    const sx = Math.min(Math.max(x + offset - radius, 0), canvas.width - radius * 2);
+    const sy = Math.min(Math.max(y - radius, 0), canvas.height - radius * 2);
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = radius * 2;
+    tempCanvas.height = radius * 2;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
+    const srcPatch = ctx.getImageData(sx, sy, radius * 2, radius * 2);
+    tempCtx.putImageData(srcPatch, 0, 0);
+
+    // blur patch
+    tempCtx.globalAlpha = 1;
+    tempCtx.filter = 'blur(16px)';
+    tempCtx.drawImage(tempCanvas, 0, 0);
+
+    // Soft-edge
+    let mask = tempCtx.createRadialGradient(radius, radius, radius * 0.65, radius, radius, radius);
+    mask.addColorStop(0, 'rgba(255,255,255,1)');
+    mask.addColorStop(0.85, 'rgba(255,255,255,0.3)');
+    mask.addColorStop(1, 'rgba(255,255,255,0)');
+    tempCtx.globalCompositeOperation = 'destination-in';
+    tempCtx.fillStyle = mask;
+    tempCtx.beginPath();
+    tempCtx.arc(radius, radius, radius, 0, 2 * Math.PI);
+    tempCtx.closePath();
+    tempCtx.fill();
+    tempCtx.globalCompositeOperation = 'source-over';
+
+    // Draw final
+    ctx.save();
+    ctx.globalAlpha = 0.8;
+    ctx.drawImage(tempCanvas, x - radius, y - radius);
+    ctx.restore();
+    ctx.filter = 'none';
+  }
+
+  
+  
+  
+
+
   const handleBlemishSave = () => {
     if (!selectedImage || !canvasRef.current) return;
   
@@ -1468,7 +1517,8 @@ function Step3() {
                   style={{
                     position: "static", left: 0, top: 0,
                     borderRadius: 12, pointerEvents: "auto", zIndex: 1,
-                    width: '100%', height: '100%'
+                    // width: '100%', height: '100%'
+                    width: canvasSize.width*2.3, height: canvasSize.height*2.3
                   }}
                   
                   onMouseMove={e => {
@@ -1484,35 +1534,18 @@ function Step3() {
                     if (!mousePos) return;
                     const canvas = canvasRef.current;
                     const ctx = canvas?.getContext('2d');
-                    if (canvas && ctx) {
-                      // Get the region as image data
-                      const r = brushSize / 2;
-                      const sx = Math.max(mousePos.x - r, 0);
-                      const sy = Math.max(mousePos.y - r, 0);
-                      const sw = Math.min(brushSize, canvas.width - sx);
-                      const sh = Math.min(brushSize, canvas.height - sy);
+                    if (!canvas || !ctx) return;
                   
-                      // Offscreen canvas to blur
-                      const tempCanvas = document.createElement('canvas');
-                      tempCanvas.width = sw;
-                      tempCanvas.height = sh;
-                      const tctx = tempCanvas.getContext('2d');
-                      if (tctx) {
-                        tctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
-                        tctx.globalAlpha = 1.0;
-                        tctx.filter = 'blur(200px)';
-                        tctx.drawImage(tempCanvas, 0, 0);
-                        tctx.filter = 'none';
-                        // Drawing only on image
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.arc(mousePos.x, mousePos.y, r, 0, 2 * Math.PI);
-                        ctx.clip();
-                        ctx.drawImage(tempCanvas, 0, 0, sw, sh, sx, sy, sw, sh);
-                        ctx.restore();
-                      }
-                    }
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(mousePos.x, mousePos.y, brushSize / 2, 0, 2 * Math.PI);
+                    ctx.clip();
+                  
+                    healBlemish(ctx, mousePos.x, mousePos.y, brushSize / 2);
+                  
+                    ctx.restore();
                   }}
+                  
                   
                 />
                 {mousePos && (
