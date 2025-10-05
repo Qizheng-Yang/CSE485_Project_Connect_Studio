@@ -42,6 +42,10 @@ import Cropper from 'react-easy-crop';
 import { Area } from 'react-easy-crop';
 
 
+// Blemish import
+import * as StackBlur from 'stackblur-canvas';
+
+
 // Import local images for text slide backgrounds
 import image1 from '../assets/image1.png';
 import image2 from '../assets/image2.png';
@@ -390,49 +394,50 @@ function Step3() {
   };
   
   // Handler Blemish
-  function healBlemish(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    radius: number
-  ) {
-    const offset = Math.round(radius * 1.1);
-    const canvas = ctx.canvas;
-    const sx = Math.min(Math.max(x + offset - radius, 0), canvas.width - radius * 2);
-    const sy = Math.min(Math.max(y - radius, 0), canvas.height - radius * 2);
+  function healBlemish(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number) {
+    const d = radius * 2;
+    const areaX = x - radius;
+    const areaY = y - radius;
+  
+    // Pixel patch
+    const imageData = ctx.getImageData(areaX, areaY, d, d);
+  
+    // StackBlur on it
+    StackBlur.imageDataRGBA(imageData, 0, 0, d, d, Math.floor(radius * 0.1));
+  
+    // Blurred area into a temp canvas
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = radius * 2;
-    tempCanvas.height = radius * 2;
+    tempCanvas.width = d;
+    tempCanvas.height = d;
     const tempCtx = tempCanvas.getContext('2d');
     if (!tempCtx) return;
-    const srcPatch = ctx.getImageData(sx, sy, radius * 2, radius * 2);
-    tempCtx.putImageData(srcPatch, 0, 0);
-
-    // blur patch
-    tempCtx.globalAlpha = 1;
-    tempCtx.filter = 'blur(16px)';
-    tempCtx.drawImage(tempCanvas, 0, 0);
-
-    // Soft-edge
-    let mask = tempCtx.createRadialGradient(radius, radius, radius * 0.65, radius, radius, radius);
-    mask.addColorStop(0, 'rgba(255,255,255,1)');
-    mask.addColorStop(0.85, 'rgba(255,255,255,0.3)');
-    mask.addColorStop(1, 'rgba(255,255,255,0)');
+  
+    tempCtx.putImageData(imageData, 0, 0);
+  
+    // For soft edge
     tempCtx.globalCompositeOperation = 'destination-in';
-    tempCtx.fillStyle = mask;
-    tempCtx.beginPath();
-    tempCtx.arc(radius, radius, radius, 0, 2 * Math.PI);
-    tempCtx.closePath();
-    tempCtx.fill();
+    const gradient = tempCtx.createRadialGradient(
+      radius, radius, radius * 0.6,  
+      radius, radius, radius      
+    );
+    gradient.addColorStop(0, 'rgba(0,0,0,1)');  
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');   
+  
+    tempCtx.fillStyle = gradient;
+    tempCtx.fillRect(0, 0, d, d);
     tempCtx.globalCompositeOperation = 'source-over';
-
-    // Draw final
+  
+    // Back on main
     ctx.save();
-    ctx.globalAlpha = 0.8;
-    ctx.drawImage(tempCanvas, x - radius, y - radius);
+    ctx.globalAlpha = 1.0;
+    ctx.drawImage(tempCanvas, areaX, areaY);
     ctx.restore();
-    ctx.filter = 'none';
   }
+  
+  
+
+  
+
 
   const handleBlemishSave = () => {
     if (!selectedImage || !canvasRef.current) return;
@@ -1546,7 +1551,7 @@ function Step3() {
           </div>
         )}
 
-        {/* Blemish Tool*/}
+        {/* Blemish Tool */}
         {selectedImage && activeTool === 'blemish' && (
           <div style={{
             position: 'fixed',
