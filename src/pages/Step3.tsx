@@ -275,7 +275,7 @@ function Step3() {
 
 
  useEffect(() => {
-    if (!selectedImage || activeTool !== 'blemish') return;
+    if (!selectedImage || activeTool !== 'blemish' && activeTool !== 'redeye') return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (canvas && ctx) {
@@ -433,11 +433,6 @@ function Step3() {
     ctx.filter = 'none';
   }
 
-  
-  
-  
-
-
   const handleBlemishSave = () => {
     if (!selectedImage || !canvasRef.current) return;
   
@@ -467,7 +462,82 @@ function Step3() {
 
 
   // Handler RedEye
-  const handleRedEyeSave = () => { setActiveTool(null); };
+  function removeRedEye(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    radius: number
+  ) {
+    // Step 1: Get the patched region from the image
+    const canvas = ctx.canvas;
+    const sx = Math.max(Math.floor(x - radius), 0);
+    const sy = Math.max(Math.floor(y - radius), 0);
+    const w = Math.min(radius * 2, canvas.width - sx);
+    const h = Math.min(radius * 2, canvas.height - sy);
+  
+    const imageData = ctx.getImageData(sx, sy, w, h);
+    const data = imageData.data;
+  
+    // Step 2: Iterate over pixels, do smart replacement for "red" pixels only
+    for (let px = 0; px < data.length; px += 4) {
+      const r = data[px], g = data[px + 1], b = data[px + 2];
+      // Simple rule to detect 'red eye': high R, low G/B, and near center of patch (distance-based blending)
+      const dx = ((px / 4) % w) - radius;
+      const dy = Math.floor(px / 4 / w) - radius;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+  
+      // Detect strongly reddish pixels in the core, blend out softly at the edge
+      if (
+        r > 140 &&
+        g < 100 &&
+        b < 100 &&
+        dist <= radius
+      ) {
+        // Compute softness factor: 1 at center, fades to 0 at edge
+        const fade = Math.max(0, 1 - (dist / radius));
+        // Target color: dark brown/gray for natural pupil (NOT black)
+        // Final color: blend original with target dark using fade
+        const targetR = 50, targetG = 40, targetB = 45;
+        data[px] = Math.round(fade * targetR + (1 - fade) * r);
+        data[px + 1] = Math.round(fade * targetG + (1 - fade) * g);
+        data[px + 2] = Math.round(fade * targetB + (1 - fade) * b);
+        // Alpha stays the same
+      }
+    }
+  
+    // Step 3: Write patched region back, so no hard circle
+    ctx.putImageData(imageData, sx, sy);
+  
+    // Step 4: Optionally, feather the edge (repeat pass with very low fade brush)
+    // You can also draw a radial gradient faint dark overlay for extra softness
+  }
+  
+
+  const handleRedEyeSave = () => {
+    if (!selectedImage || !canvasRef.current) return;
+  
+    const redEyeImage = canvasRef.current.toDataURL("image/png");
+  
+    // Update media items
+    const updateMediaItems = (prevItems: MediaItem[]) =>
+      prevItems.map(item => item.id === selectedImage.id ? { ...item, url: redEyeImage } : item);
+  
+    // Update slides
+    const updateSlides = (prevSlides: Slide[]) =>
+      prevSlides.map(slide =>
+        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: redEyeImage } : slide
+      );
+  
+    setSelectedImage(prev =>
+      prev ? { ...prev, url: redEyeImage } : null
+    );
+    
+    setMediaItems(updateMediaItems(mediaItems));
+    setSlides(updateSlides(slides));
+      
+    setIsEditing(false); 
+    setActiveTool(null); 
+  };
 
 
   
@@ -1279,7 +1349,7 @@ function Step3() {
         </style>
 
         {/*Editing Image*/}
-        {selectedImage && !isCropping && activeTool !== 'blemish'&& (
+        {selectedImage && !isCropping && activeTool !== 'blemish' && activeTool !== 'redeye'&& (
           <>
           {/* Preview PopUp */}
           <div style={{
@@ -1307,7 +1377,7 @@ function Step3() {
           </div>
 
 
-          {/* Side Cropping Panel */}
+          {/* Right Side Panel */}
           <div style={{
             position: 'fixed',
             top: 0, right: 0,
@@ -1428,6 +1498,7 @@ function Step3() {
           </>
         )}
 
+        {/* Cropping Tool */}
         {selectedImage && isCropping && (
           <div style={{
             position: 'fixed',
@@ -1610,6 +1681,139 @@ function Step3() {
                 gap: 24
               }}>
                 <button onClick={handleBlemishSave}
+                  style={{ fontSize: "25px", padding: "14px 27px", marginBottom: 10 }}>
+                  Save & Exit
+                </button>
+                <button onClick={() => setActiveTool(null)}
+                  style={{ fontSize: "25px", padding: "15px 27px", marginBottom: 10 }}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+            </div>
+
+        )}
+
+        {/* Red Eye Tool*/}
+        {selectedImage && activeTool === 'redeye' && (
+          <div style={{
+            position: 'fixed',
+            top: 0, bottom: 0, left: 0, right: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            zIndex: 400,
+          }}>
+            <div style={{
+              width: '80vw', height: '60vh',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 12, marginBottom: 32
+            }}>
+              <div style={{ marginTop: 320,marginLeft: 430, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', width: canvasSize.width*2.3, height: canvasSize.height*2.3}}>
+                
+                <canvas
+                  ref={canvasRef}
+                  width={canvasSize.width*2.3}
+                  height={canvasSize.height*2.3}
+                  style={{
+                    position: "static", left: 0, top: 0,
+                    borderRadius: 12, pointerEvents: "auto", zIndex: 1,
+                    // width: '100%', height: '100%'
+                    width: canvasSize.width*2.3, height: canvasSize.height*2.3
+                  }}
+                  
+                  onMouseMove={e => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) * ((canvasSize.width * 2.3) / rect.width);
+                    const y = (e.clientY - rect.top) * ((canvasSize.height * 2.3) / rect.height);
+                    setMousePos({ x, y });
+                  }}
+                  
+                  
+                  onMouseLeave={() => setMousePos(null)}
+                  onClick={e => {
+                    if (!mousePos) return;
+                    const canvas = canvasRef.current;
+                    const ctx = canvas?.getContext('2d');
+                    if (!canvas || !ctx) return;
+                  
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(mousePos.x, mousePos.y, brushSize / 2, 0, 2 * Math.PI);
+                    ctx.clip();
+                  
+                    removeRedEye(ctx, mousePos.x, mousePos.y, brushSize / 2);
+                  
+                    ctx.restore();
+                  }}
+                  
+                  
+                />
+                {mousePos && (
+                  <div style={{
+                    position: 'absolute',
+                    left: mousePos.x - brushSize / 2,
+                    top: mousePos.y - brushSize / 2,
+                    width: brushSize,
+                    height: brushSize,
+                    borderRadius: '50%',
+                    border: '2px solid #b2cc55',
+                    pointerEvents: 'none',
+                    background: 'rgba(178,204,85,0.10)',
+                    zIndex: 10
+                  }} />
+                  
+                )}
+              </div>
+            </div>
+
+            <div style={{
+              position: 'fixed',
+              bottom: 0, left: 0,
+              width: '100%',
+              height: 175,
+              background: '#fff',
+              zIndex: 310,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* Pupil Size Slider*/}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                marginBottom: 25 
+              }}>
+                <label style={{ fontSize: "20px", marginRight: 16 }}>Pupil Size</label>
+                <input
+                  style={{ width: 1700 }} 
+                  type="range"
+                  min={10}
+                  max={220}
+                  value={brushSize}
+                  onChange={e => setBrushSize(Number(e.target.value))}
+                />
+
+              </div>
+
+              {/* Action buttons*/}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                marginBottom: -20,
+                gap: 24
+              }}>
+                <button onClick={handleRedEyeSave}
                   style={{ fontSize: "25px", padding: "14px 27px", marginBottom: 10 }}>
                   Save & Exit
                 </button>
