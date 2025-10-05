@@ -469,7 +469,6 @@ function Step3() {
     y: number,
     radius: number
   ) {
-    // Step 1: Get the patched region from the image
     const canvas = ctx.canvas;
     const sx = Math.max(Math.floor(x - radius), 0);
     const sy = Math.max(Math.floor(y - radius), 0);
@@ -479,39 +478,24 @@ function Step3() {
     const imageData = ctx.getImageData(sx, sy, w, h);
     const data = imageData.data;
   
-    // Step 2: Iterate over pixels, do smart replacement for "red" pixels only
     for (let px = 0; px < data.length; px += 4) {
       const r = data[px], g = data[px + 1], b = data[px + 2];
-      // Simple rule to detect 'red eye': high R, low G/B, and near center of patch (distance-based blending)
-      const dx = ((px / 4) % w) - radius;
-      const dy = Math.floor(px / 4 / w) - radius;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-  
-      // Detect strongly reddish pixels in the core, blend out softly at the edge
-      if (
-        r > 140 &&
-        g < 100 &&
-        b < 100 &&
-        dist <= radius
-      ) {
-        // Compute softness factor: 1 at center, fades to 0 at edge
-        const fade = Math.max(0, 1 - (dist / radius));
-        // Target color: dark brown/gray for natural pupil (NOT black)
-        // Final color: blend original with target dark using fade
-        const targetR = 50, targetG = 40, targetB = 45;
-        data[px] = Math.round(fade * targetR + (1 - fade) * r);
-        data[px + 1] = Math.round(fade * targetG + (1 - fade) * g);
-        data[px + 2] = Math.round(fade * targetB + (1 - fade) * b);
-        // Alpha stays the same
+
+      // Only correcting the red
+      const isRed = r > 90 && g < 100 && b < 100;
+      const isWhite = r > 180 && g > 200 && b > 200;
+      if (isRed && !isWhite) {
+        data[px] = 50;      // R
+        data[px + 1] = 40;  // G
+        data[px + 2] = 45;  // B
       }
+
     }
-  
-    // Step 3: Write patched region back, so no hard circle
+    
     ctx.putImageData(imageData, sx, sy);
-  
-    // Step 4: Optionally, feather the edge (repeat pass with very low fade brush)
-    // You can also draw a radial gradient faint dark overlay for extra softness
   }
+
+  
   
 
   const handleRedEyeSave = () => {
