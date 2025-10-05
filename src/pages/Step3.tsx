@@ -49,6 +49,7 @@ import image3 from '../assets/image3.png';
 import image4 from '../assets/image4.png';
 import image5 from '../assets/image5.png';
 import image6 from '../assets/image6.png';
+import testImage from '../assets/redEye.png';
 
 import memorialChoice from '../assets/memorialQuote.png';
 import weddingChoice from '../assets/weddingQuote.png';
@@ -761,7 +762,7 @@ function Step3() {
                 {/* Background Selection */}
                 <p>Choose Background:</p>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto' }}>
-                  {[image1, image2, image3, image4, image5, image6].map((imageUrl, index) => (
+                  {[image1, image2, image3, image4, image5, image6, testImage].map((imageUrl, index) => (
                     <img
                       key={index}
                       src={imageUrl}
