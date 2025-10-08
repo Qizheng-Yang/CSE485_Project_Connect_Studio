@@ -1306,6 +1306,8 @@ function Step3() {
                 <p>No photos or videos uploaded yet.</p>
               </div>
             )}
+            
+            <PhotoGalleryLink /> 
           </div>
         )}
 
