@@ -104,6 +104,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [slides, setSlides] = useState<Slide[]>([]);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   
+  const [isLinkEnabled, setIsLinkEnabled] = useState(false);
+  
   // Loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -491,6 +493,10 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Loading states
       isLoading,
       error
+      
+      isLinkEnabled,
+      setIsLinkEnabled
+      
     }}>
       {children}
     </ImageContext.Provider>
