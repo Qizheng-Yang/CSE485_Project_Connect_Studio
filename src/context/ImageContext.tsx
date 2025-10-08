@@ -14,6 +14,7 @@ export interface Slide {
   type: 'text' | 'image';
   backgroundImage?: string;
   imageUrl?: string;
+  mediaFileId?: string | null;
   customText?: string;
   customFont?: string;       
   customColor?: string;     
@@ -86,6 +87,9 @@ interface ImageContextType {
   // Loading states
   isLoading: boolean;
   error: string | null;
+
+  isLinkEnabled: boolean;
+  setIsLinkEnabled: (enabled: boolean) => void;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -492,7 +496,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       // Loading states
       isLoading,
-      error
+      error,
       
       isLinkEnabled,
       setIsLinkEnabled
