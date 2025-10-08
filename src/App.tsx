@@ -10,6 +10,7 @@ import Step4 from './pages/Step4';
 import Step5 from './pages/Step5';
 import Step6 from './pages/Step6';
 import AuthPage from './pages/AuthPage'; // import your full-page auth component
+import ContributePage from './pages/ContributePage';
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
           <Route path="/step/4" element={<Step4 />} />
           <Route path="/step/5" element={<Step5 />} />
           <Route path="/step/6" element={<Step6 />} />
-          <Route path="/auth" element={<AuthPage />} /> {/* <-- Add this line! */}
+          <Route path="/auth" element={<AuthPage />} /> 
+          <Route path="/contribute/:tributeId" element={<ContributePage />} />
         </Routes>
       </ImageProvider>
     </AuthProvider>
