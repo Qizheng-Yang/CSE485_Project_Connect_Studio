@@ -4,6 +4,7 @@ import StepNavigation from '../components/StepNavigation';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useImage } from '../context/ImageContext';
 import { MediaItem, Slide } from '../context/ImageContext';
+import PhotoGalleryLink from '../components/PhotoGalleryLink'; 
 import { useDropzone } from 'react-dropzone';
 import {
   DndContext,
