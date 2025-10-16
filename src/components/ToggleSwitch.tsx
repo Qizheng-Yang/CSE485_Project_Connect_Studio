@@ -1,4 +1,4 @@
-// ToggleSwitch.tsx
+// src/components/ToggleSwitch.tsx
 
 interface ToggleSwitchProps {
   checked: boolean;
@@ -7,7 +7,7 @@ interface ToggleSwitchProps {
 
 const ToggleSwitch = ({ checked, onChange }: ToggleSwitchProps) => {
   return (
-    <div className="toggle-switch">
+    <label className="toggle-switch"> 
       <input
         type="checkbox"
         className="toggle-switch-checkbox"
@@ -15,7 +15,7 @@ const ToggleSwitch = ({ checked, onChange }: ToggleSwitchProps) => {
         onChange={(e) => onChange(e.target.checked)}
       />
       <span className="toggle-slider"></span>
-    </div>
+    </label>
   );
 };
 
