@@ -4,7 +4,7 @@ import StepNavigation from '../components/StepNavigation';
 import { useImage } from '../context/ImageContext';
 import 'react-slideshow-image/dist/styles.css';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Define the item type for preview
 interface PreviewItem {
@@ -39,6 +39,7 @@ function Step5() {
   const [animKey, setAnimKey] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   // Combine theme, slides, and media items in order
   const allItems: PreviewItem[] = [];
@@ -87,6 +88,17 @@ function Step5() {
       transition: 'fade'
     });
   });
+
+  // Control video playback based on isPlaying state
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play().catch(err => console.error('Video play error:', err));
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     if (allItems.length > 0 && isPlaying) {
@@ -237,17 +249,54 @@ function Step5() {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                backgroundImage: `url(${currentItem?.src})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 zIndex: 1
               }}
             >
+              {/* Render video element for video type, background image for others */}
+              {currentItem?.type === 'video' ? (
+                <video
+                  ref={videoRef}
+                  key={`video-${animKey}`}
+                  src={currentItem.src}
+                  autoPlay={isPlaying}
+                  muted
+                  loop={false}
+                  playsInline
+                  preload="metadata"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                  onLoadedMetadata={() => {
+                    if (videoRef.current && isPlaying) {
+                      videoRef.current.play().catch(err => console.error('Video play error:', err));
+                    }
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `url(${currentItem?.src})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                />
+              )}
+              
+              {/* Text overlay for slides */}
               {currentItem?.customText && (
                 <span style={{
+                  position: 'relative',
+                  zIndex: 10,
                   color: currentItem?.customColor || '#fff',
                   fontSize: '24px',
                   fontWeight: 'bold',
