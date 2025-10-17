@@ -128,13 +128,48 @@ router.get('/file/:id', async (req, res) => {
       });
     }
 
-    // Set appropriate headers
-    res.setHeader('Content-Type', mediaFile.mime_type);
-    res.setHeader('Content-Length', mediaFile.file_size);
-    res.setHeader('Content-Disposition', `inline; filename="${mediaFile.original_filename}"`);
+    const filePath = join(process.cwd(), mediaFile.file_path);
 
-    // Send file
-    res.sendFile(join(process.cwd(), mediaFile.file_path));
+    // For video files, support range requests for streaming
+    if (mediaFile.mime_type.startsWith('video/')) {
+      const stat = await import('fs').then(fs => fs.promises.stat(filePath));
+      const fileSize = stat.size;
+      const range = req.headers.range;
+
+      if (range) {
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = (end - start) + 1;
+
+        const { createReadStream } = await import('fs');
+        const file = createReadStream(filePath, { start, end });
+
+        const head = {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': mediaFile.mime_type,
+        };
+
+        res.writeHead(206, head);
+        file.pipe(res);
+      } else {
+        const head = {
+          'Content-Length': fileSize,
+          'Content-Type': mediaFile.mime_type,
+        };
+        res.writeHead(200, head);
+        const { createReadStream } = await import('fs');
+        createReadStream(filePath).pipe(res);
+      }
+    } else {
+      // For non-video files, use sendFile
+      res.setHeader('Content-Type', mediaFile.mime_type);
+      res.setHeader('Content-Length', mediaFile.file_size);
+      res.setHeader('Content-Disposition', `inline; filename="${mediaFile.original_filename}"`);
+      res.sendFile(filePath);
+    }
 
   } catch (error) {
     console.error('Serve file error:', error);

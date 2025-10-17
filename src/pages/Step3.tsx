@@ -1239,13 +1239,26 @@ function Step3() {
                               <div style={{ position: 'relative' }}>
                                 <video 
                                   src={item.url} 
+                                  preload="metadata"
+                                  muted
+                                  playsInline
                                   style={{ 
                                     width: '100%', 
                                     height: '150px', 
                                     objectFit: 'cover',
+                                    backgroundColor: '#000',
                                     filter: item.filters
                                       ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
                                       : 'none'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    const video = e.currentTarget;
+                                    video.play().catch(() => {});
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    const video = e.currentTarget;
+                                    video.pause();
+                                    video.currentTime = 0;
                                   }}
                                 />
                                 <div style={{
