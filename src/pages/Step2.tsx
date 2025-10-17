@@ -4,17 +4,26 @@ import StepNavigation from '../components/StepNavigation';
 import { useState, useEffect } from 'react';
 import { useImage } from '../context/ImageContext';
 
-interface Theme {
+export interface Theme {
   id: number;
   src: string;
   alt: string;
+  frame?: string;
 }
 
 const themeImages: Theme[] = [
-  { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
-  { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
-  { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
-  { id: 4, src: '/themes/theme4.png', alt: 'Theme 4' },
+  
+  { id: 1, src: '/themes/theme1.png', alt: 'Ocean sunset', frame: '/themes/pattern_theme1.png' },
+  { id: 2, src: '/themes/theme2.png', alt: 'White minimalist', frame: '/themes/pattern_theme2.png' },
+  { id: 3, src: '/themes/theme3.png', alt: 'Rustic wood', frame: '/themes/pattern_theme3.png' },
+  { id: 4, src: '/themes/theme4.png', alt: 'Warm orangey', frame: '/themes/pattern_theme4.png' },
+  // ...other themes
+ 
+  
+  // { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
+  // { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
+  // { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
+  // { id: 4, src: '/themes/theme4.png', alt: 'Theme 4' },
   { id: 5, src: '/themes/theme5.png', alt: 'Theme 5' },
   { id: 6, src: '/themes/theme6.png', alt: 'Theme 6' },
   { id: 7, src: '/themes/theme7.png', alt: 'Theme 7' },
@@ -51,18 +60,28 @@ function Step2() {
   const { selectedTheme, setSelectedTheme } = useImage();
   const [localSelectedTheme, setLocalSelectedTheme] = useState<Theme | null>(null);
 
-  // Set first theme as default
   useEffect(() => {
     const defaultTheme = themeImages[0];
     setLocalSelectedTheme(defaultTheme);
     setSelectedTheme(defaultTheme);
   }, [setSelectedTheme]);
 
+  useEffect(() => {
+    if (localSelectedTheme?.frame) {
+      document.body.style.setProperty('--slide-pattern', `url(${localSelectedTheme.frame})`);
+    } else {
+      document.body.style.setProperty('--slide-pattern', 'none');
+    }
+  }, [localSelectedTheme]);
+
   const handleThemeSelect = (theme: Theme): void => {
     setLocalSelectedTheme(theme);
     setSelectedTheme(theme);
     localStorage.setItem('selectedTheme', theme.id.toString());
+  
+    document.body.style.setProperty('--slide-pattern', theme.frame ? `url(${theme.frame})` : 'none');
   };
+  
 
   return (
     <div className="container">
@@ -75,21 +94,37 @@ function Step2() {
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           {/* Large preview of selected theme */}
           {localSelectedTheme && (
-            <div style={{ 
-              margin: '0 auto 30px', 
-              maxWidth: '500px',
-              padding: '0px',
-            }}>
+            <div style={{ position: 'relative', margin: '0 auto 30px', width: 500, height: 300, padding: 0 }}>
               <img 
                 src={localSelectedTheme.src} 
                 alt={`Selected: ${localSelectedTheme.alt}`}
                 style={{
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  display: 'block',
+                  objectFit: 'cover',
+                  padding: 0, margin: 0, border: 'none'
                 }}
               />
+              {localSelectedTheme.frame && (
+                <img
+                  src={localSelectedTheme.frame}
+                  alt="Frame overlay"
+                  style={{
+                    position: 'absolute',
+                    top: 0, left: 0,
+                    width: '100%', height: '100%',
+                    pointerEvents: 'none',
+                    opacity: 1,
+                    objectFit: 'fill',
+                    zIndex: 2,
+                    margin: 0, padding: 0, border: 'none'
+                  }}
+                />
+              )}
             </div>
           )}
+
 
           {/* 3x7 Grid of theme thumbnails */}
           <div style={{ 

@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 // Define the item type for preview
 interface PreviewItem {
   id: string;
-  type: 'theme' | 'slide' | 'image' | 'video';
+  type: 'theme' | 'slide' | 'image' | 'video' | 'audio';
   src: string;
   duration: number;
   customText?: string;
@@ -73,7 +73,7 @@ function Step5() {
     });
   });
   
-  // Add media items
+
   mediaItems.forEach(item => {
     allItems.push({
       id: item.id,
@@ -213,24 +213,26 @@ function Step5() {
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <div 
-            className="slide-frame"
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <div
+            className="theme-preview-slide"
             style={{
               width: '600px',
               height: '300px',
               margin: '0 auto',
-              backgroundColor: '#000',
-              borderRadius: '2.5px',
-              overflow: 'hidden',
               position: 'relative',
-              boxSizing: 'border-box'
+              border: '8px solid var(--slide-border)',
+              filter: `var(--slide-filter) ${currentItem?.effect || ''}`.trim(),
+              borderRadius: '16px',
+              overflow: 'hidden',
+              background: '#000'
             }}
           >
             <div
               key={animKey}
               className={`slide-animator ${transitionClass}`}
               style={{
-                position: 'absolute', 
+                position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
@@ -241,7 +243,7 @@ function Step5() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                filter: currentItem?.effect || 'none'
+                zIndex: 1
               }}
             >
               {currentItem?.customText && (
@@ -258,7 +260,40 @@ function Step5() {
                 </span>
               )}
             </div>
+            <div
+              className="theme-overlay-pattern"
+              style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundImage: 'var(--slide-pattern)',
+                backgroundSize: 'cover',
+                opacity: 1,
+                pointerEvents: 'none',
+                zIndex: 2
+              }}
+            />
+            {/* {selectedTheme?.frame && (
+              <img
+                src={selectedTheme.frame}
+                alt="Frame overlay"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'fill',
+                  pointerEvents: 'none',
+                  opacity: 1,
+                  zIndex: 2,
+                  margin: 0, padding: 0, border: 'none'
+                }}
+              />
+            )} */}
+
           </div>
+        </div>
+
         </div>
 
         <div className="navigation-buttons">

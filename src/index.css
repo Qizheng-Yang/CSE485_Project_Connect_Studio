@@ -356,7 +356,24 @@ body {
 
 
 /* --- STEP 2 --- */
-    /* ADD MORE LATER */
+.theme-preview-slide {
+  transition: border 0.4s, filter 0.3s;
+}
+
+
+.theme-overlay-pattern {
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-repeat: repeat;
+  background-position: center;
+  background-size: contain;
+  /* opacity: 0.15; */
+  opacity: 0.9;
+  z-index: 2;
+  /* mix-blend-mode: overlay; */
+}
+
 
 
 
