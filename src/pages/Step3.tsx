@@ -599,9 +599,9 @@ function Step3() {
         const updatedSlides = reorderedItems.map((item, index) => ({ ...item, order: index }));
         setSlides(updatedSlides);
         
-        // Save slides to database
+        // Save slides to database - pass the updated slides array directly
         try {
-          await saveSlides();
+          await saveSlides(updatedSlides);
           console.log('Slides reordered and saved to database');
         } catch (error) {
           console.error('Failed to save slides:', error);
@@ -634,9 +634,9 @@ function Step3() {
       const updatedSlides = [...slides, newSlide];
       setSlides(updatedSlides);
       
-      // Save slides to database
+      // Save slides to database - pass the updated slides array directly
       try {
-        await saveSlides();
+        await saveSlides(updatedSlides);
         console.log('Slide saved to database');
       } catch (error) {
         console.error('Failed to save slide:', error);
@@ -661,9 +661,9 @@ function Step3() {
     const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index }));
     setSlides(reorderedSlides);
     
-    // Save slides to database
+    // Save slides to database - pass the updated slides array directly
     try {
-      await saveSlides();
+      await saveSlides(reorderedSlides);
       console.log('Slides updated in database');
     } catch (error) {
       console.error('Failed to save slides:', error);

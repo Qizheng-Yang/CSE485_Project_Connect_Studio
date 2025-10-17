@@ -81,7 +81,7 @@ interface ImageContextType {
   uploadMusicFiles: (files: File[]) => Promise<MediaItem[]>;
   
   // Slide management functions
-  saveSlides: () => Promise<void>;
+  saveSlides: (slidesToSave?: Slide[]) => Promise<void>;
   loadSlides: () => Promise<void>;
   
   // Loading states
@@ -377,7 +377,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Save slides to database
-  const saveSlides = async (): Promise<void> => {
+  const saveSlides = async (slidesToSave?: Slide[]): Promise<void> => {
     if (!currentProject) {
       setError('Please create a project first');
       return;
@@ -387,8 +387,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setError(null);
 
     try {
-      // Prepare slides data for API
-      const slidesData = slides.map(slide => ({
+      // Use provided slides or fall back to state slides
+      const slidesData = (slidesToSave || slides).map(slide => ({
         id: slide.id,
         type: slide.type,
         backgroundImage: slide.backgroundImage,
