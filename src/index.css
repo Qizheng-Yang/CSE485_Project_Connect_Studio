@@ -76,7 +76,7 @@ body {
 
 .auth-input {
   display: block;
-  width: 90%;
+  width: 84%;
   padding: 10px;
   margin-bottom: 14px;
   border-radius: 5px;
@@ -1117,6 +1117,50 @@ body {
         opacity: 0.8;
     }
 /* Back & Next Buttons END */
+
+
+
+
+/* === Password Show Icon === */
+
+.password-input-container {
+  position: relative;
+  width: 90%; 
+  margin-bottom: 14px; 
+}
+
+
+.password-input-container .auth-input {
+  /* Override the default .auth-input styles to fill the container */
+  width: 100%;
+  margin-bottom: 0; /* The container handles the bottom margin now */
+  
+  /* These styles ensure consistent appearance and spacing for the icon */
+  box-sizing: border-box; 
+  padding-right: 45px;
+}
+
+/* This styles the button that holds the eye icon */
+.password-toggle-button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.password-toggle-button:hover {
+    color: #000;
+}
+
+
 
 
 
