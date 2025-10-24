@@ -171,16 +171,31 @@ function Step2() {
                   overflow: 'hidden'
                 }}
               >
-                <img 
-                  src={theme.src} 
-                  alt={theme.alt}
-                  style={{
-                    width: '100%',
-                    height: '80px',
-                    objectFit: 'cover',
-                    display: 'block'
-                  }}
-                />
+                {isVideo(theme.src) ? (
+                  <video 
+                    src={theme.src} 
+                    muted
+                    playsInline
+                    preload="metadata"
+                    style={{
+                      width: '100%',
+                      height: '80px',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                ) : (
+                  <img 
+                    src={theme.src} 
+                    alt={theme.alt}
+                    style={{
+                      width: '100%',
+                      height: '80px',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>
