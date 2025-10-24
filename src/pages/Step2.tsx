@@ -13,7 +13,7 @@ export interface Theme {
 
 const themeImages: Theme[] = [
   
-  { id: 1, src: '/themes/theme1.png', alt: 'Ocean sunset', frame: '/themes/pattern_theme1.png' },
+  { id: 1, src: '/themes/theme1.mp4', alt: 'Ocean sunset', frame: '/themes/pattern_theme1.png' },
   { id: 2, src: '/themes/theme2.png', alt: 'White minimalist', frame: '/themes/pattern_theme2.png' },
   { id: 3, src: '/themes/theme3.png', alt: 'Rustic wood', frame: '/themes/pattern_theme3.png' },
   { id: 4, src: '/themes/theme4.png', alt: 'Warm orangey', frame: '/themes/pattern_theme4.png' },
@@ -60,6 +60,11 @@ function Step2() {
   const { selectedTheme, setSelectedTheme } = useImage();
   const [localSelectedTheme, setLocalSelectedTheme] = useState<Theme | null>(null);
 
+  // Helper function to check if the source is a video
+  const isVideo = (src: string): boolean => {
+    return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
+  };
+
   useEffect(() => {
     const defaultTheme = themeImages[0];
     setLocalSelectedTheme(defaultTheme);
@@ -95,17 +100,34 @@ function Step2() {
           {/* Large preview of selected theme */}
           {localSelectedTheme && (
             <div style={{ position: 'relative', margin: '0 auto 30px', width: 500, height: 300, padding: 0 }}>
-              <img 
-                src={localSelectedTheme.src} 
-                alt={`Selected: ${localSelectedTheme.alt}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'block',
-                  objectFit: 'cover',
-                  padding: 0, margin: 0, border: 'none'
-                }}
-              />
+              {isVideo(localSelectedTheme.src) ? (
+                <video 
+                  src={localSelectedTheme.src} 
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'block',
+                    objectFit: 'cover',
+                    padding: 0, margin: 0, border: 'none'
+                  }}
+                />
+              ) : (
+                <img 
+                  src={localSelectedTheme.src} 
+                  alt={`Selected: ${localSelectedTheme.alt}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'block',
+                    objectFit: 'cover',
+                    padding: 0, margin: 0, border: 'none'
+                  }}
+                />
+              )}
               {localSelectedTheme.frame && (
                 <img
                   src={localSelectedTheme.frame}
