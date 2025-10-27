@@ -40,24 +40,30 @@ function Step5() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const themeVideoRef = useRef<HTMLVideoElement>(null);
+  
+  // Helper function to check if the source is a video
+  const isVideo = (src: string): boolean => {
+    return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
+  };
   
   // Combine theme, slides, and media items in order
   const allItems: PreviewItem[] = [];
   
-  // Add theme as first item if selected
-  if (selectedTheme) {
-    allItems.push({
-      id: 'theme',
-      type: 'theme',
-      src: selectedTheme.src,
-      duration: 3000, // 3 seconds for theme
-      customText: '',
-      customFont: 'Montserrat',
-      customColor: '#ffffff',
-      effect: 'none',
-      transition: 'fade'
-    });
-  }
+  // Don't add theme as a separate item - it will be the background
+  // if (selectedTheme) {
+  //   allItems.push({
+  //     id: 'theme',
+  //     type: 'theme',
+  //     src: selectedTheme.src,
+  //     duration: 3000, // 3 seconds for theme
+  //     customText: '',
+  //     customFont: 'Montserrat',
+  //     customColor: '#ffffff',
+  //     effect: 'none',
+  //     transition: 'fade'
+  //   });
+  // }
   
   // Add slides
   slides.forEach(slide => {
@@ -97,6 +103,10 @@ function Step5() {
       } else {
         videoRef.current.pause();
       }
+    }
+    // Always play theme video if it exists
+    if (themeVideoRef.current) {
+      themeVideoRef.current.play().catch(err => console.error('Theme video play error:', err));
     }
   }, [isPlaying]);
 
@@ -240,6 +250,42 @@ function Step5() {
               background: '#000'
             }}
           >
+            {/* Theme as background - either video or image */}
+            {selectedTheme && isVideo(selectedTheme.src) ? (
+              <video
+                ref={themeVideoRef}
+                src={selectedTheme.src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  zIndex: 0
+                }}
+              />
+            ) : selectedTheme ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${selectedTheme.src})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  zIndex: 0
+                }}
+              />
+            ) : null}
+
+            {/* Current item on top of theme */}
             <div
               key={animKey}
               className={`slide-animator ${transitionClass}`}
@@ -255,7 +301,7 @@ function Step5() {
                 zIndex: 1
               }}
             >
-              {/* Render video element for video type, background image for others */}
+              {/* Render video element for video type, image with transparency for others */}
               {currentItem?.type === 'video' ? (
                 <video
                   ref={videoRef}
@@ -267,9 +313,10 @@ function Step5() {
                   playsInline
                   preload="metadata"
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
+                    maxWidth: '70%',
+                    maxHeight: '70%',
+                    objectFit: 'contain',
+                    opacity: 0.85
                   }}
                   onLoadedMetadata={() => {
                     if (videoRef.current && isPlaying) {
@@ -277,7 +324,18 @@ function Step5() {
                     }
                   }}
                 />
-              ) : (
+              ) : currentItem?.type === 'image' ? (
+                <img
+                  src={currentItem.src}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '70%',
+                    maxHeight: '70%',
+                    objectFit: 'contain',
+                    opacity: 0.85
+                  }}
+                />
+              ) : currentItem?.type === 'slide' ? (
                 <div
                   style={{
                     position: 'absolute',
@@ -285,12 +343,13 @@ function Step5() {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `url(${currentItem?.src})`,
+                    backgroundImage: currentItem.src ? `url(${currentItem.src})` : 'none',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundPosition: 'center',
+                    opacity: currentItem.src ? 0.3 : 0
                   }}
                 />
-              )}
+              ) : null}
               
               {/* Text overlay for slides */}
               {currentItem?.customText && (

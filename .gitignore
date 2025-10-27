@@ -13,5 +13,14 @@ public/themes/*.mp4
 public/themes/*.webm
 public/themes/*.ogg
 
+# User uploaded files - too large for Git
+backend/uploads/images/*
+backend/uploads/videos/*
+backend/uploads/audio/*
+backend/backend/uploads/*
+
+# Database files - should not be in Git
+backend/database/*.db
+
 # System files
 .DS_Store
