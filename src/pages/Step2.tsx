@@ -12,18 +12,11 @@ export interface Theme {
 }
 
 const themeImages: Theme[] = [
-  
-  { id: 1, src: '/themes/theme1.mp4', alt: 'Ocean sunset', frame: '/themes/pattern_theme1.png' },
-  { id: 2, src: '/themes/theme2.png', alt: 'White minimalist', frame: '/themes/pattern_theme2.png' },
-  { id: 3, src: '/themes/theme3.png', alt: 'Rustic wood', frame: '/themes/pattern_theme3.png' },
-  { id: 4, src: '/themes/theme4.png', alt: 'Warm orangey', frame: '/themes/pattern_theme4.png' },
-  // ...other themes
  
-  
-  // { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
-  // { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
-  // { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
-  // { id: 4, src: '/themes/theme4.png', alt: 'Theme 4' },
+  { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
+  { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
+  { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
+  { id: 4, src: '/themes/theme4.png', alt: 'Theme 4' },
   { id: 5, src: '/themes/theme5.png', alt: 'Theme 5' },
   { id: 6, src: '/themes/theme6.png', alt: 'Theme 6' },
   { id: 7, src: '/themes/theme7.png', alt: 'Theme 7' },
