@@ -168,6 +168,7 @@ function Step2() {
                 {isVideo(theme.src) ? (
                   <video 
                     src={theme.src} 
+                    poster={`/themes/theme${theme.id}_poster.png`}
                     muted
                     playsInline
                     preload="metadata"

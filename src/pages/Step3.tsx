@@ -147,6 +147,16 @@ interface SortableItemProps {
   children: React.ReactNode;
 }
 
+interface SlideForm {
+  backgroundImage: string;
+  customText: string;
+  customFont: string;
+  customColor: string;
+  customDuration: string;
+  selectedQuote?: string;
+}
+
+
 const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
   const {
     attributes,
@@ -245,13 +255,17 @@ function Step3() {
   const colorPickerRef = useRef<HTMLDivElement>(null);
   
   // Current slide being created
-  const [currentSlide, setCurrentSlide] = useState({
+  const [currentSlide, setCurrentSlide] = useState<SlideForm>({
     backgroundImage: '',
     customText: '',
     customFont: 'Montserrat',
     customColor: '#000000',
     customDuration: '5',
+    selectedQuote: undefined,
   });
+
+  const { selectedTheme } = useImage();
+
 
   const [categoryIdx, setCategoryIdx] = useState(0); // Category
   
@@ -616,8 +630,77 @@ function Step3() {
     }
   };
 
+  // const handleAddSlide = async () => {
+    
+  //   if (currentSlide.backgroundImage && currentSlide.customText) {
+  //     const newSlide = {
+  //       id: Date.now().toString(),
+  //       type: 'text' as const,
+  //       backgroundImage: currentSlide.backgroundImage,
+  //       customText: currentSlide.customText,
+  //       customFont: currentSlide.customFont,
+  //       customColor: currentSlide.customColor,
+  //       customDuration: currentSlide.customDuration,
+  //       order: slides.length,
+  //       transition: selectedTransition,
+  //       effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
+  //     };
+      
+  //     const updatedSlides = [...slides, newSlide];
+  //     setSlides(updatedSlides);
+      
+  //     // Save slides to database - pass the updated slides array directly
+  //     try {
+  //       await saveSlides(updatedSlides);
+  //       console.log('Slide saved to database');
+  //     } catch (error) {
+  //       console.error('Failed to save slide:', error);
+  //       // Continue anyway - slide is still in local state
+  //     }
+      
+  //     // Reset form
+  //     setCurrentSlide({
+  //       backgroundImage: '',
+  //       customText: '',
+  //       customFont: 'Montserrat',
+  //       customColor: '#000000',
+  //       customDuration: '5',
+  //       selectedQuote: undefined,
+  //     });
+  //     setIsCreatingSlide(false);
+  //   }
+  // };
+
   const handleAddSlide = async () => {
-    if (currentSlide.backgroundImage && currentSlide.customText) {
+    // Check if adding a themedQuote slide based on currentSlide.selectedQuote,
+    // otherwise fallback to your regular text slide add logic.
+  
+    if (currentSlide.selectedQuote) {
+      // Add themedQuote slide with mp4 background and overlay PNG
+      const newSlide = {
+        id: Date.now().toString(),
+        type: 'themedQuote' as const,
+        backgroundVideo: '/themes/theme1.mp4',           // Static mp4 for themed quote slides
+        quoteOverlay: currentSlide.selectedQuote,        // The selected overlay PNG
+        customFont: currentSlide.customFont,
+        customColor: currentSlide.customColor,
+        customDuration: currentSlide.customDuration,
+        order: slides.length,
+        transition: selectedTransition,
+        effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
+      };
+      
+      const updatedSlides = [...slides, newSlide];
+      setSlides(updatedSlides);
+  
+      try {
+        await saveSlides(updatedSlides);
+        console.log('Themed quote slide saved to database');
+      } catch (error) {
+        console.error('Failed to save themed quote slide:', error);
+      }
+    } else if (currentSlide.backgroundImage && currentSlide.customText) {
+      // Existing text slide logic
       const newSlide = {
         id: Date.now().toString(),
         type: 'text' as const,
@@ -630,30 +713,37 @@ function Step3() {
         transition: selectedTransition,
         effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
       };
-      
+  
       const updatedSlides = [...slides, newSlide];
       setSlides(updatedSlides);
-      
-      // Save slides to database - pass the updated slides array directly
+  
       try {
         await saveSlides(updatedSlides);
         console.log('Slide saved to database');
       } catch (error) {
         console.error('Failed to save slide:', error);
-        // Continue anyway - slide is still in local state
       }
-      
-      // Reset form
-      setCurrentSlide({
-        backgroundImage: '',
-        customText: '',
-        customFont: 'Montserrat',
-        customColor: '#000000',
-        customDuration: '5',
-      });
-      setIsCreatingSlide(false);
+    } else {
+      // Optionally: handle validation error if needed
+      console.warn('Slide not added: missing required information');
+      return;
     }
+  
+    // Reset form after adding slide
+    setCurrentSlide({
+      backgroundImage: '',
+      customText: '',
+      customFont: 'Montserrat',
+      customColor: '#000000',
+      customDuration: '5',
+      selectedQuote: undefined,    // reset quote selection too
+    });
+  
+    setIsCreatingSlide(false);
   };
+  
+
+
 
   const removeSlide = async (id: string) => {
     const filteredSlides = slides.filter(slide => slide.id !== id);
@@ -906,6 +996,46 @@ function Step3() {
                   </div>
                 </div>
 
+                {/* Add Themed Quote Slide Section */}
+                {selectedTheme?.id === 1 && (
+                  <div style={{ margin: '50px 0' }}>
+                    <label style={{fontSize: '16px', marginBottom: '8px', display: 'block' }}>
+                      Or Select a Themed Quote Slide
+                    </label>
+                    <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+                      {Array.from({ length: 6 }, (_, i) => i + 1).map((num) => {
+                        const quotePath = `/themes/themed_quotes/theme1_quote${num}.png`;
+                        const posterPath = `/themes/theme1_poster.png`;
+
+                        return (
+                          <img 
+                            key={quotePath}
+                            src={quotePath}
+                            alt={`Quote ${num}`}
+                            style={{
+                              width: 240,
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              border: currentSlide.selectedQuote === quotePath ? '3px solid #4CAF50' : '2px solid transparent',
+                              backgroundImage: `url(${posterPath})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              position: 'relative',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                            onClick={() => {
+                              setCurrentSlide({ ...currentSlide, selectedQuote: quotePath });
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+
                 {/* Preview */}
                 {currentSlide.backgroundImage && (
                   <div style={{ marginBottom: '20px' }}>
@@ -957,9 +1087,9 @@ function Step3() {
                   </button>
                   <button 
                     onClick={handleAddSlide}
-                    disabled={!currentSlide.backgroundImage || !currentSlide.customText}
+                    disabled={!(currentSlide.backgroundImage || currentSlide.selectedQuote)}
                     style={{
-                      backgroundColor: currentSlide.backgroundImage && currentSlide.customText ? '#b2cc55' : '#ccc',
+                      backgroundColor: currentSlide.backgroundImage || currentSlide.selectedQuote? '#b2cc55' : '#ccc',
                       color: 'white',
                       border: 'none',
                       borderRadius: '20px',

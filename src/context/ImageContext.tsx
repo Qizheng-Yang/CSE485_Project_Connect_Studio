@@ -11,7 +11,7 @@ interface Theme {
 
 export interface Slide {
   id: string;
-  type: 'text' | 'image';
+  type: 'text' | 'image' | "themedQuote";
   backgroundImage?: string;
   imageUrl?: string;
   mediaFileId?: string | null;
@@ -27,6 +27,10 @@ export interface Slide {
   background?: string;
 
   filters?: { brightness: number; contrast: number; saturation: number; blur: number; }
+
+  backgroundVideo?: string;
+  quoteOverlay?: string; 
+  selectedQuote?: string;
 }
 
 export interface MediaItem {
