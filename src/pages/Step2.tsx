@@ -12,8 +12,10 @@ export interface Theme {
 }
 
 const themeImages: Theme[] = [
- 
-  { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
+  
+  { id: 1, src: '/themes/theme1.mp4', alt: 'Ocean sunset', frame: '/themes/pattern_theme1.png' },
+
+  // { id: 1, src: '/themes/theme1.png', alt: 'Theme 1' },
   { id: 2, src: '/themes/theme2.png', alt: 'Theme 2' },
   { id: 3, src: '/themes/theme3.png', alt: 'Theme 3' },
   { id: 4, src: '/themes/theme4.png', alt: 'Theme 4' },
