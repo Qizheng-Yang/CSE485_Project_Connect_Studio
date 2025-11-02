@@ -277,6 +277,8 @@ function Step3() {
     selectedQuote: undefined,
   });
 
+
+
   const { selectedTheme } = useImage();
 
 
@@ -823,7 +825,15 @@ const handleAddSlide = async () => {
                         border: currentSlide.backgroundImage === imageUrl ? '3px solid #b2cc55' : '1px solid #ddd',
                         borderRadius: '5px'
                       }}
-                      onClick={() => setCurrentSlide(prev => ({ ...prev, backgroundImage: imageUrl }))}
+                      onClick={() => setCurrentSlide(prev => ({ 
+                        ...prev, 
+                        backgroundImage: imageUrl,
+                        selectedQuote: undefined, 
+                        customText: prev.customText || ''
+
+                      }))}
+
+
                     />
                   ))}
                 </div>
@@ -996,14 +1006,27 @@ const handleAddSlide = async () => {
                               alignItems: 'center',
                             }}
                             onClick={() => {
-                              setCurrentSlide({ ...currentSlide, selectedQuote: quotePath });
+                              setCurrentSlide({ 
+                                ...currentSlide, 
+                                selectedQuote: quotePath,
+                                backgroundImage: '',
+                                customText: '',  
+                                customFont: 'Montserrat', 
+                                customColor: '#000000'
+
+                              });
+
                             }}
+
                           />
                         );
                       })}
                     </div>
                   </div>
                 )}
+
+
+                
 
 
                 {/* Preview */}
@@ -1038,6 +1061,40 @@ const handleAddSlide = async () => {
                   </div>
                 )}
 
+                {/* Themed Quote Preview */}
+                {currentSlide.selectedQuote && (
+                  <div style={{ marginBottom: '20px' }}>
+                    <p>Preview:</p>
+                    <div 
+                      style={{
+                        width: '300px',
+                        height: '180px',
+                        backgroundImage: `url(/themes/theme1_poster.png)`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        position: 'relative',
+                        borderRadius: '5px',
+                        margin: '0 auto'
+                      }}
+                    >
+                      {/* Quote overlay */}
+                      <img
+                        src={currentSlide.selectedQuote}
+                        alt="Quote Overlay"
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+
                 {/* Action Buttons */}
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                   <button 
@@ -1064,7 +1121,7 @@ const handleAddSlide = async () => {
                       border: 'none',
                       borderRadius: '20px',
                       padding: '10px 20px',
-                      cursor: currentSlide.backgroundImage && currentSlide.customText ? 'pointer' : 'not-allowed',
+                      cursor: (currentSlide.backgroundImage && currentSlide.customText) || currentSlide.selectedQuote? 'pointer' : 'not-allowed',
                       marginTop: '15px',
                       fontSize: '16px'
                     }}
@@ -1221,6 +1278,8 @@ const handleAddSlide = async () => {
             )}
           </div>
         )}
+
+
 
         {/* PHOTOS & VIDEOS TAB */}
         {activeTab === 'photos' && (
