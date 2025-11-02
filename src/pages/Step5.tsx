@@ -6,11 +6,15 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect, useRef } from 'react';
 
+import { parseThemeAndQuote } from '../pages/Step3';
+
+
 // Define the item type for preview
 interface PreviewItem {
   id: string;
   type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | "themedQuote";
   src: string;
+  quoteOverlay?: string;
   duration: number;
   customText?: string;
   customFont?: string;
@@ -50,35 +54,39 @@ function Step5() {
   // Combine theme, slides, and media items in order
   const allItems: PreviewItem[] = [];
   
-  // Don't add theme as a separate item - it will be the background
-  // if (selectedTheme) {
-  //   allItems.push({
-  //     id: 'theme',
-  //     type: 'theme',
-  //     src: selectedTheme.src,
-  //     duration: 3000, // 3 seconds for theme
-  //     customText: '',
-  //     customFont: 'Montserrat',
-  //     customColor: '#ffffff',
-  //     effect: 'none',
-  //     transition: 'fade'
-  //   });
-  // }
+
   
   // Add slides
   slides.forEach(slide => {
-    allItems.push({
-      id: slide.id,
-      type: 'slide',
-      src: slide.backgroundImage || '',
-      duration: parseInt(slide.customDuration || '5') * 1000,
-      customText: slide.customText || '',
-      customFont: slide.customFont || 'Montserrat',
-      customColor: slide.customColor || '#ffffff',
-      effect: slide.effect || 'none',
-      transition: slide.transition || 'fade'
-    });
+    if (slide.type === 'themedQuote') {
+      const themeParsed = parseThemeAndQuote(slide.quoteOverlay || '');
+      allItems.push({
+        id: slide.id,
+        type: 'themedQuote',
+        src: `/themes/${themeParsed?.theme}_poster.png`, // poster background
+        quoteOverlay: slide.quoteOverlay || '', // overlay PNG filename
+        duration: parseInt(slide.customDuration || '5') * 1000,
+        customText: slide.customText || '',
+        customFont: slide.customFont || 'Montserrat',
+        customColor: slide.customColor || '#ffffff',
+        effect: slide.effect || 'none',
+        transition: slide.transition || 'fade'
+      });
+    } else {
+      allItems.push({
+        id: slide.id,
+        type: 'slide',
+        src: slide.backgroundImage || '',
+        duration: parseInt(slide.customDuration || '5') * 1000,
+        customText: slide.customText || '',
+        customFont: slide.customFont || 'Montserrat',
+        customColor: slide.customColor || '#ffffff',
+        effect: slide.effect || 'none',
+        transition: slide.transition || 'fade'
+      });
+    }
   });
+  
   
 
   mediaItems.forEach(item => {
@@ -302,6 +310,7 @@ function Step5() {
               }}
             >
               {/* Render video element for video type, image with transparency for others */}
+
               {currentItem?.type === 'video' ? (
                 <video
                   ref={videoRef}
@@ -324,7 +333,46 @@ function Step5() {
                     }
                   }}
                 />
-              ) : currentItem?.type === 'image' ? (
+              ) : currentItem?.type === 'themedQuote' ? (
+                <>
+                  {/* Poster background */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      backgroundImage: `url(${currentItem.src})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      opacity: 1,
+                      zIndex: 0,
+                    }}
+                  />
+              
+                  {/* Quote overlay */}
+                  <img
+                    src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
+                    alt="Quote overlay"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      pointerEvents: 'none',
+                      zIndex: 1,
+                    }}
+                    draggable={false}
+                  />
+                </>
+              )
+              
+              
+              
+              : currentItem?.type === 'image' ? (
                 <img
                   src={currentItem.src}
                   alt="Preview"

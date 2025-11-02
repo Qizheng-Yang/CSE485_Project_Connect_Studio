@@ -205,6 +205,18 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
   );
 };
 
+
+export function parseThemeAndQuote(quoteOverlay?: string): { theme: string; quoteNumber: number } | null {
+  if (!quoteOverlay) return null;
+  const match = quoteOverlay.match(/(theme\d+)_quote(\d+)\.png$/);
+  if (!match) return null;
+  return {
+    theme: match[1],
+    quoteNumber: parseInt(match[2], 10),
+  };
+}
+
+
 // Helper for cropping
 async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<string> {
   if (!crop) return imageSrc;
@@ -234,6 +246,7 @@ async function getCroppedImg(imageSrc: string, crop: Area | null): Promise<strin
     image.onerror = error => reject(error);
   });
 }
+
 
 
 function Step3() {
@@ -630,15 +643,6 @@ function Step3() {
     }
   };
 
-  function parseThemeAndQuote(quoteOverlay?: string): { theme: string; quoteNumber: number } | null {
-    if (!quoteOverlay) return null;
-    const match = quoteOverlay.match(/(theme\d+)_quote(\d+)\.png$/);
-    if (!match) return null;
-    return {
-      theme: match[1],
-      quoteNumber: parseInt(match[2], 10),
-    };
-  }
   
 
 const handleAddSlide = async () => {
