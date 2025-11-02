@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 // Define the item type for preview
 interface PreviewItem {
   id: string;
-  type: 'theme' | 'slide' | 'image' | 'video' | 'audio';
+  type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | "themedQuote";
   src: string;
   duration: number;
   customText?: string;

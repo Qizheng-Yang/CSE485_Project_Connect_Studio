@@ -12,6 +12,10 @@ interface Theme {
 export interface Slide {
   id: string;
   type: 'text' | 'image' | "themedQuote";
+
+  theme?: string;
+  quoteNumber?: number; 
+
   backgroundImage?: string;
   imageUrl?: string;
   mediaFileId?: string | null;
@@ -36,7 +40,7 @@ export interface Slide {
 export interface MediaItem {
   id: string;
   url: string;
-  type: 'image' | 'video' | 'audio';
+  type: 'image' | 'video' | 'audio' | "themedQuote";
   order: number;
   fileId?: string; // Backend file ID
   filename?: string;

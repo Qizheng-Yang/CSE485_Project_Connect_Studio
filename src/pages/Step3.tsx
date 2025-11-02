@@ -630,117 +630,83 @@ function Step3() {
     }
   };
 
-  // const handleAddSlide = async () => {
-    
-  //   if (currentSlide.backgroundImage && currentSlide.customText) {
-  //     const newSlide = {
-  //       id: Date.now().toString(),
-  //       type: 'text' as const,
-  //       backgroundImage: currentSlide.backgroundImage,
-  //       customText: currentSlide.customText,
-  //       customFont: currentSlide.customFont,
-  //       customColor: currentSlide.customColor,
-  //       customDuration: currentSlide.customDuration,
-  //       order: slides.length,
-  //       transition: selectedTransition,
-  //       effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
-  //     };
-      
-  //     const updatedSlides = [...slides, newSlide];
-  //     setSlides(updatedSlides);
-      
-  //     // Save slides to database - pass the updated slides array directly
-  //     try {
-  //       await saveSlides(updatedSlides);
-  //       console.log('Slide saved to database');
-  //     } catch (error) {
-  //       console.error('Failed to save slide:', error);
-  //       // Continue anyway - slide is still in local state
-  //     }
-      
-  //     // Reset form
-  //     setCurrentSlide({
-  //       backgroundImage: '',
-  //       customText: '',
-  //       customFont: 'Montserrat',
-  //       customColor: '#000000',
-  //       customDuration: '5',
-  //       selectedQuote: undefined,
-  //     });
-  //     setIsCreatingSlide(false);
-  //   }
-  // };
+  function parseThemeAndQuote(quoteOverlay?: string): { theme: string; quoteNumber: number } | null {
+    if (!quoteOverlay) return null;
+    const match = quoteOverlay.match(/(theme\d+)_quote(\d+)\.png$/);
+    if (!match) return null;
+    return {
+      theme: match[1],
+      quoteNumber: parseInt(match[2], 10),
+    };
+  }
+  
 
-  const handleAddSlide = async () => {
-    // Check if adding a themedQuote slide based on currentSlide.selectedQuote,
-    // otherwise fallback to your regular text slide add logic.
-  
-    if (currentSlide.selectedQuote) {
-      // Add themedQuote slide with mp4 background and overlay PNG
-      const newSlide = {
-        id: Date.now().toString(),
-        type: 'themedQuote' as const,
-        backgroundVideo: '/themes/theme1.mp4',           // Static mp4 for themed quote slides
-        quoteOverlay: currentSlide.selectedQuote,        // The selected overlay PNG
-        customFont: currentSlide.customFont,
-        customColor: currentSlide.customColor,
-        customDuration: currentSlide.customDuration,
-        order: slides.length,
-        transition: selectedTransition,
-        effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
-      };
-      
-      const updatedSlides = [...slides, newSlide];
-      setSlides(updatedSlides);
-  
-      try {
-        await saveSlides(updatedSlides);
-        console.log('Themed quote slide saved to database');
-      } catch (error) {
-        console.error('Failed to save themed quote slide:', error);
-      }
-    } else if (currentSlide.backgroundImage && currentSlide.customText) {
-      // Existing text slide logic
-      const newSlide = {
-        id: Date.now().toString(),
-        type: 'text' as const,
-        backgroundImage: currentSlide.backgroundImage,
-        customText: currentSlide.customText,
-        customFont: currentSlide.customFont,
-        customColor: currentSlide.customColor,
-        customDuration: currentSlide.customDuration,
-        order: slides.length,
-        transition: selectedTransition,
-        effect: filterEffects.find(e => e.name === selectedEffect)?.value || 'none'
-      };
-  
-      const updatedSlides = [...slides, newSlide];
-      setSlides(updatedSlides);
-  
-      try {
-        await saveSlides(updatedSlides);
-        console.log('Slide saved to database');
-      } catch (error) {
-        console.error('Failed to save slide:', error);
-      }
-    } else {
-      // Optionally: handle validation error if needed
-      console.warn('Slide not added: missing required information');
-      return;
+const handleAddSlide = async () => {
+  if (currentSlide.selectedQuote) {
+    const newSlide = {
+      id: Date.now().toString(),
+      type: "themedQuote" as const,
+      quoteOverlay: currentSlide.selectedQuote.replace(/^\/?themes\/themed_quotes\//, ""),
+      customFont: currentSlide.customFont,
+      customColor: currentSlide.customColor,
+      customDuration: currentSlide.customDuration,
+      order: slides.length,
+      transition: selectedTransition,
+      effect: filterEffects.find(e => e.name === selectedEffect)?.value || "none",
+    };
+
+    const updatedSlides = [...slides, newSlide];
+    setSlides(updatedSlides);
+
+    try {
+      await saveSlides(updatedSlides);
+      console.log("Themed quote slide saved to database");
+    } catch (error) {
+      console.error("Failed to save themed quote slide:", error);
     }
-  
-    // Reset form after adding slide
-    setCurrentSlide({
-      backgroundImage: '',
-      customText: '',
-      customFont: 'Montserrat',
-      customColor: '#000000',
-      customDuration: '5',
-      selectedQuote: undefined,    // reset quote selection too
-    });
-  
-    setIsCreatingSlide(false);
-  };
+  } else if (currentSlide.backgroundImage && currentSlide.customText) {
+    const newSlide = {
+      id: Date.now().toString(),
+      type: "text" as const,
+      backgroundImage: currentSlide.backgroundImage,
+      customText: currentSlide.customText,
+      customFont: currentSlide.customFont,
+      customColor: currentSlide.customColor,
+      customDuration: currentSlide.customDuration,
+      order: slides.length,
+      transition: selectedTransition,
+      effect: filterEffects.find(e => e.name === selectedEffect)?.value || "none",
+    };
+
+    const updatedSlides = [...slides, newSlide];
+    setSlides(updatedSlides);
+
+    try {
+      await saveSlides(updatedSlides);
+      console.log("Slide saved to database");
+    } catch (error) {
+      console.error("Failed to save slide:", error);
+    }
+  } else {
+    // In case not all info added that is required
+    console.warn("Slide not added: missing required information");
+    return;
+  }
+
+  // Reset form after adding the slide
+  setCurrentSlide({
+    backgroundImage: "",
+    customText: "",
+    customFont: "Montserrat",
+    customColor: "#000000",
+    customDuration: "5",
+    selectedQuote: undefined, // reset quote selection
+  });
+
+  setIsCreatingSlide(false);
+};
+
+
   
 
 
@@ -1125,90 +1091,125 @@ function Step3() {
                       maxWidth: '1000px', 
                       margin: '0 auto' 
                     }}>
-                      {slides.map((slide) => (
-                        <SortableItem key={slide.id} id={slide.id}>
-                          <div style={{ 
-                            position: 'relative',
-                            backgroundColor: '#f9f9f9',
-                            borderRadius: '10px',
-                            padding: '10px'
-                          }}>
-                            <div
-                              style={{
-                                width: '100%',
-                                height: '150px',
-                                backgroundImage: `url(${slide.backgroundImage})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: '5px',
-                                marginBottom: '10px',
-                                cursor: slide.backgroundImage ? 'pointer' : 'default',
+                      {slides.map((slide) => {
 
-                                filter: slide.filters
-                                  ? `brightness(${slide.filters.brightness}%) contrast(${slide.filters.contrast}%) saturate(${slide.filters.saturation}%) blur(${slide.filters.blur}px)`
-                                  : 'none'
-                              }}
-                              onClick={() => {
-                                if (!slide.backgroundImage) return;
-                                setSelectedImage({
-                                  id: slide.id,
-                                  url: slide.backgroundImage ?? '',
-                                  type: 'image',
-                                  order: slide.order
-                                });
-                                setIsEditing(true);
-                                setIsCropping(false);
-                              }}
-                            >
-                              <span style={{
-                                color: slide.customColor,
-                                fontFamily: slide.customFont,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                                textAlign: 'center',
-                                padding: '5px'
-                              }}>
-                                {slide.customText}
-                              </span>
-                            </div>
-                            <p style={{ fontSize: '12px', margin: '5px 0' }}>
-                              Duration: {slide.customDuration}s
-                            </p>
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                removeSlide(slide.id);
-                              }}
-                              onMouseDown={(e) => {
-                                e.stopPropagation();
-                              }}
+                        const backgroundImageUrl = (() => {
+                          if (slide.type === 'themedQuote' && slide.quoteOverlay) {
+                            const parsed = parseThemeAndQuote(slide.quoteOverlay);
+                            if (parsed) {
+                              return `/themes/${parsed.theme}_poster.png`;
+                            }
+                            return undefined;
+                          }
+                          return slide.backgroundImage || undefined;
+                        })();
+
+                        return (
+                        
+                          <SortableItem key={slide.id} id={slide.id}>
+                            <div style={{ 
+                              position: 'relative',
+                              backgroundColor: '#f9f9f9',
+                              borderRadius: '10px',
+                              padding: '10px'
+                            }}>
+                              <div
                                 style={{
-                                  position: 'absolute',
-                                  top: '8px',
-                                  right: '8px',
-                                  background: 'rgba(255,0,0,0.8)',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '50%',
-                                  width: '24px',
-                                  height: '24px',
-                                  cursor: 'pointer',
-                                  fontSize: '14px',
-                                  zIndex: 100,
+                                  width: '100%',
+                                  height: '150px',
+                                  backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
                                   display: 'flex',
                                   alignItems: 'center',
-                                  justifyContent: 'center'
+                                  justifyContent: 'center',
+                                  borderRadius: '5px',
+                                  marginBottom: '10px',
+                                  cursor: slide.backgroundImage ? 'pointer' : 'default',
+
+                                  filter: slide.filters
+                                    ? `brightness(${slide.filters.brightness}%) contrast(${slide.filters.contrast}%) saturate(${slide.filters.saturation}%) blur(${slide.filters.blur}px)`
+                                    : 'none'
                                 }}
-                            >
-                              ×
-                            </button>
-                          </div>
-                        </SortableItem>
-                      ))}
+                                onClick={() => {
+                                  if (!backgroundImageUrl) return;
+                                  setSelectedImage({
+                                    id: slide.id,
+                                    url: backgroundImageUrl,
+                                    type: 'image',
+                                    order: slide.order
+                                  });
+                                  setIsEditing(true);
+                                  setIsCropping(false);
+                                }}
+                              >
+                                <span style={{
+                                  color: slide.customColor,
+                                  fontFamily: slide.customFont,
+                                  fontSize: '14px',
+                                  fontWeight: 'bold',
+                                  textAlign: 'center',
+                                  padding: '5px'
+                                }}>
+                                  {slide.customText}
+                                </span>
+
+                                {slide.type === 'themedQuote' && slide.quoteOverlay && (
+                                  <img
+                                    src={`/themes/themed_quotes/${slide.quoteOverlay}`}
+                                    alt="Quote overlay"
+                                    style={{
+                                      position: 'absolute',
+                                      top: 0,
+                                      left: 0,
+                                      width: '100%',
+                                      height: '150px',
+                                      pointerEvents: 'none',
+                                      objectFit: 'contain',
+                                      borderRadius: '5px',
+                                    }}
+                                    draggable={false}
+                                  />
+                                )}
+
+
+                              </div>
+                              <p style={{ fontSize: '12px', margin: '5px 0' }}>
+                                Duration: {slide.customDuration}s
+                              </p>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  removeSlide(slide.id);
+                                }}
+                                onMouseDown={(e) => {
+                                  e.stopPropagation();
+                                }}
+                                  style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                    background: 'rgba(255,0,0,0.8)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '24px',
+                                    height: '24px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    zIndex: 100,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          </SortableItem>
+                        
+                      ) } )  } 
                     </div>
                   </SortableContext>
                 </DndContext>
@@ -1339,107 +1340,113 @@ function Step3() {
                       maxWidth: '1000px', 
                       margin: '0 auto' 
                     }}>
-                      {mediaItems.map((item) => (
-                        <SortableItem key={item.id} id={item.id}>
-                          <div style={{ 
-                            position: 'relative',
-                            backgroundColor: '#f9f9f9',
-                            borderRadius: '10px',
-                            overflow: 'hidden'
-                          }}>
-                            {item.type === 'image' ? (
-                              <img 
-                                src={item.url} 
-                                alt="Uploaded content"
-                                style={{ 
-                                  width: '100%', 
-                                  height: '150px', 
-                                  objectFit: 'cover',
-                                  filter: item.filters
-                                    ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
-                                    : 'none',
-                                  cursor: 'pointer'
-                                }}
-                                onClick={() => {
-                                  setSelectedImage(item);
-                                  setIsEditing(true);
-                                }}
-                              />
-                            ) : (
-                              <div style={{ position: 'relative' }}>
-                                <video 
-                                  src={item.url} 
-                                  preload="metadata"
-                                  muted
-                                  playsInline
-                                  style={{ 
-                                    width: '100%', 
-                                    height: '150px', 
-                                    objectFit: 'cover',
-                                    backgroundColor: '#000',
-                                    filter: item.filters
-                                      ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
-                                      : 'none'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    const video = e.currentTarget;
-                                    video.play().catch(() => {});
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    const video = e.currentTarget;
-                                    video.pause();
-                                    video.currentTime = 0;
-                                  }}
-                                />
-                                <div style={{
-                                  position: 'absolute',
-                                  bottom: '5px',
-                                  left: '5px',
-                                  backgroundColor: 'rgba(0,0,0,0.7)',
-                                  color: 'white',
-                                  padding: '2px 8px',
-                                  borderRadius: '3px',
-                                  fontSize: '12px'
-                                }}>
-                                  VIDEO
+                      {slides.map((slide) => (
+                        <SortableItem key={slide.id} id={slide.id}>
+                          <div
+                            style={{
+                              position: 'relative',
+                              backgroundColor: '#f9f9f9',
+                              borderRadius: 10,
+                              padding: 10,
+                              width: 200,
+                              height: 160,
+                              boxSizing: 'border-box',
+                            }}
+                          >
+                            {slide.type === "themedQuote" && slide.quoteOverlay ? (() => {
+                              const parsed = parseThemeAndQuote(slide.quoteOverlay);
+                              if (!parsed) {
+                                return <div>Invalid quote overlay</div>;
+                              }
+                              return (
+                                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                  <img
+                                    src={`/themes/${parsed.theme}_poster.png`}
+                                    alt="Theme poster"
+                                    style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover',
+                                      borderRadius: 8,
+                                    }}
+                                    draggable={false}
+                                  />
+                                  {/* Comment out overlay if debugging */}
+                                  
+                                  <img
+                                    src={`/themes/themed_quotes/${slide.quoteOverlay}`}
+                                    alt="Quote Overlay"
+                                    style={{
+                                      position: 'absolute',
+                                      top: 0,
+                                      left: 0,
+                                      width: '100%',
+                                      height: '100%',
+                                      pointerEvents: 'none',
+                                      objectFit: 'contain',
+                                      borderRadius: 8,
+                                    }}
+                                    draggable={false}
+                                  />
+                                
                                 </div>
+                              );
+                            })()
+                            : slide.type === 'image' && slide.imageUrl ? (
+                              <img
+                                src={slide.imageUrl}
+                                alt="Uploaded content"
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  filter: slide.filters
+                                    ? `brightness(${slide.filters.brightness}%) contrast(${slide.filters.contrast}%) saturate(${slide.filters.saturation}%) blur(${slide.filters.blur}px)`
+                                    : 'none',
+                                }}
+                                draggable={false}
+                              />
+                            ) : slide.type === 'text' ? (
+                              <div
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  padding: 10,
+                                  fontFamily: slide.customFont,
+                                  color: slide.customColor,
+                                  fontSize: 14,
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {slide.customText || 'Text Slide'}
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  color: '#999',
+                                  fontSize: 14,
+                                  fontStyle: 'italic',
+                                }}
+                              >
+                                No Preview Available
                               </div>
                             )}
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                removeMediaItem(item.id);
-                              }}
-                              onMouseDown={(e) => {
-                                e.stopPropagation();
-                              }}
-                                style={{
-                                  position: 'absolute',
-                                  top: '8px',
-                                  right: '8px',
-                                  background: 'rgba(255,0,0,0.8)',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '50%',
-                                  width: '24px',
-                                  height: '24px',
-                                  cursor: 'pointer',
-                                  fontSize: '14px',
-                                  zIndex: 100,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center'
-                                }}
-                            >
-                              ×
-                            </button>
-                            <div style={{ padding: '5px', fontSize: '12px', textAlign: 'center' }}>
-                              Order: {item.order + 1}
-                            </div>
+                            <p style={{ fontSize: '12px', textAlign: 'right' }}>
+                              Duration: {slide.customDuration || '5'}s
+                            </p>
                           </div>
                         </SortableItem>
                       ))}
+
+
                     </div>
                   </SortableContext>
                 </DndContext>
