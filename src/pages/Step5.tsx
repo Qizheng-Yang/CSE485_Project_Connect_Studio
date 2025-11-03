@@ -6,15 +6,14 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect, useRef } from 'react';
 
-import { parseThemeAndQuote } from '../pages/Step3';
-
+// Importing the new DownloadButton component 
+import DownloadButton from '../components/DownloadButton';
 
 // Define the item type for preview
 interface PreviewItem {
   id: string;
-  type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | "themedQuote";
+  type: 'theme' | 'slide' | 'image' | 'video' | 'audio';
   src: string;
-  quoteOverlay?: string;
   duration: number;
   customText?: string;
   customFont?: string;
@@ -45,6 +44,28 @@ function Step5() {
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const themeVideoRef = useRef<HTMLVideoElement>(null);
+
+  // --- ADDITION 2: Add state and the handler function for the download process ---
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = () => {
+    setIsDownloading(true);
+    console.log("Download requested. Data to be sent to backend for rendering:", {
+      theme: selectedTheme,
+      slides: slides,
+      mediaItems: mediaItems, // We send all media, including audio, to the backend
+    });
+
+    // Simulate a delay for server rendering
+    setTimeout(() => {
+      alert(
+        "Video Download Initialized!\n\n" +
+        "This is a placeholder. In a real application, the video would be rendered on the server " +
+        "and the final MP4 file would now be downloaded to your computer."
+      );
+      setIsDownloading(false);
+    }, 2500); // Simulate a 2.5-second rendering time
+  };
   
   // Helper function to check if the source is a video
   const isVideo = (src: string): boolean => {
@@ -54,39 +75,20 @@ function Step5() {
   // Combine theme, slides, and media items in order
   const allItems: PreviewItem[] = [];
   
-
-  
   // Add slides
   slides.forEach(slide => {
-    if (slide.type === 'themedQuote') {
-      const themeParsed = parseThemeAndQuote(slide.quoteOverlay || '');
-      allItems.push({
-        id: slide.id,
-        type: 'themedQuote',
-        src: `/themes/${themeParsed?.theme}.mp4`,  // video background
-        quoteOverlay: slide.quoteOverlay || '', // overlay PNG filename
-        duration: parseInt(slide.customDuration || '5') * 1000,
-        customText: slide.customText || '',
-        customFont: slide.customFont || 'Montserrat',
-        customColor: slide.customColor || '#ffffff',
-        effect: slide.effect || 'none',
-        transition: slide.transition || 'fade'
-      });
-    } else {
-      allItems.push({
-        id: slide.id,
-        type: 'slide',
-        src: slide.backgroundImage || '',
-        duration: parseInt(slide.customDuration || '5') * 1000,
-        customText: slide.customText || '',
-        customFont: slide.customFont || 'Montserrat',
-        customColor: slide.customColor || '#ffffff',
-        effect: slide.effect || 'none',
-        transition: slide.transition || 'fade'
-      });
-    }
+    allItems.push({
+      id: slide.id,
+      type: 'slide',
+      src: slide.backgroundImage || '',
+      duration: parseInt(slide.customDuration || '5') * 1000,
+      customText: slide.customText || '',
+      customFont: slide.customFont || 'Montserrat',
+      customColor: slide.customColor || '#ffffff',
+      effect: slide.effect || 'none',
+      transition: slide.transition || 'fade'
+    });
   });
-  
   
 
   mediaItems.forEach(item => {
@@ -217,6 +219,10 @@ function Step5() {
           >
             🔄 Reset
           </button>
+
+          {/* --- ADDITION 3: Place the new DownloadButton component here --- */}
+          <DownloadButton isDownloading={isDownloading} onDownload={handleDownload} />
+
         </div>
 
         {/* Progress Bar */}
@@ -263,7 +269,7 @@ function Step5() {
               <video
                 ref={themeVideoRef}
                 src={selectedTheme.src}
-                // autoPlay
+                autoPlay
                 loop
                 muted
                 playsInline
@@ -310,7 +316,6 @@ function Step5() {
               }}
             >
               {/* Render video element for video type, image with transparency for others */}
-
               {currentItem?.type === 'video' ? (
                 <video
                   ref={videoRef}
@@ -333,80 +338,7 @@ function Step5() {
                     }
                   }}
                 />
-              ) : currentItem?.type === 'themedQuote' ? (
-                isVideo(currentItem.src) ? (
-                  <>
-                    <video
-                      ref={videoRef}
-                      key={`video-${animKey}`}
-                      src={currentItem.src}
-                      autoPlay={isPlaying}
-                      muted
-                      loop
-                      playsInline
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        zIndex: 0
-                      }}
-                    />
-                    <img
-                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
-                      alt="Quote overlay"
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        pointerEvents: 'none',
-                        zIndex: 1,
-                      }}
-                      draggable={false}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundImage: `url(${currentItem.src})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        opacity: 1,
-                        zIndex: 0,
-                      }}
-                    />
-                    <img
-                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
-                      alt="Quote overlay"
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        pointerEvents: 'none',
-                        zIndex: 1,
-                      }}
-                      draggable={false}
-                    />
-                  </>
-                )
-              )
-              /*Here end?*/
-              
-              : currentItem?.type === 'image' ? (
+              ) : currentItem?.type === 'image' ? (
                 <img
                   src={currentItem.src}
                   alt="Preview"
@@ -462,25 +394,6 @@ function Step5() {
                 zIndex: 2
               }}
             />
-            {/* {selectedTheme?.frame && (
-              <img
-                src={selectedTheme.frame}
-                alt="Frame overlay"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'fill',
-                  pointerEvents: 'none',
-                  opacity: 1,
-                  zIndex: 2,
-                  margin: 0, padding: 0, border: 'none'
-                }}
-              />
-            )} */}
-
           </div>
         </div>
 
