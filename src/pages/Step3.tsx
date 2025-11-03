@@ -208,10 +208,11 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
 
 export function parseThemeAndQuote(quoteOverlay?: string): { theme: string; quoteNumber: number } | null {
   if (!quoteOverlay) return null;
-  const match = quoteOverlay.match(/(theme\d+)_quote(\d+)\.png$/);
+  const match = quoteOverlay.match(/^quote(\d+)\.png$/);
   if (!match) return null;
   return {
     theme: match[1],
+    
     quoteNumber: parseInt(match[2], 10),
   };
 }
@@ -276,7 +277,6 @@ function Step3() {
     customDuration: '5',
     selectedQuote: undefined,
   });
-
 
 
   const { selectedTheme } = useImage();
@@ -743,6 +743,9 @@ const handleAddSlide = async () => {
     }
   };
 
+  const themeId = selectedTheme?.id || 1;
+  const posterPath = `/themes/theme${themeId}_poster.png`;
+
   return (
     <div className="container">
       <NavbarBabbo />
@@ -806,8 +809,13 @@ const handleAddSlide = async () => {
               </div>
             )}
 
+
+            
+
             {/* Create Slide Form */}
             {isCreatingSlide && (
+
+
               <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '10px', marginBottom: '30px' }}>
                 <h3>Create Text Slide</h3>
                 
@@ -976,16 +984,19 @@ const handleAddSlide = async () => {
                   </div>
                 </div>
 
+
                 {/* Add Themed Quote Slide Section */}
-                {selectedTheme?.id === 1 && (
+                {selectedTheme?.id && (
                   <div style={{ margin: '50px 0' }}>
                     <label style={{fontSize: '16px', marginBottom: '8px', display: 'block' }}>
                       Or Select a Themed Quote Slide
                     </label>
                     <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
                       {Array.from({ length: 6 }, (_, i) => i + 1).map((num) => {
-                        const quotePath = `/themes/themed_quotes/theme1_quote${num}.png`;
-                        const posterPath = `/themes/theme1_poster.png`;
+                        const themeId = selectedTheme.id;
+
+                        const quotePath = `/themes/themed_quotes/quote${num}.png`;
+                        const posterPath = `/themes/theme${themeId}_poster.png`;
 
                         return (
                           <img 
@@ -1037,7 +1048,8 @@ const handleAddSlide = async () => {
                       style={{
                         width: '300px',
                         height: '180px',
-                        backgroundImage: `url(${currentSlide.backgroundImage})`,
+                        // backgroundImage: `url(${currentSlide.backgroundImage})`,
+                        backgroundImage: `url(${posterPath})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         display: 'flex',
@@ -1069,7 +1081,8 @@ const handleAddSlide = async () => {
                       style={{
                         width: '300px',
                         height: '180px',
-                        backgroundImage: `url(/themes/theme1_poster.png)`,
+                        // backgroundImage: `url(/themes/theme1_poster.png)`,
+                        backgroundImage: `url(${posterPath})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         position: 'relative',
@@ -1156,11 +1169,7 @@ const handleAddSlide = async () => {
 
                         const backgroundImageUrl = (() => {
                           if (slide.type === 'themedQuote' && slide.quoteOverlay) {
-                            const parsed = parseThemeAndQuote(slide.quoteOverlay);
-                            if (parsed) {
-                              return `/themes/${parsed.theme}_poster.png`;
-                            }
-                            return undefined;
+                            return posterPath;
                           }
                           return slide.backgroundImage || undefined;
                         })();
@@ -1424,7 +1433,8 @@ const handleAddSlide = async () => {
                               return (
                                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                                   <img
-                                    src={`/themes/${parsed.theme}_poster.png`}
+                                    // src={`/themes/${parsed.theme}_poster.png`}
+                                    src={`url(${posterPath})`}
                                     alt="Theme poster"
                                     style={{
                                       width: '100%',
