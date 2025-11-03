@@ -989,7 +989,7 @@ const handleAddSlide = async () => {
                 {selectedTheme?.id && (
                   <div style={{ margin: '50px 0' }}>
                     <label style={{fontSize: '16px', marginBottom: '8px', display: 'block' }}>
-                      Or Select a Themed Quote Slide
+                      Or Select a Theme Based Slide
                     </label>
                     <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
                       {Array.from({ length: 6 }, (_, i) => i + 1).map((num) => {
