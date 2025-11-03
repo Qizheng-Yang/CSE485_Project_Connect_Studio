@@ -6,14 +6,15 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { useState, useEffect, useRef } from 'react';
 import DownloadButton from '../components/DownloadButton';
+import { parseThemeAndQuote } from '../pages/Step3';
 
 
-// --- (1) FIX: Add 'themedQuote' to the list of allowed types ---
 interface PreviewItem {
   id: string;
   type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | 'themedQuote';
   src: string;
   duration: number;
+  quoteOverlay?: string;
   customText?: string;
   customFont?: string;
   customColor?: string;
@@ -69,7 +70,23 @@ function Step5() {
   
   const allItems: PreviewItem[] = [];
   
-  slides.forEach(slide => {
+ // Add slides
+ slides.forEach(slide => {
+  if (slide.type === 'themedQuote') {
+    const themeParsed = parseThemeAndQuote(slide.quoteOverlay || '');
+    allItems.push({
+      id: slide.id,
+      type: 'themedQuote',
+      src: `/themes/${themeParsed?.theme}.mp4`, 
+      quoteOverlay: slide.quoteOverlay || '', 
+      duration: parseInt(slide.customDuration || '5') * 1000,
+      customText: slide.customText || '',
+      customFont: slide.customFont || 'Montserrat',
+      customColor: slide.customColor || '#ffffff',
+      effect: slide.effect || 'none',
+      transition: slide.transition || 'fade'
+    });
+  } else {
     allItems.push({
       id: slide.id,
       type: 'slide',
@@ -81,9 +98,9 @@ function Step5() {
       effect: slide.effect || 'none',
       transition: slide.transition || 'fade'
     });
-  });
+  }
+});
   
-  // This loop will now work correctly because PreviewItem allows 'themedQuote'
   mediaItems.forEach(item => {
     allItems.push({
       id: item.id,
@@ -239,21 +256,113 @@ function Step5() {
             >
               {currentItem?.type === 'video' ? (
                 <video
-                  ref={videoRef} key={`video-${animKey}`} src={currentItem.src} autoPlay={isPlaying} muted loop={false} playsInline preload="metadata"
+                  ref={videoRef}
+                  key={`video-${animKey}`}
+                  src={currentItem.src}
+                  autoPlay={isPlaying}
+                  muted
+                  loop={false}
+                  playsInline
+                  preload="metadata"
                   style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', opacity: 0.85 }}
-                  onLoadedMetadata={() => { if (videoRef.current && isPlaying) { videoRef.current.play().catch(err => console.error('Video play error:', err)); } }}
+                  onLoadedMetadata={() => {
+                    if (videoRef.current && isPlaying) {
+                      videoRef.current.play().catch(err => console.error('Video play error:', err));
+                    }
+                  }}
                 />
               ) : currentItem?.type === 'image' ? (
                 <img
-                  src={currentItem.src} alt="Preview"
+                  src={currentItem.src}
+                  alt="Preview"
                   style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', opacity: 0.85 }}
                 />
-              //  Treat 'themedQuote' visually the same as a 'slide' ---
-              ) : (currentItem?.type === 'slide' || currentItem?.type === 'themedQuote') ? (
+              ) : currentItem?.type === 'themedQuote' ? (
+                isVideo(currentItem.src) ? (
+                  <>
+                    <video
+                      ref={videoRef}
+                      key={`video-${animKey}`}
+                      src={currentItem.src}
+                      autoPlay={isPlaying}
+                      muted
+                      loop
+                      playsInline
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        zIndex: 0,
+                      }}
+                    />
+                    <img
+                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
+                      alt="Quote overlay"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                      }}
+                      draggable={false}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: `url(${currentItem.src})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        opacity: 1,
+                        zIndex: 0,
+                      }}
+                    />
+                    <img
+                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
+                      alt="Quote overlay"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                      }}
+                      draggable={false}
+                    />
+                  </>
+                )
+              ) : currentItem?.type === 'slide' ? (
                 <div
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: currentItem.src ? `url(${currentItem.src})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', opacity: currentItem.src ? 0.3 : 0 }}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: currentItem.src ? `url(${currentItem.src})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: currentItem.src ? 0.3 : 0,
+                  }}
                 />
               ) : null}
+
               
               {currentItem?.customText && (
                 <span style={{ position: 'relative', zIndex: 10, color: currentItem?.customColor || '#fff', fontSize: '24px', fontWeight: 'bold', fontFamily: currentItem?.customFont || 'Montserrat', textAlign: 'center', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', padding: '10px' }}>
