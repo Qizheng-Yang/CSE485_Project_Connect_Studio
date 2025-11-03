@@ -63,7 +63,7 @@ function Step5() {
       allItems.push({
         id: slide.id,
         type: 'themedQuote',
-        src: `/themes/${themeParsed?.theme}_poster.png`, // poster background
+        src: `/themes/${themeParsed?.theme}.mp4`,  // video background
         quoteOverlay: slide.quoteOverlay || '', // overlay PNG filename
         duration: parseInt(slide.customDuration || '5') * 1000,
         customText: slide.customText || '',
@@ -263,7 +263,7 @@ function Step5() {
               <video
                 ref={themeVideoRef}
                 src={selectedTheme.src}
-                autoPlay
+                // autoPlay
                 loop
                 muted
                 playsInline
@@ -334,43 +334,77 @@ function Step5() {
                   }}
                 />
               ) : currentItem?.type === 'themedQuote' ? (
-                <>
-                  {/* Poster background */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      backgroundImage: `url(${currentItem.src})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      opacity: 1,
-                      zIndex: 0,
-                    }}
-                  />
-              
-                  {/* Quote overlay */}
-                  <img
-                    src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
-                    alt="Quote overlay"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain',
-                      pointerEvents: 'none',
-                      zIndex: 1,
-                    }}
-                    draggable={false}
-                  />
-                </>
+                isVideo(currentItem.src) ? (
+                  <>
+                    <video
+                      ref={videoRef}
+                      key={`video-${animKey}`}
+                      src={currentItem.src}
+                      autoPlay={isPlaying}
+                      muted
+                      loop
+                      playsInline
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        zIndex: 0
+                      }}
+                    />
+                    <img
+                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
+                      alt="Quote overlay"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                      }}
+                      draggable={false}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: `url(${currentItem.src})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        opacity: 1,
+                        zIndex: 0,
+                      }}
+                    />
+                    <img
+                      src={`/themes/themed_quotes/${currentItem.quoteOverlay}`}
+                      alt="Quote overlay"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                      }}
+                      draggable={false}
+                    />
+                  </>
+                )
               )
-              
-              
+              /*Here end?*/
               
               : currentItem?.type === 'image' ? (
                 <img
