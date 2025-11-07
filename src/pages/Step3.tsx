@@ -1412,109 +1412,100 @@ const handleAddSlide = async () => {
                       maxWidth: '1000px', 
                       margin: '0 auto' 
                     }}>
-                      {slides.map((slide) => (
-                        <SortableItem key={slide.id} id={slide.id}>
+                      {mediaItems.map((item) => (
+                        <SortableItem key={item.id} id={item.id}>
                           <div
                             style={{
                               position: 'relative',
                               backgroundColor: '#f9f9f9',
                               borderRadius: 10,
                               padding: 10,
-                              width: 200,
-                              height: 160,
-                              boxSizing: 'border-box',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              if (item.type === 'image') {
+                                setSelectedImage(item);
+                                setIsEditing(true);
+                                setIsCropping(false);
+                              }
                             }}
                           >
-                            {slide.type === "themedQuote" && slide.quoteOverlay ? (() => {
-                              const parsed = parseThemeAndQuote(slide.quoteOverlay);
-                              if (!parsed) {
-                                return <div>Invalid quote overlay</div>;
-                              }
-                              return (
-                                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                                  <img
-                                    // src={`/themes/${parsed.theme}_poster.png`}
-                                    src={`url(${posterPath})`}
-                                    alt="Theme poster"
-                                    style={{
-                                      width: '100%',
-                                      height: '100%',
-                                      objectFit: 'cover',
-                                      borderRadius: 8,
-                                    }}
-                                    draggable={false}
-                                  />
-                                  {/* Comment out overlay if debugging */}
-                                  
-                                  <img
-                                    src={`/themes/themed_quotes/${slide.quoteOverlay}`}
-                                    alt="Quote Overlay"
-                                    style={{
-                                      position: 'absolute',
-                                      top: 0,
-                                      left: 0,
-                                      width: '100%',
-                                      height: '100%',
-                                      pointerEvents: 'none',
-                                      objectFit: 'contain',
-                                      borderRadius: 8,
-                                    }}
-                                    draggable={false}
-                                  />
-                                
-                                </div>
-                              );
-                            })()
-                            : slide.type === 'image' && slide.imageUrl ? (
+                            {item.type === 'image' ? (
                               <img
-                                src={slide.imageUrl}
+                                src={item.url}
                                 alt="Uploaded content"
                                 style={{
                                   width: '100%',
-                                  height: '100%',
+                                  height: '150px',
                                   objectFit: 'cover',
-                                  filter: slide.filters
-                                    ? `brightness(${slide.filters.brightness}%) contrast(${slide.filters.contrast}%) saturate(${slide.filters.saturation}%) blur(${slide.filters.blur}px)`
+                                  borderRadius: '5px',
+                                  filter: item.filters
+                                    ? `brightness(${item.filters.brightness}%) contrast(${item.filters.contrast}%) saturate(${item.filters.saturation}%) blur(${item.filters.blur}px)`
                                     : 'none',
                                 }}
                                 draggable={false}
                               />
-                            ) : slide.type === 'text' ? (
-                              <div
+                            ) : item.type === 'video' ? (
+                              <video
+                                src={item.url}
                                 style={{
                                   width: '100%',
-                                  height: '100%',
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  padding: 10,
-                                  fontFamily: slide.customFont,
-                                  color: slide.customColor,
-                                  fontSize: 14,
-                                  textAlign: 'center',
+                                  height: '150px',
+                                  objectFit: 'cover',
+                                  borderRadius: '5px',
                                 }}
-                              >
-                                {slide.customText || 'Text Slide'}
-                              </div>
+                                draggable={false}
+                              />
                             ) : (
                               <div
                                 style={{
                                   width: '100%',
-                                  height: '100%',
+                                  height: '150px',
                                   display: 'flex',
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                   color: '#999',
                                   fontSize: 14,
                                   fontStyle: 'italic',
+                                  borderRadius: '5px',
+                                  backgroundColor: '#e0e0e0'
                                 }}
                               >
-                                No Preview Available
+                                {item.type === 'audio' ? '🎵 Audio' : 'No Preview'}
                               </div>
                             )}
-                            <p style={{ fontSize: '12px', textAlign: 'right' }}>
-                              Duration: {slide.customDuration || '5'}s
+                            <p style={{ fontSize: '12px', margin: '5px 0', textAlign: 'center' }}>
+                              {item.originalFilename || 'Media file'}
                             </p>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                removeMediaItem(item.id);
+                              }}
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                background: 'rgba(255,0,0,0.8)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '24px',
+                                height: '24px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                zIndex: 100,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              ×
+                            </button>
                           </div>
                         </SortableItem>
                       ))}
