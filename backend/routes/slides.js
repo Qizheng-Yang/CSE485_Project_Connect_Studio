@@ -24,7 +24,7 @@ router.get('/project/:projectId', authenticateToken, async (req, res) => {
 
     // Get slides for the project
     const slides = await database.query(
-      `SELECT s.*, mf.filename, mf.original_filename, mf.file_path, mf.file_type, mf.mime_type
+      `SELECT s.*, mf.id as media_id, mf.filename, mf.original_filename, mf.file_path, mf.file_type, mf.mime_type
        FROM slides s
        LEFT JOIN media_files mf ON s.media_file_id = mf.id
        WHERE s.project_id = ?
@@ -33,21 +33,38 @@ router.get('/project/:projectId', authenticateToken, async (req, res) => {
     );
 
     // Format slides for frontend
-    const formattedSlides = slides.map(slide => ({
-      id: slide.id.toString(),
-      type: slide.media_file_id ? 'image' : 'text',
-      backgroundImage: slide.background_image,
-      mediaFileId: slide.media_file_id ? slide.media_file_id.toString() : null,
-      order: slide.order_index,
-      duration: slide.duration,
-      transition: slide.transition,
-      filters: slide.filters ? JSON.parse(slide.filters) : null,
-      // Additional fields for text slides
-      customText: slide.custom_text || '',
-      customFont: slide.custom_font || 'Montserrat',
-      customColor: slide.custom_color || '#000000',
-      customDuration: slide.duration ? slide.duration.toString() : '5'
-    }));
+    const formattedSlides = slides.map(slide => {
+      // If slide has a media_file_id, construct the proper URL
+      let backgroundImage = slide.background_image;
+      let imageUrl = slide.background_image;
+      
+      if (slide.media_file_id && slide.media_id) {
+        // Construct the API URL for the media file
+        const mediaUrl = `/api/media/file/${slide.media_file_id}`;
+        backgroundImage = mediaUrl;
+        imageUrl = mediaUrl;
+        console.log(`Slide ${slide.id}: Resolved media_file_id ${slide.media_file_id} to URL: ${mediaUrl}`);
+      } else {
+        console.log(`Slide ${slide.id}: No media_file_id, using stored background_image: ${backgroundImage}`);
+      }
+      
+      return {
+        id: slide.id.toString(),
+        type: slide.custom_text ? 'text' : 'image', // Determine type by whether it has text
+        backgroundImage: backgroundImage,
+        imageUrl: imageUrl,
+        mediaFileId: slide.media_file_id ? slide.media_file_id.toString() : null,
+        order: slide.order_index,
+        duration: slide.duration,
+        transition: slide.transition,
+        filters: slide.filters ? JSON.parse(slide.filters) : null,
+        // Additional fields for text slides
+        customText: slide.custom_text || '',
+        customFont: slide.custom_font || 'Montserrat',
+        customColor: slide.custom_color || '#000000',
+        customDuration: slide.duration ? slide.duration.toString() : '5'
+      };
+    });
 
     res.json({
       message: 'Slides retrieved successfully',

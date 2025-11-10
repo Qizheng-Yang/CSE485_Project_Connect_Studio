@@ -360,7 +360,9 @@ function Step3() {
   
     setSlides((prevSlides: Slide[]): Slide[] =>
       prevSlides.map((slide: Slide) =>
-        slide.backgroundImage === selectedImage.url ? { ...slide, filters } : slide
+        slide.backgroundImage === selectedImage.url || slide.imageUrl === selectedImage.url 
+          ? { ...slide, filters } 
+          : slide
       )
     );
   
@@ -407,7 +409,9 @@ function Step3() {
 
     const updateSlides = (prevSlides: Slide[]) =>
       prevSlides.map(slide =>
-        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: croppedImage } : slide
+        slide.backgroundImage === selectedImage.url || slide.imageUrl === selectedImage.url 
+          ? { ...slide, backgroundImage: croppedImage, imageUrl: croppedImage } 
+          : slide
       );
     
     setSelectedImage(prev =>
@@ -481,7 +485,9 @@ function Step3() {
     // Update slides
     const updateSlides = (prevSlides: Slide[]) =>
       prevSlides.map(slide =>
-        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: blemishedImage } : slide
+        slide.backgroundImage === selectedImage.url || slide.imageUrl === selectedImage.url 
+          ? { ...slide, backgroundImage: blemishedImage, imageUrl: blemishedImage } 
+          : slide
       );
   
     setSelectedImage(prev =>
@@ -545,7 +551,9 @@ function Step3() {
     // Update slides
     const updateSlides = (prevSlides: Slide[]) =>
       prevSlides.map(slide =>
-        slide.backgroundImage === selectedImage.url ? { ...slide, backgroundImage: redEyeImage } : slide
+        slide.backgroundImage === selectedImage.url || slide.imageUrl === selectedImage.url 
+          ? { ...slide, backgroundImage: redEyeImage, imageUrl: redEyeImage } 
+          : slide
       );
   
     setSelectedImage(prev =>
@@ -690,10 +698,15 @@ const handleAddSlide = async () => {
       console.error("Failed to save themed quote slide:", error);
     }
   } else if (currentSlide.backgroundImage && currentSlide.customText) {
+    // Find the mediaFileId if this backgroundImage is from an uploaded media file
+    const matchingMedia = mediaItems.find(item => item.url === currentSlide.backgroundImage);
+    
     const newSlide = {
       id: Date.now().toString(),
       type: "text" as const,
       backgroundImage: currentSlide.backgroundImage,
+      imageUrl: currentSlide.backgroundImage,
+      mediaFileId: matchingMedia?.fileId || null,
       customText: currentSlide.customText,
       customFont: currentSlide.customFont,
       customColor: currentSlide.customColor,

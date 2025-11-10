@@ -197,6 +197,11 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setError(null);
 
     try {
+      // Clear existing state first to prevent duplicates
+      setSlides([]);
+      setMediaItems([]);
+      setUploadedImage(null);
+      
       const response = await projectsAPI.getById(projectId);
       const project = response.project;
 
@@ -216,18 +221,21 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIntro(project.intro_text);
       
       // Load media files
+      const loadedMediaItems: MediaItem[] = [];
       if (project.mediaFiles && project.mediaFiles.length > 0) {
-        const mediaItems: MediaItem[] = project.mediaFiles.map((file: any) => ({
-          id: file.id.toString(),
-          url: mediaAPI.getFileUrl(file.id),
-          type: file.file_type,
-          order: file.order_index,
-          fileId: file.id.toString(),
-          filename: file.filename,
-          originalFilename: file.original_filename,
-          duration: file.duration || '0:00' // For audio files
-        }));
-        setMediaItems(mediaItems);
+        project.mediaFiles.forEach((file: any) => {
+          loadedMediaItems.push({
+            id: file.id.toString(),
+            url: mediaAPI.getFileUrl(file.id),
+            type: file.file_type,
+            order: file.order_index,
+            fileId: file.id.toString(),
+            filename: file.filename,
+            originalFilename: file.original_filename,
+            duration: file.duration || '0:00'
+          });
+        });
+        setMediaItems(loadedMediaItems);
         
         // Set main image if exists
         const mainImage = project.mediaFiles.find((f: any) => f.is_main_image);
@@ -239,11 +247,13 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Load slides for this project
       try {
         const slidesResponse = await slidesAPI.getProjectSlides(projectData.id);
-        if (slidesResponse.slides) {
+        if (slidesResponse.slides && slidesResponse.slides.length > 0) {
+          // Backend now returns properly formatted slides with resolved URLs
           const loadedSlides: Slide[] = slidesResponse.slides.map((slide: any) => ({
             id: slide.id,
             type: slide.type,
-            backgroundImage: slide.backgroundImage,
+            backgroundImage: slide.backgroundImage, // Backend resolves media URLs
+            imageUrl: slide.imageUrl || slide.backgroundImage, // Use imageUrl from backend
             mediaFileId: slide.mediaFileId,
             order: slide.order,
             customText: slide.customText,
@@ -258,7 +268,6 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       } catch (slidesError) {
         console.warn('Could not load slides:', slidesError);
-        // Continue without slides - not critical
       }
       
     } catch (err: any) {
