@@ -63,12 +63,19 @@ function Step1() {
     const newIntro = event.target.value;
     setIntro(newIntro);
     
-    // Update project if it exists
+    // Create or update project
     if (currentProject) {
       try {
         await updateProject({ intro_text: newIntro });
       } catch (error) {
         console.error('Failed to update intro:', error);
+      }
+    } else if (isAuthenticated && newIntro) {
+      // Auto-create project when user starts entering data
+      try {
+        await createProject('Untitled Project', newIntro);
+      } catch (error) {
+        console.error('Failed to create project:', error);
       }
     }
   };
@@ -77,12 +84,19 @@ function Step1() {
     const newName = event.target.value;
     setName(newName);
     
-    // Update project if it exists
+    // Create or update project
     if (currentProject) {
       try {
         await updateProject({ title: newName });
       } catch (error) {
         console.error('Failed to update title:', error);
+      }
+    } else if (isAuthenticated && newName) {
+      // Auto-create project when user starts entering data
+      try {
+        await createProject(newName, 'In Loving Memory of');
+      } catch (error) {
+        console.error('Failed to create project:', error);
       }
     }
   };

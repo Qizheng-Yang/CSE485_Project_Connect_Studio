@@ -66,6 +66,7 @@ interface ImageContextType {
   createProject: (title: string, intro: string, themeId?: number, fullAccess?: boolean) => Promise<Project | null>;
   updateProject: (updates: Partial<Project>) => Promise<void>;
   loadProject: (projectId: string) => Promise<void>;
+  clearProject: () => void;
 
   // Legacy support (for existing components)
   uploadedImage: string | null;
@@ -456,6 +457,18 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Clear project and reset state for creating a new project
+  const clearProject = (): void => {
+    setCurrentProject(null);
+    setUploadedImage(null);
+    setSlides([]);
+    setMediaItems([]);
+    setName('');
+    setIntro('In Loving Memory of');
+    setSelectedTheme(null);
+    setError(null);
+  };
+
   // Auto-create project when user starts entering data (disabled for now to avoid conflicts)
   // useEffect(() => {
   //   if (isAuthenticated && !currentProject && (name || intro !== 'In Loving Memory of')) {
@@ -478,6 +491,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       createProject,
       updateProject,
       loadProject,
+      clearProject,
       
       // Legacy support
       uploadedImage, 

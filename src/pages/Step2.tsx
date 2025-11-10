@@ -3,6 +3,7 @@ import NavbarBabbo from '../components/NavbarBabbo';
 import StepNavigation from '../components/StepNavigation';
 import { useState, useEffect } from 'react';
 import { useImage } from '../context/ImageContext';
+import { useAuth } from '../context/AuthContext';
 
 export interface Theme {
   id: number;
@@ -46,7 +47,8 @@ const themeImages: Theme[] = [
 ];
 
 function Step2() {
-  const { selectedTheme, setSelectedTheme } = useImage();
+  const { selectedTheme, setSelectedTheme, currentProject, updateProject } = useImage();
+  const { isAuthenticated } = useAuth();
   const [localSelectedTheme, setLocalSelectedTheme] = useState<Theme | null>(null);
 
   // Helper function to check if the source is a video
@@ -68,12 +70,22 @@ function Step2() {
     }
   }, [localSelectedTheme]);
 
-  const handleThemeSelect = (theme: Theme): void => {
+  const handleThemeSelect = async (theme: Theme): Promise<void> => {
     setLocalSelectedTheme(theme);
     setSelectedTheme(theme);
     localStorage.setItem('selectedTheme', theme.id.toString());
   
     document.body.style.setProperty('--slide-pattern', theme.frame ? `url(${theme.frame})` : 'none');
+    
+    // Save theme to project if authenticated and project exists
+    if (isAuthenticated && currentProject) {
+      try {
+        await updateProject({ theme_id: theme.id });
+        console.log('Theme saved to project');
+      } catch (error) {
+        console.error('Failed to save theme to project:', error);
+      }
+    }
   };
   
 

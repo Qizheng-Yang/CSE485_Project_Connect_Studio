@@ -3,6 +3,7 @@ import { ImageProvider } from './context/ImageContext'; // Import the ImageProvi
 import { AuthProvider } from './context/AuthContext'; // Import the AuthProvider
 import Home from './pages/Home';
 import CreateVideo from './pages/CreateVideo';
+import MyProjects from './pages/MyProjects';
 import Step1 from './pages/Step1';
 import Step2 from './pages/Step2';
 import Step3 from './pages/Step3';
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create" element={<CreateVideo />} />
+          <Route path="/my-projects" element={<MyProjects />} />
           <Route path="/step/1" element={<Step1 />} />
           <Route path="/step/2" element={<Step2 />} />
           <Route path="/step/3" element={<Step3 />} />

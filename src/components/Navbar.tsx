@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Navbar() {
 
@@ -19,13 +19,29 @@ function Navbar() {
   }
   
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1px', borderBottom: '1px solid black'}}>
+    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1px', borderBottom: '1px solid black'}}>
 
-      <h2 className="nav-bar-studio-text">S T U D I O</h2>
+      <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <h2 className="nav-bar-studio-text">S T U D I O</h2>
+      </Link>
 
       {auth.userEmail ? ( // If Logged in
-        <div className="auth-welcome">
+        <div className="auth-welcome" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           <span>Welcome, {auth.userEmail}</span>
+          <Link to="/my-projects">
+            <button style={{
+              padding: '8px 16px',
+              fontSize: '14px',
+              backgroundColor: '#4a90e2',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}>
+              My Projects
+            </button>
+          </Link>
           <button className="login-signup-button" onClick={handleLogout}>
             Sign Out
           </button>

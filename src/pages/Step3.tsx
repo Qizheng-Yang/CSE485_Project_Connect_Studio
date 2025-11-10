@@ -579,6 +579,25 @@ function Step3() {
     };
   }, [isColorPickerVisible]);
 
+  // Auto-save slides when they change
+  useEffect(() => {
+    if (!currentProject || slides.length === 0) return;
+
+    // Debounce the auto-save to avoid too many requests
+    const timer = setTimeout(async () => {
+      try {
+        console.log('Auto-saving slides...');
+        await saveSlides(slides);
+        console.log('Slides auto-saved successfully');
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        // Don't show alert for auto-save failures to avoid interrupting the user
+      }
+    }, 2000); // Wait 2 seconds after last change before saving
+
+    return () => clearTimeout(timer);
+  }, [slides, currentProject, saveSlides]);
+
   // Photo upload handling
   const [uploading, setUploading] = useState(false);
   
