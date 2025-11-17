@@ -297,7 +297,6 @@ function Step5() {
                   src={item.url}
                   autoPlay={false}
                   loop
-                  controls
                   ref={el => {
                     if (el) audioRefs.current[item.id] = el;
                     else delete audioRefs.current[item.id];
