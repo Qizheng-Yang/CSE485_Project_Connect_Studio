@@ -11,7 +11,7 @@ import { parseThemeAndQuote } from '../pages/Step3';
 
 interface PreviewItem {
   id: string;
-  type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | 'themedQuote';
+  type: 'theme' | 'slide' | 'image' | 'video' | 'audio' | 'themedQuote'| 'intro';
   src: string;
   duration: number;
   quoteOverlay?: string;
@@ -20,6 +20,9 @@ interface PreviewItem {
   customColor?: string;
   effect?: string;
   transition?: string;
+  introImage?: string;
+  introText?: string;
+  name?: string;
 }
 
 // Added Fonts
@@ -37,7 +40,7 @@ import "@fontsource/open-sans";
 
 
 function Step5() {
-  const { slides, mediaItems, selectedTheme } = useImage();
+  const { slides, mediaItems, selectedTheme, uploadedImage, intro, name } = useImage();
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [animKey, setAnimKey] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -45,6 +48,7 @@ function Step5() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const themeVideoRef = useRef<HTMLVideoElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+
 
   const handleDownload = () => {
     setIsDownloading(true);
@@ -68,7 +72,23 @@ function Step5() {
     return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
   };
   
+
   const allItems: PreviewItem[] = [];
+
+  if (selectedTheme && uploadedImage && intro) {
+    allItems.unshift({
+      id: 'intro-slide',
+      type: 'intro',
+      src: selectedTheme.src,
+      introImage: uploadedImage,
+      introText: intro,
+      name,
+      duration: 5000,
+      customFont: 'Great Vibes',
+      customColor: '#ffffff'
+    });
+  }
+  
   
  // Add slides
  slides.forEach(slide => {
@@ -179,6 +199,8 @@ function Step5() {
     }
   };
 
+  
+
   if (allItems.length === 0) {
     return (
       <div className="container">
@@ -198,6 +220,8 @@ function Step5() {
   const transitionClass = currentItem?.transition
     ? currentItem.transition.toLowerCase()
     : "fade";
+
+
 
   return (
     <div className="container">
@@ -254,7 +278,104 @@ function Step5() {
               className={`slide-animator ${transitionClass}`}
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1 }}
             >
-              {currentItem?.type === 'video' ? (
+
+              {currentItem?.type === 'intro' ? (
+                <>
+                  {isVideo(currentItem.src) ? (
+                    <video
+                      src={currentItem.src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{
+                        position: 'absolute',
+                        top: 0, left: 0, width: '100%', height: '100%',
+                        objectFit: 'cover',
+                        zIndex: 0
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0, left: 0, width: '100%', height: '100%',
+                        backgroundImage: `url(${currentItem.src})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        zIndex: 0
+                      }}
+                    />
+                  )}
+
+                  {/* Centered Layout */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0, left: 0, width: '100%', height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 2,
+                    }}
+                  >
+                    {/* Text */}
+                    <div style={{
+                      minWidth: '300px',
+                      maxWidth: '56%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: '2.5rem'
+                    }}>
+                      <span style={{
+                        color: '#fff',
+                        fontFamily: 'Great Vibes, cursive',
+                        fontWeight: 600,
+                        fontSize: '2.5rem',
+                        textShadow: '2px 2px 10px rgba(0,0,0,0.9)'
+                      }}>
+                        {currentItem.introText}
+                      </span>
+                      {currentItem.name && (
+                        <span style={{
+                          fontFamily: 'Great Vibes, cursive',
+                          fontWeight: 700,
+                          fontSize: '2.6rem',
+                          marginTop: '8px',
+                          color: '#fff',
+                          textShadow: '2px 2px 10px rgba(0,0,0,0.85)'
+                        }}>
+                          {currentItem.name}
+                        </span>
+                      )}
+                    </div>
+                    {/* Image */}
+                    <div
+                      style={{
+                        minWidth: '120px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        height: '100%'
+                      }}
+                    >
+                      <img
+                        src={currentItem.introImage}
+                        alt="Intro"
+                        style={{
+                          width: '160px',
+                          maxHeight: '210px',
+                          borderRadius: '13px',
+                          boxShadow: '0 4px 18px rgba(0,0,0,0.21)',
+                          objectFit: 'cover',
+                          background: '#fff'
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : currentItem?.type === 'video' ? (
                 <video
                   ref={videoRef}
                   key={`video-${animKey}`}
