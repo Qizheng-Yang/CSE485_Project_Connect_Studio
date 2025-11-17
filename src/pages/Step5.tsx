@@ -153,43 +153,42 @@ function Step5() {
     });
   });
 
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.play().catch(err => console.error('Video play error:', err));
-      } else {
-        videoRef.current.pause();
-      }
-    }
-    if (themeVideoRef.current) {
-      themeVideoRef.current.play().catch(err => console.error('Theme video play error:', err));
-    }
-  }, [isPlaying]);
+  const intervalRef = useRef<number | null>(null); 
 
   useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    
     if (allItems.length > 0 && isPlaying) {
-      const currentItem = allItems[currentItemIndex];
-      const duration = currentItem?.duration || 5000;
-
-      const timer = setTimeout(() => {
-        setCurrentItemIndex((prevIndex) => (prevIndex + 1) % allItems.length);
-        setAnimKey((k) => k + 1);
-        setProgress(0);
-      }, duration);
-
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          const increment = 100 / (duration / 100);
-          return prev + increment > 100 ? 100 : prev + increment;
-        });
+      const duration = allItems[currentItemIndex]?.duration || 5000;
+      const startTime = Date.now();
+      setProgress(0);
+  
+      intervalRef.current = window.setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const percent = Math.min((elapsed / duration) * 100, 100);
+        setProgress(percent);
+        if (elapsed >= duration) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          setCurrentItemIndex(prev => (prev + 1) % allItems.length);
+          setAnimKey(k => k + 1);
+          setProgress(0);
+        }
       }, 100);
-
-      return () => {
-        clearTimeout(timer);
-        clearInterval(progressInterval);
-      };
     }
-  }, [currentItemIndex, allItems, isPlaying]);
+  
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [currentItemIndex, isPlaying]);
+  
+
+  
 
 
   const resetPreview = () => {
