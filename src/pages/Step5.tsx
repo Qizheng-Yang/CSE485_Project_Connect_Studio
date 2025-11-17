@@ -153,6 +153,11 @@ function Step5() {
     });
   });
 
+  const cleanedItems = allItems.filter(
+    item => item.src !== uploadedImage && item.type !== 'audio'
+  );
+  
+
   const intervalRef = useRef<number | null>(null); 
 
   useEffect(() => {
@@ -172,7 +177,7 @@ function Step5() {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
           }
-          setCurrentItemIndex(prev => (prev + 1) % allItems.length);
+          setCurrentItemIndex(prev => (prev + 1) % cleanedItems.length);
           setAnimKey(k => k + 1);
           setProgress(0);
         }
@@ -218,7 +223,7 @@ function Step5() {
 
   
 
-  if (allItems.length === 0) {
+  if (cleanedItems.length === 0) {
     return (
       <div className="container">
         <NavbarBabbo />
@@ -233,7 +238,7 @@ function Step5() {
     );
   }
 
-  const currentItem = allItems[currentItemIndex];
+  const currentItem = cleanedItems[currentItemIndex];
   const transitionClass = currentItem?.transition
     ? currentItem.transition.toLowerCase()
     : "fade";
@@ -270,7 +275,7 @@ function Step5() {
 
         {/* Use the new helper function to display the correct label --- */}
         <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '14px', color: '#666' }}>
-          {currentItemIndex + 1} of {allItems.length} | {getItemTypeLabel(currentItem?.type)}
+          {currentItemIndex + 1} of {cleanedItems.length} | {getItemTypeLabel(currentItem?.type)}
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
