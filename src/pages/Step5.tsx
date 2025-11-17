@@ -49,6 +49,24 @@ function Step5() {
   const themeVideoRef = useRef<HTMLVideoElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
+  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
+
+  const togglePlayback = () => {
+    if (!isPlaying) {
+      Object.values(audioRefs.current).forEach(audio => {
+        audio.volume = 1.0;
+        audio.play().catch(() => {});
+      });
+    } else {
+      Object.values(audioRefs.current).forEach(audio => {
+        audio.pause();
+      });
+    }
+    setIsPlaying(!isPlaying);
+    if (!isPlaying) setProgress(0);
+  };
+
+
 
   const handleDownload = () => {
     setIsDownloading(true);
@@ -173,12 +191,6 @@ function Step5() {
     }
   }, [currentItemIndex, allItems, isPlaying]);
 
-  const togglePlayback = () => {
-    setIsPlaying(!isPlaying);
-    if (!isPlaying) {
-      setProgress(0);
-    }
-  };
 
   const resetPreview = () => {
     setCurrentItemIndex(0);
@@ -272,6 +284,24 @@ function Step5() {
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: `url(${selectedTheme.src})`, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 0 }}
               />
             ) : null}
+            {mediaItems
+              .filter(item => item.type === 'audio')
+              .map(item => (
+                <audio
+                  key={item.id}
+                  src={item.url}
+                  autoPlay={false}
+                  loop
+                  controls
+                  ref={el => {
+                    if (el) audioRefs.current[item.id] = el;
+                    else delete audioRefs.current[item.id];
+                  }}
+                />
+              ))
+            }
+
+
 
             <div
               key={animKey}
