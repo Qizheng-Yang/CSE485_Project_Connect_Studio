@@ -385,7 +385,7 @@ function Step5() {
                   loop={false}
                   playsInline
                   preload="metadata"
-                  style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', opacity: 0.85 }}
+                  style={{ maxWidth: '100%', height: '70%', objectFit: 'cover'}}
                   onLoadedMetadata={() => {
                     if (videoRef.current && isPlaying) {
                       videoRef.current.play().catch(err => console.error('Video play error:', err));
@@ -396,7 +396,7 @@ function Step5() {
                 <img
                   src={currentItem.src}
                   alt="Preview"
-                  style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', opacity: 0.85 }}
+                  style={{ maxWidth: '100%', height: '100%', objectFit: 'cover'}}
                 />
               ) : currentItem?.type === 'themedQuote' ? (
                 isVideo(currentItem.src) ? (
