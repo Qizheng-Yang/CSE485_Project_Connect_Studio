@@ -856,33 +856,6 @@ const handleAddSlide = async () => {
 
               <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '10px', marginBottom: '30px' }}>
                 <h3>Create Text Slide</h3>
-                
-                {/* Background Selection */}
-                {/* <p>Choose Background:</p>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto' }}>
-                  {[image1, image2, image3, image4, image5, image6,].map((imageUrl, index) => (
-                    <img
-                      key={index}
-                      src={imageUrl}
-                      alt={`Background ${index + 1}`}
-                      style={{
-                        width: '200px',
-                        cursor: 'pointer',
-                        border: currentSlide.backgroundImage === imageUrl ? '3px solid #b2cc55' : '1px solid #ddd',
-                        borderRadius: '5px'
-                      }}
-                      onClick={() => setCurrentSlide(prev => ({ 
-                        ...prev, 
-                        backgroundImage: imageUrl,
-                        selectedQuote: undefined, 
-                        customText: prev.customText || ''
-
-                      }))}
-
-
-                    />
-                  ))}
-                </div> */}
 
                 {/* Text Input */}
                 <div style={{ marginBottom: '20px' }}>
