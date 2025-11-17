@@ -697,7 +697,7 @@ const handleAddSlide = async () => {
     } catch (error) {
       console.error("Failed to save themed quote slide:", error);
     }
-  } else if (currentSlide.backgroundImage && currentSlide.customText) {
+  } else if (currentSlide.customText) {
     // Find the mediaFileId if this backgroundImage is from an uploaded media file
     const matchingMedia = mediaItems.find(item => item.url === currentSlide.backgroundImage);
     
@@ -852,7 +852,7 @@ const handleAddSlide = async () => {
                 <h3>Create Text Slide</h3>
                 
                 {/* Background Selection */}
-                <p>Choose Background:</p>
+                {/* <p>Choose Background:</p>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto' }}>
                   {[image1, image2, image3, image4, image5, image6,].map((imageUrl, index) => (
                     <img
@@ -876,7 +876,7 @@ const handleAddSlide = async () => {
 
                     />
                   ))}
-                </div>
+                </div> */}
 
                 {/* Text Input */}
                 <div style={{ marginBottom: '20px' }}>
@@ -1070,17 +1070,14 @@ const handleAddSlide = async () => {
 
 
                 
-
-
                 {/* Preview */}
-                {currentSlide.backgroundImage && (
+                {(currentSlide.customText || currentSlide.selectedQuote) && (
                   <div style={{ marginBottom: '20px' }}>
                     <p>Preview:</p>
                     <div
                       style={{
                         width: '300px',
                         height: '180px',
-                        // backgroundImage: `url(${currentSlide.backgroundImage})`,
                         backgroundImage: `url(${posterPath})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -1088,53 +1085,39 @@ const handleAddSlide = async () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '5px',
-                        margin: '0 auto'
+                        margin: '0 auto',
+                        position: 'relative'
                       }}
                     >
-                      <span style={{
-                        color: currentSlide.customColor,
-                        fontFamily: currentSlide.customFont,
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        padding: '10px'
-                      }}>
-                        {currentSlide.customText || 'Your text here'}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Themed Quote Preview */}
-                {currentSlide.selectedQuote && (
-                  <div style={{ marginBottom: '20px' }}>
-                    <p>Preview:</p>
-                    <div 
-                      style={{
-                        width: '300px',
-                        height: '180px',
-                        // backgroundImage: `url(/themes/theme1_poster.png)`,
-                        backgroundImage: `url(${posterPath})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        position: 'relative',
-                        borderRadius: '5px',
-                        margin: '0 auto'
-                      }}
-                    >
-                      {/* Quote overlay */}
-                      <img
-                        src={currentSlide.selectedQuote}
-                        alt="Quote Overlay"
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                        }}
-                      />
+                      {/* Themed quote overlay */}
+                      {currentSlide.selectedQuote ? (
+                        <img
+                          src={currentSlide.selectedQuote}
+                          alt="Quote Overlay"
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                        />
+                      ) : (
+                        // Custom text
+                        <span style={{
+                          color: currentSlide.customColor,
+                          fontFamily: currentSlide.customFont,
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                          padding: '10px',
+                          zIndex: 1,
+                          position: 'relative'
+                        }}>
+                          {currentSlide.customText || 'Your text here'}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1159,14 +1142,14 @@ const handleAddSlide = async () => {
                   </button>
                   <button 
                     onClick={handleAddSlide}
-                    disabled={!(currentSlide.backgroundImage || currentSlide.selectedQuote)}
+                    disabled={!(currentSlide.customText || currentSlide.selectedQuote)}
                     style={{
-                      backgroundColor: currentSlide.backgroundImage || currentSlide.selectedQuote? '#b2cc55' : '#ccc',
+                      backgroundColor: currentSlide.selectedQuote? '#b2cc55' : '#ccc',
                       color: 'white',
                       border: 'none',
                       borderRadius: '20px',
                       padding: '10px 20px',
-                      cursor: (currentSlide.backgroundImage && currentSlide.customText) || currentSlide.selectedQuote? 'pointer' : 'not-allowed',
+                      cursor: currentSlide.customText || currentSlide.selectedQuote? 'pointer' : 'not-allowed',
                       marginTop: '15px',
                       fontSize: '16px'
                     }}
@@ -1199,12 +1182,11 @@ const handleAddSlide = async () => {
                     }}>
                       {slides.map((slide) => {
 
-                        const backgroundImageUrl = (() => {
-                          if (slide.type === 'themedQuote' && slide.quoteOverlay) {
-                            return posterPath;
-                          }
-                          return slide.backgroundImage || undefined;
-                        })();
+
+                        const backgroundImageUrl = (slide.type === 'themedQuote' || slide.customText)
+                        ? posterPath
+                        : slide.backgroundImage || undefined;
+
 
                         return (
                         
