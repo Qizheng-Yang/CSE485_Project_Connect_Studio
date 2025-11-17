@@ -264,7 +264,7 @@ function Step5() {
           >
             {selectedTheme && isVideo(selectedTheme.src) ? (
               <video
-                ref={themeVideoRef} src={selectedTheme.src} autoPlay loop muted playsInline
+                ref={themeVideoRef} src={selectedTheme.src} autoPlay loop muted={false} playsInline
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
               />
             ) : selectedTheme ? (
@@ -286,7 +286,7 @@ function Step5() {
                       src={currentItem.src}
                       autoPlay
                       loop
-                      muted
+                      muted={false}
                       playsInline
                       style={{
                         position: 'absolute',
@@ -381,7 +381,7 @@ function Step5() {
                   key={`video-${animKey}`}
                   src={currentItem.src}
                   autoPlay={isPlaying}
-                  muted
+                  muted={false}
                   loop={false}
                   playsInline
                   preload="metadata"
@@ -406,7 +406,7 @@ function Step5() {
                       key={`video-${animKey}`}
                       src={currentItem.src}
                       autoPlay={isPlaying}
-                      muted
+                      muted={false}
                       loop
                       playsInline
                       style={{
