@@ -6,9 +6,11 @@ import { getAudioDuration } from '../utils/audioUtils';
 import { useImage } from '../context/ImageContext';
 import { MediaItem } from '../context/ImageContext';
 
+
 function Step4() {
   const { 
     mediaItems, 
+    slides,
     setMediaItems, 
     uploadMusicFiles, 
     currentProject, 
@@ -16,12 +18,52 @@ function Step4() {
     error 
   } = useImage();
   
+
+
+
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
-  const [videoLength] = useState('5.25 minutes');
-  const [slideLength] = useState('3.5 Seconds');
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   
+
+  function parseDuration(val: string | number | undefined): number {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    if (typeof val === 'string' && val.includes(':')) {
+      // handle "m:ss" strings
+      const [min, sec] = val.split(':').map(Number);
+      return (min * 60) + sec;
+    }
+    return Number(val) || 0;
+  }
+  
+  
+  let totalSeconds = 0;
+
+  // Sum text slides
+  if (slides) {
+    totalSeconds += slides
+      .filter(slide => slide.type === 'text')
+      .reduce((sum: number, slide) => sum + parseDuration(slide.customDuration), 0);
+  }
+  
+  // Sum photo/image slides (5 seconds each)
+  totalSeconds += mediaItems
+    .filter(item => item.type === 'image')
+    .length * 5;
+  
+  // Sum video slides (parse string or number duration)
+  totalSeconds += mediaItems
+    .filter(item => item.type === 'video')
+    .reduce((sum: number, item) => sum + parseDuration(item.duration), 0);
+  
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const formattedVidLength = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  
+
+
+
   // Get music files from mediaItems
   const musicFiles = mediaItems.filter(item => item.type === 'audio');
   
@@ -220,8 +262,8 @@ function Step4() {
           </div>
         )}
         <div className="length-info">
-          <p className='small-text'>Video Length: {videoLength}</p>
-          <p className='small-text'>Slide Length: Match to Music OR {slideLength}</p>
+          <p className='small-text'>Video Length: {formattedVidLength}</p>
+          <p className='small-text'>Slide Length: Loop OR Match to Video Length</p>
         </div>
 
         {showLicenseModal && (
