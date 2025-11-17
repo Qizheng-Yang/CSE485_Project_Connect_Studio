@@ -197,6 +197,12 @@ function Step5() {
     setProgress(0);
     setIsPlaying(false);
     setAnimKey(k => k + 1);
+
+    // Audio paused and reset
+    Object.values(audioRefs.current).forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0; 
+    });
   };
 
   // Create a helper to display a user-friendly name for the new type ---
