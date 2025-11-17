@@ -884,7 +884,7 @@ const handleAddSlide = async () => {
                   <input
                     type="text"
                     value={currentSlide.customText}
-                    onChange={(e) => setCurrentSlide(prev => ({ ...prev, customText: e.target.value }))}
+                    onChange={(e) => setCurrentSlide(prev => ({ ...prev, customText: e.target.value, selectedQuote: undefined }))}
                     placeholder="Enter your text"
                     style={{ width: '100%', padding: '10px', marginTop: '5px', borderRadius: '5px', border: '1px solid #ddd', fontSize: '15px'}}
                   />
@@ -953,7 +953,7 @@ const handleAddSlide = async () => {
                               : undefined,
                         }}
                         onClick={() =>
-                          setCurrentSlide((s) => ({ ...s, customText: quote }))
+                          setCurrentSlide((s) => ({ ...s, customText: quote , selectedQuote: undefined}))
                         }
                       >
                         {quote}
@@ -1144,7 +1144,7 @@ const handleAddSlide = async () => {
                     onClick={handleAddSlide}
                     disabled={!(currentSlide.customText || currentSlide.selectedQuote)}
                     style={{
-                      backgroundColor: currentSlide.selectedQuote? '#b2cc55' : '#ccc',
+                      backgroundColor:(currentSlide.customText || currentSlide.selectedQuote)? '#b2cc55' : '#ccc',
                       color: 'white',
                       border: 'none',
                       borderRadius: '20px',
