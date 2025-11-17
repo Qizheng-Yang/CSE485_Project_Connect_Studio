@@ -778,6 +778,12 @@ const handleAddSlide = async () => {
   const themeId = selectedTheme?.id || 1;
   const posterPath = `/themes/theme${themeId}_poster.png`;
 
+  const {uploadedImage} = useImage();
+
+  const displayMediaItems = mediaItems.filter(
+    item => item.type !== 'audio' && item.url !== uploadedImage
+  );
+
   return (
     <div className="container">
       <NavbarBabbo />
@@ -1415,6 +1421,7 @@ const handleAddSlide = async () => {
                   collisionDetection={closestCenter}
                   onDragEnd={handleDragEnd}
                 >
+                  
                   <SortableContext 
                     items={mediaItems.map(item => item.id)}
                     strategy={rectSortingStrategy}
@@ -1426,7 +1433,7 @@ const handleAddSlide = async () => {
                       maxWidth: '1000px', 
                       margin: '0 auto' 
                     }}>
-                      {mediaItems.map((item) => (
+                      {displayMediaItems.map((item) => (
                         <SortableItem key={item.id} id={item.id}>
                           <div
                             style={{
