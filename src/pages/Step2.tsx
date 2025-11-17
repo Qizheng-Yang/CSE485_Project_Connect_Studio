@@ -37,8 +37,9 @@ const themeImages: Theme[] = [
   { id: 20, src: '/themes/theme20.mp4', alt: 'Theme 20' },
   { id: 21, src: '/themes/theme21.mp4', alt: 'Theme 21' },
   { id: 22, src: '/themes/theme22.mp4', alt: 'Theme 22' },
-  // { id: 23, src: '/themes/theme23.mp4', alt: 'Theme 23' },
-  // { id: 24, src: '/themes/theme24.mp4', alt: 'Theme 24' },
+  { id: 23, src: '/themes/theme23.mp4', alt: 'Theme 23' },
+  { id: 24, src: '/themes/theme24.mp4', alt: 'Theme 24' },
+  { id: 25, src: '/themes/theme25.mp4', alt: 'Theme 25' },
 
 
 ];
