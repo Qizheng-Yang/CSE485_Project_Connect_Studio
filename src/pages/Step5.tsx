@@ -425,6 +425,11 @@ function Step5() {
                   playsInline
                   preload="metadata"
                   style={{ maxWidth: '100%', height: '100%', objectFit: 'cover'}}
+                  onEnded={() => {
+                    setCurrentItemIndex(prev => (prev + 1) % cleanedItems.length);
+                    setAnimKey(k => k + 1);
+                    setProgress(0);
+                  }}
                   onLoadedMetadata={() => {
                     if (videoRef.current && isPlaying) {
                       videoRef.current.play().catch(err => console.error('Video play error:', err));

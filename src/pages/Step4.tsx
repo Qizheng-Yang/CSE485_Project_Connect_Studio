@@ -15,7 +15,8 @@ function Step4() {
     uploadMusicFiles, 
     currentProject, 
     isLoading, 
-    error 
+    error, 
+    selectedTheme
   } = useImage();
   
 
@@ -24,6 +25,7 @@ function Step4() {
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
   const [showCheckboxes, setShowCheckboxes] = useState(false);
+
   
 
   function parseDuration(val: string | number | undefined): number {
@@ -35,28 +37,36 @@ function Step4() {
       return (min * 60) + sec;
     }
     return Number(val) || 0;
-  }
-  
+  } 
   
   let totalSeconds = 0;
+
+  // If theme was selected
+  if (selectedTheme) {
+    totalSeconds += 5;
+  }
 
   // Sum text slides
   if (slides) {
     totalSeconds += slides
       .filter(slide => slide.type === 'text')
       .reduce((sum: number, slide) => sum + parseDuration(slide.customDuration), 0);
+
+    totalSeconds += slides.filter(slide => slide.type === 'themedQuote').length * 5;
   }
   
-  // Sum photo/image slides (5 seconds each)
-  totalSeconds += mediaItems
-    .filter(item => item.type === 'image')
-    .length * 5;
-  
-  // Sum video slides (parse string or number duration)
-  totalSeconds += mediaItems
-    .filter(item => item.type === 'video')
-    .reduce((sum: number, item) => sum + parseDuration(item.duration), 0);
-  
+  if(mediaItems) {
+    // Sum photo/image slides (5 seconds each)
+    totalSeconds += mediaItems
+      .filter(item => item.type === 'image')
+      .length * 5;
+    
+    // Sum video slides (parse string or number duration)
+    totalSeconds += mediaItems
+      .filter(item => item.type === 'video')
+      .reduce((sum: number, item) => sum + parseDuration(item.duration), 0);
+  }
+
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const formattedVidLength = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -108,6 +118,47 @@ function Step4() {
       calculateDurations();
     }
   }, [musicFiles.length]); // Only run when number of music files changes
+
+  useEffect(() => {   // For video durations
+    const calculateVideoDurations = async () => {
+      for (const file of mediaItems) {
+        if (file.type === "video" && (!file.duration || file.duration === "0:00")) {
+          try {
+            const video = document.createElement("video");
+            video.src = file.url;
+            await new Promise((resolve, reject) => {
+              video.addEventListener("loadedmetadata", resolve);
+              video.addEventListener("error", reject);
+            });
+            const duration = Math.floor(video.duration);
+            const minutes = Math.floor(duration / 60);
+            const seconds = Math.floor(duration % 60);
+            const durationString = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  
+            setMediaItems(prev =>
+              prev.map(item =>
+                item.id === file.id ? { ...item, duration: durationString } : item
+              )
+            );
+          } catch (error) {
+            console.error("Error calculating duration for", file.filename, error);
+          }
+        }
+      }
+    };
+  
+    // Only if video item missing a valid duration
+    if (
+      mediaItems.some(
+        item =>
+          item.type === "video" &&
+          (!item.duration || item.duration === "0:00")
+      )
+    ) {
+      calculateVideoDurations();
+    }
+  }, [mediaItems.length]);
+  
 
   const handleUploadClick = () => {
     if (licenseAccepted) {
@@ -262,8 +313,8 @@ function Step4() {
           </div>
         )}
         <div className="length-info">
-          <p className='small-text'>Video Length: {formattedVidLength}</p>
-          <p className='small-text'>Slide Length: Loop OR Match to Video Length</p>
+          <p className='small-text'>Tribute Video Length: {formattedVidLength}</p>
+          <p className='small-text'>Music Audio: Loop OR Match to Video Length</p>
         </div>
 
         {showLicenseModal && (
